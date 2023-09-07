@@ -236,11 +236,11 @@ urlpatterns = [
 
 [Enter your account][9] and here is how your console should look like.
 
-![OAuth2Djoser](./oauth2-google-django-tutorial.png 'Google OAuth2 Django Djoser')
+![OAuth2Djoser](/static/images/blog/django-oauth-social-tutorial-how-to-implement-google-login-with-djoser/oauth2-google-django-tutorial.png 'Google OAuth2 Django Djoser')
 
 Here you need to put the redirection allowed URL
 
-![OAuth2Djoser](./oauth2-google-django-tutorial-credentials.png 'Google OAuth2 Django Djoser')
+![OAuth2Djoser](/static/images/blog/django-oauth-social-tutorial-how-to-implement-google-login-with-djoser/oauth2-google-django-tutorial-credentials.png 'Google OAuth2 Django Djoser')
 
 ## 5. <a name="postman"></a>Use POSTMAN to test the basic flow.
 
@@ -250,15 +250,15 @@ They come with descriptions and scripted flow so you could have more insights. I
 
 1. First run the first GET request in order to obtain URL that opens you Google Login page. Copy the link nr 2. It's an output of script that replaces HTTPS to HTTP that this endpoint returns ( you can do it manually )
 
-![OAuth2DjoserGoogleTokenRegisterDjango](./oauth-google-postman-authorization-uri.png 'Google OAuth2 Django Djoser')
+![OAuth2DjoserGoogleTokenRegisterDjango](/static/images/blog/django-oauth-social-tutorial-how-to-implement-google-login-with-djoser/oauth-google-postman-authorization-uri.png 'Google OAuth2 Django Djoser')
 
 2. This step is just a helper, don´t login via postman preview view. Just verify in preview of the second request that you are indeed seeing the login page ( could be skipped and done directly in the browser )
 
-![OAuth2DjoserGoogleTokenRegisterDjango](./oauth-google-postman-authorization-account.png 'Google OAuth2 Django Djoser')
+![OAuth2DjoserGoogleTokenRegisterDjango](/static/images/blog/django-oauth-social-tutorial-how-to-implement-google-login-with-djoser/oauth-google-postman-authorization-account.png 'Google OAuth2 Django Djoser')
 
 3. With the URL copied in step 1 open your browser and navigate to it. You should see a google select profile page or if you are using incognito mode ( or you're not logged yet to any of google accounts ) you just see this:
 
-![OAuth2DjoserGoogleTokenRegisterDjango](./oauth-google-login-screen.png 'Google OAuth2 Django Djoser')
+![OAuth2DjoserGoogleTokenRegisterDjango](/static/images/blog/django-oauth-social-tutorial-how-to-implement-google-login-with-djoser/oauth-google-login-screen.png 'Google OAuth2 Django Djoser')
 
 4. Finally, once logged in or account selected, you will see the outcome of the endpoint:
 
@@ -281,11 +281,11 @@ class RedirectSocial(View):
         return JsonResponse(json_obj)
 ```
 
-![OAuth2DjoserGoogleTokenRegisterDjango](./oauth-google-response-code-state.png 'Google OAuth2 Django Djoser')
+![OAuth2DjoserGoogleTokenRegisterDjango](/static/images/blog/django-oauth-social-tutorial-how-to-implement-google-login-with-djoser/oauth-google-response-code-state.png 'Google OAuth2 Django Djoser')
 
 Copy the code to 3rd POSTMAN endpoint (POST) and obtain TOKEN! 🎉🎊
 
-![OAuth2DjoserGoogleTokenRegisterDjango](./oauth-google-response-code-state-postman-how-to-obtain-token.png 'Google OAuth2 Django Djoser')
+![OAuth2DjoserGoogleTokenRegisterDjango](/static/images/blog/django-oauth-social-tutorial-how-to-implement-google-login-with-djoser/oauth-google-response-code-state-postman-how-to-obtain-token.png 'Google OAuth2 Django Djoser')
 
 With this token you can authenticate within DRF!
 

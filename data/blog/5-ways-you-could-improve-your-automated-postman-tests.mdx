@@ -38,13 +38,13 @@ POSTMAN allows you to use [3rd party libraries][11] in its sandbox. Next tips wi
 
 Let's say SWAGGER tells you that in body you need to pass string as title:
 
-![swagger_postman](./ss-swagger-postman-docs.PNG 'Swagger Endpoint Mapping')
+![swagger_postman](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-swagger-postman-docs.PNG 'Swagger Endpoint Mapping')
 
 You can programaticaly change your body content in pre-request scripts so that e.g. each time you make a request you have different Job title.
 
 First open your pre-request scripts tab, prepare your body and **stringify it**.
 
-![postman-pre-script](./ss-postman-prerequest-trick-script-add-on-extension.PNG 'Sending request with prerequest scripts')
+![postman-pre-script](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-postman-prerequest-trick-script-add-on-extension.PNG 'Sending request with prerequest scripts')
 
 (code version in case you need to copy)
 
@@ -60,7 +60,7 @@ pm.environment.set("job_object", JSON.stringify(preparedBody))
 
 You have to set this body object as an environment, global or collection variable. Once you do it, before executing the script you just need to use it in body like that:
 
-![postman-pre-script-use](./ss-postman-body-request.PNG 'Sending request with prerequest scripts')
+![postman-pre-script-use](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-postman-body-request.PNG 'Sending request with prerequest scripts')
 
 Now each time you execute this request you will get new Job title:
 
@@ -80,11 +80,11 @@ Specific use cases: You have a page that has a login fields with generated token
 
 Let's say that you make a request to some API and it redirects you to a page with input fields that have tokens assigned. That's a common use case with SAML and SSO. You can practice [here][0] on a real use case. This login field has a token.
 
-![input-token](./ss-input-field-token.PNG 'Sending request with prerequest scripts')
+![input-token](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-input-field-token.PNG 'Sending request with prerequest scripts')
 
 On requesting the URL of this page we will get just normal HTML:
 
-![postman-html-request](./ss-make-html-request-postman.PNG 'HTML body in POSTMAN request')
+![postman-html-request](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-make-html-request-postman.PNG 'HTML body in POSTMAN request')
 
 As you've read in a previous tip, we can use libraries provided in POSTMAN SandBox. jQuery is [replaced by CheerioJS][1] which emulates jQuery core API.
 
@@ -129,11 +129,11 @@ You can go back to **previous requests** or **skip some requests** or **loop thr
 
 Instead of using default naming:
 
-![postman-request-naming](./ss-naming-postman-requests.PNG 'Naming POSTMAN request')
+![postman-request-naming](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-naming-postman-requests.PNG 'Naming POSTMAN request')
 
 Try naming your request in a way that will be easier to write them in the scripts when passing their names into your **setNextRequest()** e.g. using request method and no spaces:
 
-![good-postman-request-namingt](./ss-naming-postman-requests-good.PNG 'Naming POSTMAN request good')
+![good-postman-request-namingt](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-naming-postman-requests-good.PNG 'Naming POSTMAN request good')
 
 ## <a name="validating-schema"></a>Validating schema
 

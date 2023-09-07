@@ -34,7 +34,7 @@ Last but not least, quote from _docs_ on where to use it and where it can get us
 
 Have a quick look at the flow we will go through:
 
-![reCAPTCHA-flow-explanation-tutorial](./reCAPTCHA-flow-explanation-tutorial.png 'reCAPTCHA-flow-explanation-tutorial')
+![reCAPTCHA-flow-explanation-tutorial](/static/images/blog/how-to-implement-recaptcha-v3-with-vuejs-front-end-framework-and-django-rest-api/reCAPTCHA-flow-explanation-tutorial.png 'reCAPTCHA-flow-explanation-tutorial')
 
 We will be following the programmatic steps from the [official guide][3]
 
@@ -129,13 +129,13 @@ and we need to provide a following body:
 
 or we could put those values as encoded form:
 
-![postman-recaptcha-token-verify](./postman-recaptcha-token-verify.png 'postman-recaptcha-token-verify')
+![postman-recaptcha-token-verify](/static/images/blog/how-to-implement-recaptcha-v3-with-vuejs-front-end-framework-and-django-rest-api/postman-recaptcha-token-verify.png 'postman-recaptcha-token-verify')
 
 This very request is the request you have to send **from your backend** to later use the **score** value in your logic.
 
 I wanted to start with POSTMAN because it has very useful feature that let's you [**export request in any language you want**][6]. I will export it in python´s requests:
 
-![postman-export-request](./postman-export-request.png 'postman-export-request')
+![postman-export-request](/static/images/blog/how-to-implement-recaptcha-v3-with-vuejs-front-end-framework-and-django-rest-api/postman-export-request.png 'postman-export-request')
 
 If you execute this script in Python e.g. in CMD / Bash you will get this:
 

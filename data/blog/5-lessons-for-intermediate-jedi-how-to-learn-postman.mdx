@@ -1,0 +1,245 @@
+---
+title: To all padawans - rise your POSTMAN skills!
+date: '2020-05-31'
+summary: Become intercept requests like a hacker 🕵️, learn how to make cookies 🍪 and more. This description literally makes sence once you check it out. 💡
+tags: ['POSTMAN', 'API', 'Testing', 'Automation', 'QA']
+images: ['/static/images/blog/5-lessons-for-intermediate-jedi-how-to-learn-postman/postman-automated-tests-tips-starwars-jedi-tips.png']
+draft: false
+---
+
+## Welcome my young apprentice, let's master some knowledge!
+
+We are using here [Star Wars API][3] to explain some matters thus the title. This post is **exclusively** about **POSTMAN** tool for Testing API. If you would like to become a Jedi knight, you should probably [check other][0] resources on that matter (or [basic training][1] if you are just a padawan).
+
+We are going to learn here about:
+
+- [Intercepting requests](#intercepting-requests-using-proxy-and-interceptor) - using proxy and interceptor to hack your workflow ( no [swagger][4]? no problem! )
+- Increasing productivity with [collections usage](#collection-usage) ( don't waste time with Auth next time ) .
+- [Cookies](#cookies) 🍪🍪🍪 ! ( let's search for them, intercept them and finally eat them )
+- [Saving responses](#saving-responses) and why it's **extremely important**.
+- Saving time by [using collections](#use-public-postman-collections) of other people.
+
+➕ EXTRA! Hints for POSTMAN Padawans.
+
+## <a name="intercepting-requests-using-proxy-and-interceptor"></a>Intercepting requests, using proxy and interceptor
+
+This is the part that I called hacking. Why? Imagine you need to make tests for a new Service that has 20 endpoints but there is no documentation. Some of those endpoints are used in front-end so you open your developer tools, open the app and you search for those requests. Then you copy them with cURL ( it's possible and useful for single requests if you did't know ) like that:
+
+![cURL](./cURL-copy-request.PNG 'cURL')
+
+And then copy here:
+
+![import-cURL](./POSTMAN-post-cURL-import.PNG 'Import cURL')
+
+You will make it way quicker if you will just try PROXY to intercept the requests or Intercepting POSTMAN functionality. I am suggesting to **[start with Intercepting with POSTMAN][5]** option since it's just quicker when you're testing. Follow the official docs to see how to set it up. If you fail to toggle it on Windows [download the bridge][6] between the Chrome extension and POSTMAN App.
+
+In case you want to Intercept requests with PROXY, you will need to first check your IP with writing
+
+```
+ipconfig
+```
+
+in the terminal. Depending on your internet connection you can see info about your [cable connection][7] or [Wi-Fi][8]. Get your _IPv4 Address_ and set up your simpliest proxy settings ( I use windows ) using port 5555
+
+![windows-proxy](./proxy-connect-windows-settings.PNG 'Setting up proxy on Windows 10')
+
+Now you can use:
+
+- Only Default proxy configuration checkbox ( that is using the system one that you have just enabled )
+- Only custom configuration checkbox ( HTTP/S or both depends on you )
+- Or both ( POSTMAN will just use one of them )
+
+![postman-proxy](./proxy-postman-proxy-settings.PNG 'Setting up proxy on POSTMAN')
+
+Now you just have to switch on Capturing requests option:
+
+![postman-proxy-options](./proxy-postman-options.PNG 'Setting up proxy on POSTMAN')
+
+and you're good to go!
+
+I have selected only HTTP so when I visit a site **in my browser** that ALLOWS HTTP connections I will see this in my POSTMAN history ( this is where the requests get saved when intercepted, but you can **select a collection instead** ) :
+
+![postman-proxy-gif](./proxy-postman-intercepting-requests.gif 'Setting up proxy on POSTMAN gif')
+
+HTTP or HTTPS is important, because you might see this instead:
+
+![connection-not-private](./connection-not-private.PNG 'connection-not-private')
+
+There you go. That's the short overview on intercepting requests that could save you bunch of time. Instead of copying one by one, delete those requests that are not necessary and you're good to go. To destroy is always easier than create.
+
+## <a name="collection-usage"></a>Increasing productivity with collections usage
+
+Who you should use collections?
+
+I will mention 3 reasons (there is more, try [reading the docs][10]):
+
+- Asserting response time at the collection level
+- Set authentication at the collection level
+- Move your variables out of your environments and into your collections.
+
+---
+
+Let's start with **assertion of response time**.
+
+![postman-collection-response-time-measuring](./postman-collection-response-time-measuring.PNG 'postman-collection-response-time-measuring')
+
+Code:
+
+```js
+const responseThreshold = 6.5 // seconds
+
+const responseInMiliseconds = pm.response.responseTime
+const responseInSeconds = responseInMiliseconds / 1000
+
+pm.test(
+  `Response time is lower than ${responseThreshold} seconds`,
+  function () {
+    pm.expect(responseInSeconds).to.be.below(responseThreshold)
+    console.log('Response time in seconds: ', responseInSeconds)
+  }
+)
+```
+
+The result of that is here:
+
+![postman-collection-response-time-measuring-run](./postman-collection-response-time-measuring-run.PNG 'postman-collection-response-time-measuring-run')
+
+This means, that even tho we run 174 requests **AND** measure response of each one of them, we do that only with 9 lines of code (you could make it even more [DRY][9]).
+
+---
+
+Let's check now **authentication at the collection level**.
+
+Again - the same reason - [**DRY**][9]. In case you are calling one app / service with the same token obtained in the e.g. first request, there is no need to repeat it on each request and keep adding _{{AuthorizationToken}}_ variable. Just start your collection with authentication request and in tests, once the auth has been executed, export the token as [_collection variable_][11]
+
+```js
+// Part of a 'Tests' sandbox in an auth request.
+
+const jsonData = pm.response.json()
+//pm.collectionVariables.set(variableName:String, variableValue:String);
+pm.collectionVariables.set('AuthorizationToken', jsonData.token)
+```
+
+Use it once, run it everywhere:
+
+![postman-collection-authentication](./postman-collection-authentication.PNG 'postman-collection-authentication')
+
+---
+
+Let's move now to **variables at the collection level**.
+
+This is a good use case for avoiding different environments trouble. In case you want to run the same set of tests on dev, test, prod and _you own the codebase / hosting_ then you might consider just hardcoding the credentials at the collection level. **This is not a good practice**, usually it's better to have your secrets and credentials injected from the environmental variables. This way, once you export your collection of tests, they will be free of secrets but in case you want to do some local tinkering it's always better to put such things (e.g. common URLs) at the collection levels. Otherwise they could get lost in sea of requests.
+
+Remember:
+
+```js
+//Set a collection variable
+pm.collectionVariables.set((variableName: String), (variableValue: String))
+
+//Get a collection variable
+pm.collectionVariables.get((variableName: String))
+```
+
+## <a name="cookies"></a>Cookies
+
+How to clean cookies programmatically?! To know that was my **BIG** dream. I've spent a loot of time figuring it out. If you were also in this position and you stuck you may have forgotten that:
+
+> In order to use **cookie 🍪 jar 🏺** you need to **add domain to a whitelist** !
+
+Like that :
+
+1. First click on the bottom left:
+   ![postman-cookies-whitelist](./postman-cookies-whitelist.PNG 'postman-cookies-whitelist')
+2. Then add the domain that you need to clean the cookies for.
+   ![postman-cookies-whitelist-add](./postman-cookies-whitelist-add.PNG 'postman-cookies-whitelist-add')
+
+One you did that, you may proceed to mingling with the 🍪🏺.
+
+First create a jar.
+
+```js
+const microsoftURL = 'login.microsoftonline.com'
+const jar = pm.cookies.jar()
+```
+
+Then get all the cookies and check for errors:
+
+```js
+jar.getAll(microsoftURL, function (error, cookies) {
+  console.log('Getting error: ', error)
+  console.log('Getting cookies: ', cookies)
+})
+```
+
+Then you can clear the cookies.
+
+```js
+jar.clear(microsoftURL, function (error) {
+  console.log('Getting error when cleaning: ', error)
+})
+```
+
+In case you want to perform more operation or want to have a [guide on setting new cookies][13], you may want to check the [API for using cookies with code][12].
+
+⚠️ Remember that you could clean those cookies or set them at the **pre-request scripts** level. ⚠️
+
+## <a name="saving-responses"></a>Why you should save responses
+
+You send request and you recieve a JSON but you are not sure about the response. Sure there is no preoperty that´s missing? Maybe something is wrong with data type? You go to a developer and ask him to confirm. This repeats and repeats, because you may not have [swagger][4] or it's badly implemented.
+
+**Not anymore!** Why? Because from now on, when developer tests his endpoint on local, he saves the response he gets. He can save it to file and attach it to the task he passes for testing. Unfortunately those files get lost with time that´s why it´s better to save it _as example_. This way, once you publish the documentation for requests, it will have all the information about response that you have saved _as example_.
+
+![postman-docs-example-response](./postman-docs-example-response.png 'postman-docs-example-response')
+
+_HINT:_ Try adding description to the requests. It's a bit hidden so you might have missed it:
+
+![postman-request-description](./postman-request-description.png 'postman-request-description')
+
+## <a name="use-public-postman-collections"></a>Using Public Collections
+
+One of **the coolest** functionality in POSTMAN is sharing public collections. By saying that I mean posting but mostly downloading existing collections that are called templates.
+
+There are literally thousands collections that have been made on interesting topics like automation, authentication etc by knowledgable people.
+
+If you are bored or feeling like learning after reading this post then definately go ahead for a search of a cool collection.
+
+![postman-shared-collections](./postman-shared-collections.png 'postman-shared-collections')
+
+![postman-shared-collections-space](./postman-shared-collections-space.png 'postman-shared-collections-space')
+
+I have just found one about space 🌌 and I'm going to learn something new.
+
+You should too! 🙋‍♂️
+
+---
+
+## <a name="hints"></a>Hints
+
+Remember:
+
+- To use environment variables according to your [scopes][14] - overwriting scopes could give you a headackes.
+- When using environmental variables make sure you have any environment set up, otherwise with _no environment_ the request won´t go through.
+
+---
+
+---
+
+_Do you have some thoughts or finding about this post? Tell me about your insights. Leave a comment with your opinion. Thank you_
+
+
+
+[0]: https://www.goodreads.com/book/show/10411786-jedi-manual-basic---introduction-to-jedi-knighthood
+[1]: https://www.amazon.es/Jedi-Manual-Intermediate-Truth-Manuals/dp/1613920148
+[3]: https://swapi.dev/
+[4]: https://swagger.io/docs/specification/2-0/what-is-swagger/
+[5]: https://learning.postman.com/docs/postman/sending-api-requests/interceptor/
+[6]: https://go.pstmn.io/interceptor-bridge-windows
+[7]: https://www.softzone.es/app/uploads-softzone.es/2020/01/Ipconfig-en-CMD-1.jpg
+[8]: https://i.ytimg.com/vi/uNdChY_T9EQ/maxresdefault.jpg
+[9]: https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
+[10]: https://learning.postman.com/docs/postman/api-documentation/documenting-your-api/
+[11]: https://learning.postman.com/docs/postman/scripts/test-examples/#collection
+[12]: https://www.postmanlabs.com/postman-collection/CookieList.html
+[13]: https://learning.postman.com/docs/postman/sending-api-requests/cookies/#creating-a-cookie
+[14]: https://learning.postman.com/docs/postman/variables-and-environments/variables/
+

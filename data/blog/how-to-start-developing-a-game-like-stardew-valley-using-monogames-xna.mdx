@@ -1,0 +1,184 @@
+---
+title: Solo Game Development Adventure 1 - Beginning of The C# Adventure.
+date: '2020-03-08'
+summary: Starting on journey similar to Stardew Valley. Gathering all the information from the internet, tight your shoelaces and hop on an adventure!
+tags: ['C#', 'GameDevelopment']
+images: ['/static/images/blog/how-to-start-developing-a-game-like-stardew-valley-using-monogames-xna/how-to-start-developing-a-game-like-stardew-valley.png']
+draft: false
+---
+
+## Introduction
+
+The story is the most important part. I am going to start with my story. If you feel in anyway connected or touched by it, feel free to join on an adventure and drop me PM with your ideas. They'll become a part of it.
+
+> If I knew where I was going, I wouldn't do it. When I can predict or plan it, I don't do it. - Frank Gehry
+
+Why the story is the most important? I am following the steps of [ConcernedApe][10] which is AKA for [Eric Barone][11] - the creator and sole developer of Stardew Valley. He coded the game from scratch.
+
+I was asking myself how did concernedape made stardew valley and I found **his own words** on reddit:
+![How To Develop StardewValley-like game](./concernedApe/concerned-ape-advice-on-making-a-game.png 'How To Develop StardewValley-like game')
+![How To Develop StardewValley-like game cd](./concernedApe/concerned-ape-advice-on-making-a-game-2.png 'How To Develop StardewValley-like game cd')
+_This post is an origin, base for the idea._
+
+## Many Emerging Puzzles form a Goal of Making a Game
+
+There is a couple of things about my life that led me to start with the game idea. Some of the most important are:
+
+- Programming - different languages of programming, concepts. Joy of coding and solving new problems. A dream to write useful software, to create and add value. I am trying to grow professionally and currently in my job and on the market in general .NET and C languages are getting more popularity.
+- Creativity and Art - it emerges from time to time when I sculpt in Clay, take Polaroids or fold Origami. I believe we all need to do art. It´s not about perfectionism and becoming an artist, it´s about learning the feelings that come with it and acquiring better perception.
+- Nostalgia - Recurring need to thing and live again my amazing, care-free childhood. Childhood filled with great games that teleported me into another world.
+- Hobbies - One of the entries on my Bucket List is creating electronic music.
+
+Then there is also a few beliefs and ideas that I am constantly seeing around and I would love to interpret them inside a game:
+
+- Existentialism - constant urge to discover and learn about existence and purpose. Feelings of being alive and aware are omnipresent, that has always generated need to discover but also to act. If only a game could give - especially young - people the idea of evanescence!
+- Current times - people don't have common goals, are infinitely divided when it comes to needs, structures, groups, ideas, values. The game should spark creating communities that could meet in real life to talk about it or play it.
+- Common goal - Let's ask questions e.g. What do we want as a society? What do we want as people? Can there be common goals? How common they can be? Lack of these type of questions is not pushing us forward.
+- Complete lack of future-proof actions. How do we want to be remembered in 100 years?
+- Concept of basing life of all humans on external, **scarce** source of energy that has been causing problems ever since.
+- Science fiction that can become reality sooner than later.
+
+The above mentioned follow me like second one-egg-twin-like head. Finally came a moment when I want to embrace them.
+
+## The Why ?
+
+- **Teaching through play** - When playing Stardew Valley I immediately felt peaceful. Game where you can't loose, where you don't kill. Living in a village and growing crops with amazing, [calming music][3] and [beautiful images][2]. I was sure that replicating this feeling in real life would be an amazing experience. I was not thinking about having my own garden since a long time. This game taught me something through the overall experience.
+
+- **Learning** - Developing a game requires knowledge of interdisciplinary concepts from programming and design world. C# as a language, Microsoft's framework, Pixel art, Designing, Screenwriting, Music. A game as a whole (well-made game) is an amazing achievement. No wonder that Stardew Valley creator [picked it up as his portfolio project][4]. C# is widely used in most of the companies install parts of the world.
+
+- **Creating** - I could create a strategy / simulation. This way I could draw from my old game from my childhood and play it while developing. Game could implement sci-fi world based with concepts I find true and interesting. World where humans don't fight over resources like in every, single game. Changing the philosophical concept of a game would allow to unleash creativity.
+
+- **Nostalgia** - My biggest childhood game that actually changed or improved my life was Settlers IV. I've translated all the game and manual with a dictionary. I was playing it infinite of time. Its concept (especially extension) is based of an external, out of this world dark energy that different races has to conquer together. You make peace with other nations and try to [fight spreading darkness][1].
+
+![Settlers 4 Gardener Viking](./settlers-4-gardener-concept-art.png 'Settlers 4 Gardener Viking')
+
+_pic1: Settler gardener_
+
+- Community - After publishing first draft of a game, there will be critics. Iterating will lead to aquiring fans and this way I could grow community which is important for every single tech project.
+
+- Profitability - The goals are as follows: 1. Knowledge 2. Skills 3. Fun 4. Experience 5. The Unexpected 6. Money. Taking into consideration my zero-level skill in game designing I am not thinking about money. I am not wondering how much money did stardew valley make or how much my game will make because I have more viable goals. Also because I doubt it will take me that far! You must know how long did stardew valley take to make to understand my attitude. **4 years of 12hr daily coding**...
+
+The pros of not focusing on money (as most of game devs) is that I won't need to worry about deadlines. Also it will cost me 0 Dollars.
+
+I know - time is money. Well, it should give me some fun from creativity. Surely it's way more reasonable than wasting time on stocks in todays abstract markets.
+
+## How to Create a Game like ConcernedApe's?
+
+Because of my zero-level skillset in game designing I will take an approach of [Eric Barone][5]. One person. He did it all. He has 10/10 stars on Steam, he has 10 millions of copies sold. Putting it short: the way he was doing it - **can work**. It has been done before so there are **VERY LOW** chances of making it happen.
+
+- I will pick up an old, favorite game that I could be inspired by. Settlers IV that had a recently it's [history edition release][12] on UPlay (THANK YOU!) is a perfect candidate for this.
+
+![Settlers 4 History Edition](./The-Settlers-4-History-Edition-02.jpg 'Settlers 4 History Edition')
+_pic2: Settlers 4 History Edition_
+
+- I will create the game with my own game engine created with [XNA][6]. The XNA allows for multiplatform release. Since nowadays people read less books and play more games, I want the game to be fully accessible. Tablet, mobile, PS4, PC. Modern open source adaptation of this framework is called [MonoGames][13]
+
+- I will design the graphics with [paint.NET][7]
+
+- I will make electronic lo-fi music with [Propellerhead Software][8]
+
+## The Story
+
+I was always fascinated like our ancestors travelled through all the globe thousands of years ago. We have tribal way of living. We are tribal animals. As [Frans de Waal][14] tells us we can learn a lot from our ancestors. Also [Robert Sapolsky][15] unveils a lot of answers to questions many of us ask ourselves all the time. When we see differences, we like to fight or make enemies.
+
+I was many times imagining an alternative history of the world, where pangea did not divided and we are living all on one continent. We learn how to live on this small piece of land. There are still mountains and rivers, but after a few thousand of years we finally mix-up so much that arriving to a mutual understanding is way easier. Either that or I believe we would need an external threat to make peace. **Third enemy.**
+
+I want the game to be peaceful. Without wars, without feeding the space in our brain that is responsible for those war-like feelings. **That requires a new land.**
+
+One of my heros is [Buckminster Fuller][16], who taught me a very simple thing - energy. He extrapolated the basic knowledge about energy we get in school. Energy is not only out ATP, cells and vehicle speed. It's societies, wars, money. Money is energy and we base all the energy on scare resources. If we add up wasting resources with our wasteful nature, we get inequalities, wars, bubbles etc. This is why, the game's economy engine has to be based on **renewable energy sources**.
+
+I was moved by an [open source ecology][17] project. It's about having blueprints for a set of machines that would allow current civilization to exist, or to rebuild it with the amount of complexity we have now. Where is this new land, that we could fill by renewable energy
+
+It must be about a place where part of me already is present. Landed a few days ago.
+
+<iframe width="980" height="410" src="https://mars.nasa.gov/layout/embed/send-your-name/mars2020/certificate/?cn=720445365697" frameborder="0"></iframe>
+
+It is a new land, with external enemy - harsh climate. New pangea that could be filled entirely by renewable materials,
+
+# Mars
+
+The game will be a strategy game about colonizing Mars. Building alternative history for our specie. Using renewable resources and science to make the planet green again. War against nature and harsh conditions of this planet.
+
+> "There is no indication that the logic we know is the last stage of intellectual evolution." - Ludwig von Mises, "Human Action"
+
+## When ?
+
+It will be done purely as a pleasure thing that will be increasing my happiness after hours. No deadlines, no timelines, no pressure, no need to finish thing today, no money involved, no obligations. **Just joy, creativity and pleasure.**
+
+## Timeline
+
+In order to make it a plan, not just a vague sketch I need to mention some points that would allow me to verify the progress later. It is not a deadline, just a loose roadmap.
+
+### 1ST YEAR - Year of preparation.
+
+    * Q2
+    - Learning C# and .NET platforms.
+    - Reading philosophical bases on how Human Action is based in Physical world. Buckminster, Korzybski, Mises.
+
+    * Q3
+    - Writing concepts and laying grouds for the core of the game. Just like our core is gas, coal, current minds and our technological achievements. Developing the core idea. Cooperation. Fighting evil. Beauty. Renewable sources. The point of the game.
+
+    * Q4
+    - Writing the script, timeline, plot and characters.
+    - Coding the core of the game engine.
+
+---
+
+### 2ND YEAR - Year of implementation.
+
+    Knowing better what's needed and how my skills are, what has been done so far - I should focus on making the economic in-game assumptions, quests, goals for playing.
+
+     * Q1
+     - Summing up the progress. Redefining what's needed.
+     - Expanding the world concept, enriching the philosophical part of the game.
+    - Designing characters in paint.NET
+    - Learning how to make lo-fi music with Propellerhead
+
+     * Q2
+     - Designing the start - place, location, objects needed.
+     - Coding first part of the timeline, placing all the things together.
+
+     * Q3
+     - Continuing pure development
+
+     * Q4
+     - Continuing pure development
+
+### 3RD YEAR - Year of Alpha.
+
+    * Q1
+     - Retouch
+     - First Alpha release.
+
+I am moving this idea to a separate domain.
+
+To read more, check the next parts on [martianSapiens.com][18]
+
+---
+
+_Tell me about your insights and leave a comment - you are most welcome to see more posts of this type just go to [home page][100]_
+
+[100]: https://hvitis.dev
+
+---
+
+
+
+[1]: https://images.igdb.com/igdb/image/upload/t_original/sc756s.png
+[2]: https://img6.gram.pl/aloc20200212172729543ktvw.jpg
+[3]: https://www.youtube.com/watch?v=JJCFQtTPq_8
+[4]: https://www.youtube.com/watch?v=9YqdutJLIi8
+[5]: https://www.youtube.com/watch?v=4-k6j9g5Hzk
+[6]: https://en.wikipedia.org/wiki/Microsoft_XNA
+[7]: https://www.getpaint.net/
+[8]: https://en.wikipedia.org/wiki/Propellerhead_Software
+[9]: https://www.thesettlers-alliance.com/en/guide-the-settlers-4-history-edition/
+[10]: https://twitter.com/ConcernedApe
+[11]: https://screenrant.com/stardew-valley-update-development-eric-barone-harvest-moon/
+[12]: https://store.ubi.com/ie/game?pid=5be2b34288a7e3b8170265d3&dwvar_5be2b34288a7e3b8170265d3_Platform=pcdl&edition=History%20Edition&source=detail
+[13]: https://www.monogame.net/
+[14]: https://www.youtube.com/watch?v=meiU6TxysCg
+[15]: https://www.youtube.com/watch?v=NNnIGh9g6fA
+[16]: https://en.wikipedia.org/wiki/Buckminster_Fuller
+[17]: https://www.opensourceecology.org/
+[18]: https://www.martiansapiens.com

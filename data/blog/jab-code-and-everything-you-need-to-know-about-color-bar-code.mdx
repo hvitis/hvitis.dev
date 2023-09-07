@@ -1,0 +1,184 @@
+---
+title: JAB Code - Everything you Need to Know About this HCCB Color Barcode
+date: '2021-02-23'
+summary: Learn how can you live forever with JAB - Just Another Bar code. It is an amazing piece of technology. Discover its capacity and use dedicated python generator.
+tags: ['JABCode', 'Python', 'Barcodes']
+images: ['/static/images/blog/jab-code-and-everything-you-need-to-know-about-color-bar-code/jab-code-do-you-dear-to-read-it.png']
+draft: false
+---
+
+JAB is a High Capacity Color Barcode generator. It is just amazing and [let me tell you why](#audio-in-img) (tldr: cause **you can live forever thanks to that**).
+
+## What is a JAB code?
+
+JAB is first of all - colored barcode.
+
+![jab code hccb](./jab-code-in-lego.webp 'Picture of rendered JAB code in LEGO representation')
+
+Its abbreviation stands for Just Another Barcode but it is far from ordinary. Some of its qualities are:
+
+- High capacity - the code itself can store up to hundreds of Kilobytes!
+- Multi color, polychrome symbology (official ISO implementation up to 8 colors, official algorithm up to 256 to choose from [more on this here 🟦🟪](#color-limitation) )
+- No white surrounding required - traditional iQR codes require a white margin around the code.
+- No shape limits, generate code in different sizes and shapes - traditional QR codes are always squares.
+- Saving all possible characters (Using UTF-8), letters, digits, punctuation etc.
+- Mirror Imaging - reversed codes are valid, readable codes.
+- **Possible to save byte data** ! (Check out how I am [saving audio in pictures](#audio-in-img) with Python)
+
+## How can you use it now?
+
+The implementation is open sourced and all the code is available on github. The [offical code package][0] offers:
+
+- Jab code reader for Android phones. It is possible to decode codes with smartphones.
+- Jab code decoder
+- Jab code encoder
+
+Those are C files that have to be [made][5] on Linux or Windows (more info on [repository page][0]). I made them successfully with Ubuntu 14 and Ubuntu 18. Running on newest Ubuntu may require [special options][7].
+
+## <a name="color-limitation"></a> Color Limitation
+
+You can choose up to 256 colors but symbols (secondary or primary) can hold up to 64 modules in different color. Modules are small colored squares ('pixels') that hold data. This means that the maximum color depth is 64 colors (check the [official technical documentation][3] for more information). However the official encoder and decoder supports by default up to 8 colors for [ISO/IEC 8859-15][6] purposes. [Another paper][4] on JAB Code mentions the requirements for that - it is difficult to reach environmental stability of reproducing the exact colors in physical reality.
+
+> The reason why this happens ist the conversion of the colorspace by the printers driver. Since JAB code should also be printable by office printers color flexibility is a core requirement.
+
+Inkjet printers and other barcode printers such as Epson tm-c3500 may not be able to maintain the encoded values for decoding purposes - the fewer colours the lower probability of failed decoding by the smartphone decoder.
+
+## JAB Code vs QR Codes
+
+According to the documentation:
+
+> JAB Code requires 85x85 modules and thus a total of 7,225 modules, with an approximate size of 7 by 7 cm where the size of the QR Code is approximatly 2.5 times bigger with comparable error correction performance.
+
+Which means that JAB codes are significantly smaller. The algorithm works in completely different way. Finder patterns, encoding, shape. It all differs from QR codes so there is a few similarities besides being in barcode category.
+
+> Current barcode standards used on documents such as birth certificates, graduation certificates, and visas have the storage capacity to record only basic identity data, requiring users to go online to verify them,
+
+With JAB code you can have data embedded inside the picture itself, **without the need to go online**.
+
+## <a name="audio-in-img"></a> You Can Live Forever !
+
+The inspiration for surviving digitally forever came to me after watching the movie [Transcendence][13] where Johny Depp stores himself as once and zeros.
+
+I found an [article from 2 years][8] ago which says:
+
+> supporters say it [JAB Code] could have a big impact on applications such as embedding identity documents with unique biometric information like fingerprints or iris scans.
+
+I pushed it one step forward and used it to store voice memories!
+
+I love JAB codes because **You can live forever inside them !** by storing piece of you. I was asking myself what is the longest a human can live? When I say forever it means for me a millennium. One thousand years with artificially extending life.
+
+## OK, but HOW can I live 1000 years?
+
+You may have missed BIG news about [GitHub arctic vault][12] project that is aiming to store ALL the open source code for 1000 years. They will use silver halides on polyester to write all the data. This means that people in 1000 years can have access to the JAB Code library and thanks to that - learn how to decode the generated color codes.
+
+Now - the GitHub project was an inspiration for me but I was limited by the fact, that I do not possess the resources to get silver halides on polyester, which sounds like expensive material.
+
+Guess what - [according to a study][11], LEGO may last up to 1300 years. This means that if you embed your voice in the mosaic and build it from LEGO, You - your voice - will last 1000 years!
+
+![jab code hccb](./lego-jab-code-embedded-audio-text.webp 'qr jab hccb barcode embedding audio content')
+_pic: this one only has text_
+
+This is just text hence the size.
+
+![how to live forever in a digital way](./how-to-live-1000-years.webp 'This will be 1000 year-old person')
+_pic: this is me holding my voice_
+
+It is printed on InkJet using Epson Traditional Photo Paper which will last 100 years before fading occurs according to [official information][15]. It is substantially longer than our [traditional means of storing][17] digital data.
+
+## How YOU Can do that?
+
+1. Register
+2. Record your voice (use Desktop browser for better quality)
+3. Add title and save the memory
+4. Click colorful QR code button to Export
+5. Download the app for decoding
+6. Use modern Android smartfone to play the audio.
+
+Now me and other people will be able to listen to my girlfriend telling me "I Love you" for the next 100 years. Regardless of the cloud, internet, optical disc longevity etc.
+
+Imagine how emotional you would get in case your loved one pass away but you can still hear them touching the photos.
+
+Beautiful.
+
+## But what about 1000 years?
+
+There are 3 problems I am trying to solve now:
+
+1. Duration
+2. Reader
+3. Money
+
+### Duration ⏱️
+
+Currently exporting uses 8 colors JAB encoder which limits the amount of data stored. This reduces the possible size of loq quality audio.
+
+The goal: Increase the amount of colors in the encoder and decoder and increase the maximal duration of the files.
+
+If we are going to
+
+### Reader
+
+Currently the reader only works for small files and on 1 operating system.
+
+### Materials 💰
+
+It takes two nodes made up from 84 x 84 Modules (pixels) to store audio that I am holding on the photo.
+
+**14112** Elements 🟥🟩⬛🟫🟨🟪
+
+This is A LOT! At the end we are using high density color barcode.
+
+I need to buy enough 1x1 LEGO tiles to make it but I do not know how to order such a quantity. If we want to do it well (like GitHub does it) we need to use "LOCKSS" method which stands for - Lots of Copies Keep Stuff Safe. This gives us 4 mosaics in 4 different part of the world which equals over 60 000 pieces.
+
+In case you are willing to help - hop on and reach me out via contact form.
+
+## What would you tell your descendants in a year 3000?
+
+Even if we will push the limits and store more seconds of audio, we will still have a very limited time. Remember that 64 possible colors is a theoretical limit. In practice there are other factors such as:
+
+- Decoder limits
+- LEGO colors limitation
+
+This puts pressure on us. What should we say to people that will look at us like we look at middle ages today? What is the core of our humanity we would like to transmit? Should we warn them? Greet them?
+
+This would be an undiscovered voyage through time.
+
+## Going beyond x10 times millennium
+
+Maybe JAB Code generator is not the perfect medium for 10000 years (Or maybe you know a way to store it for that long?) but it makes me excited. One thousand years is within my reach, what about 10 000 ?
+
+If you have seen a movie Blade Runner 2049 where they explain what has happened during atomic war. Electromagnetic impulses wiped out clean all digital storages. The only memories that were left were physical.
+
+![memories stored in crystals pikoseconds project silica](./memory-orb-github-arctic-vault.png 'Project silica')
+_pic: Luv with data orb in Blade Runner 2049._
+
+This seems like Sci-Fi technology but Micrisoft is working on it as we speak.
+
+> The GitHub Archive Program is partnering with Microsoft’s Project Silica to ultimately archive all active public repositories for over 10,000 years, by writing them into quartz glass platters using a femtosecond laser. [[source][16]]
+
+This makes me happy and excited for humanity.
+
+I hope you enjoyed the read. If you want to help or be part of it - feel free to contact me. ✉️
+
+---
+
+_Tell me about your insights and leave a comment - you are most welcome to see more posts of this type just go to [home page][100]_
+
+[100]: https://hvitis.dev
+[0]: https://github.com/jabcode/jabcode
+[1]: https://jabcode.org/
+[2]: https://www.youtube.com/watch?v=KXmj8HOyRnY
+[3]: https://www.bsi.bund.de/EN/Service-Navi/Publications/TechnicalGuidelines/TR03137/BSITR03137.html
+[4]: https://www.ingentaconnect.com/content/ist/ei/2020/00002020/00000003/art00004
+[5]: https://www.tutorialspoint.com/unix_commands/make.htm
+[6]: https://en.wikipedia.org/wiki/ISO/IEC_8859-15
+[7]: https://github.com/jabcode/jabcode/issues/44
+[8]: https://www.dcvelocity.com/articles/29915-multi-colored-barcodes-could-store-three-times-the-data-as-black-and-white
+[9]: https://play.google.com/store/apps/details?id=com.blue.jabcode
+[10]: https://github.com/jabcode/jabcode/tree/master/android_reader
+[11]: https://www.slashgear.com/study-finds-discarded-legos-may-last-for-up-to-1300-years-in-the-ocean-16613346/
+[12]: https://archiveprogram.github.com/
+[13]: https://www.imdb.com/title/tt2209764/
+[15]: https://www.epson.eu/how-epson-measures-print-speeds/print-permanence-rating
+[16]: https://archiveprogram.github.com/approach/
+[17]: https://blog.storagecraft.com/data-storage-lifespan/

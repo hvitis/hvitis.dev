@@ -1,0 +1,283 @@
+---
+title: Integrate VanillaJS project into your GatsbyJS page.
+date: '2020-11-30'
+summary: Learn how to tackle creating a project - use JavaScript to make your custom LEGO mosaic and portraits using colors that exist in LEGO world. Calculate the price of the set and more!
+tags: ['LEGO', 'ReactJS', 'JavaScript', 'PaperJS']
+images: ['/static/images/blog/project-lego-art-creator-mosaic-and-portraits-free-tutorial-using-javascript-react-gatsbyjs/lego-art-mosaic-generator-project-solution-javascript-vanilla.png']
+draft: false
+---
+
+# Implement projects into your GatsbyJS blog - why not?
+
+## Why would you even do that?
+
+I present to you LEGO custom art generator that you can use for making artwork. I love LEGO and I wanted to make a front-end project using LEGO as a canvas for ideas. This mosaic maker is pure online software so React seems like perfect tool for that.
+
+> Click here to check the [Mosaic Art creator][0].
+
+## What are we making exactly?
+
+![LegoArt](./cat-transition-mosaic.png)
+
+We want to change picture into mosaic (1st step) and then export it into [stud.io][13] program for rendering.
+
+## How to make it?
+
+**step 0** If you want to do stuff then the first thing ever is to check the need for it. 99% of chances it already exist. It does. Indeed. [Here][0] you have one example and if that is not enough then there is a whole [list][1] of them. THere is always a room for improvement. The author of the first one said in an [interview][2]:
+
+> "It would be so convenient if Lego was able to combine the algorithm from step 3 of the tool with Pick A Brick, or a similar custom service to allow people to create and order their own art pieces"
+
+So we have a reason and the _first requirement_ - build a better tool, one that has exporting functionality.
+
+**step 1** would be to start defining requirements, what is actually needed before writing first line of code.
+
+Requirements can be infinite. Let's have a look what could we do:
+
+- On generating the mosaic draw the list the colors used in making the mosaic.
+- Select size of the mosaic, use available board sizes and custom ones.
+- Implement export buttons (here we need more research).
+- Select button on how to draw mosaic - with square tiles or round ones.
+- Filter colors from the photo using colors available in LEGO sets.
+
+- Replace colors present in small quantities with colors already available on the picture.
+- Implement lists of sets of colors used by different painters e.g. Warhol's colors, Van Gogh colors, [LEGO Portrait][3] colors etc.
+- Responsive design.
+- Editing picture's size, colors, contrast etc.
+- Loading image from URL
+- Export mosaic as an image that's name consist of loaded image's name.
+
+And we could go on and on but let's stop here. The point is that once you have some idea about potential requirements you narrow them down for the first iteration. Let's do that and let's **pick the first 5**.
+
+Of course if you are really passionate about something the rule of checking for projects that already exist does not apply. You can [read more][12] on why I really needed this project.
+
+[0]: https://lego-art-remix.debkbanerji.com/
+[1]: http://www.thebrickpost.com/thoughts/alternatives-to-lego-mosaic-maker/#comment-435
+[2]: https://www.brothers-brick.com/2020/08/27/create-your-own-mosaic-masterpiece-with-lego-art-remix-review-interview/
+[3]: https://www.triggerglobal.com/assets/images/lego_london_mosaic_feature_main_v4a.jpg
+
+## So can I code now?
+
+Go ahead! **console.log("Hello world!")** cause what are you going to code? Algorithm? I know that there was an algorithm in the first project but then you need to draw the board and select size of it and... well, it's all made there. Yours has to be better, remember? Maybe... Maybe! There is a library that does things for you? Let's search for _circle canvas painter from image_. Voila! **PaperJS**, we read that _Paper.js is an open source vector graphics scripting framework that runs on top of the HTML5 Canvas._ and it can do exactly [what we want][4]. Using Pixel Colors seems like a read to use tool for our image.
+
+We get x and y of the picture in mosaic pixels that we define.
+
+```js
+    for (var y = 0; y < raster.height; y++) {
+            for(var x = 0; x < raster.width; x++) {
+```
+
+We get access to color:
+
+```js
+// Set the fill color of the path to the color
+// of the pixel:
+path.fillColor = color
+```
+
+**Can I code now?** Wait. We had more requirements, didn't we? With this package we could cover first 3, maybe 4 requirements but we still have the: _Filter colors from the photo using colors available in LEGO sets_. This means that for every mosaic pixel's color we need to find a nearest relative / equivalent in [LEGO colors][5]. Let's see... maybe: _javascript nearest color equivalent_ ? [Voila!][6] As we can read from [gitHub][7]: _Find the nearest color given a predefined list of colors._ Now, looks like we just need the _"predefined list of colors"_.
+
+We can:
+
+1. copy the list of [LEGO colors][5] to excel or numbers (macOS)
+2. format the file to get only what we need (I took more - just in case)
+3. export as CSV
+4. Format the CSV into JSON
+
+Voila!
+
+```json
+// colors.js
+[
+    {
+        "legoId": "1",
+        "ldrawName": "White",
+        "boName": "White",
+        "hexCode": "#f4f4f4",
+        "rgb": "244,244,244",
+        "ldrawId": "15",
+        "blId": "1",
+        "legoName": "White",
+        "blName": "White"
+    },
+    ...
+]
+```
+
+Ok, we have too much! According to docs, the **nearest-color** package accepts:
+
+```js
+var colors = {
+  red: '#f00',
+}
+```
+
+We can just get this from our huge JSON (we will need the rest of it soon):
+
+```js
+this.NEAREST_COLOR_COMPARE = {}
+colors.map(
+  color => (this.NEAREST_COLOR_COMPARE[color.blName.toString()] = color.hexCode)
+)
+```
+
+## So can I code now?
+
+You are already doing it! I tricked you, didn't I?
+
+Well, let's move to the **React** part of it and to real coding. We want to start with **the first requirement**.
+
+1. On generating the mosaic draw the list the colors used in making the mosaic.
+
+For that we need to mount the PaperJS. Remember that **GatsbyJS** is build on **the server** so we need to avoid loading canvas and all what's related with it there. Let's just take care of putting this on the page.
+
+```js
+  componentDidMount() {
+    // Avoid loading canvas and PaperJS on the server
+    if (typeof window !== `undefined`) {
+      let paper = require("paper")
+      paper.setup("paperCanvas")
+      var raster = new paper.Raster("mosaic")
+      raster.visible = false
+      raster.position = paper.view.center
+    }
+  }
+```
+
+Now let's add the canvas and img to render method:
+
+```js
+    <img
+    src={this.state.file}
+    alt="WOMAN"
+    crossOrigin="*"
+    ref="mosaic"
+    id="mosaic"
+    hidden
+    />
+    <canvas
+        id="paperCanvas"
+        height={this.state.height}
+        width={this.state.width}
+    >
+    </canvas>
+```
+
+Now we can load the Raster mosaic PaperJS toolbox. This function is being called onClick button so we don't need to verify if window is present.
+
+```js
+
+makeMosaic(callback) {
+    let paper = require("paper")
+    var nearestColor = require("nearest-color").from(this.NEAREST_COLOR_COMPARE)
+
+    // Create a raster item using the image tag with id='mona'
+    var raster = new paper.Raster("mosaic")
+    // Hide the Raster in order to make space for mosaic
+    raster.position = paper.view.center
+    raster.visible = false
+
+```
+
+Because this is an onLoad event, we can pass the parameters to the inside of this image load event like this:
+
+```js
+// passing type of points to raster
+raster.isCircle = this.state.isCircle
+raster.fullColors = this.fullColors
+```
+
+and now we call the event itself:
+
+```js
+    raster.on("load", function() {
+    // Since the example image we're using is much too large,
+    // and therefore has way too many pixels, lets downsize it to
+    // 40 pixels wide and 30 pixels high:
+    raster.size = new paper.Size(gridSize, gridSize)
+```
+
+we can use the variables loaded before. Here we want to define whether we generate squares or circles (requirements)
+
+```js
+if (raster.isCircle) {
+  // Create a circle ART MOSAIC shaped path:
+  var path = new paper.Path.Circle({
+    center: new paper.Point(x * spacing, y * spacing),
+    // center: paper.view.center,
+    // radius: gridSize / 2 / spacing,
+    radius: 9,
+  })
+} else {
+  // Create a square PORTRAIT shaped path:
+  var path = new paper.Path.Rectangle({
+    point: new paper.Point(x * spacing, y * spacing),
+    // center: paper.view.center,
+    // radius: gridSize / 2 / spacing,
+    size: 18,
+  })
+}
+```
+
+Now, inside the raster we have a double for loop (x and y).
+Each nested loop run gives us a color that we compare against our list of colors available for LEGO:
+
+```js
+          let pickedColor = nearestColor(hexColor)
+
+          if (!colorCodesVerify.includes(pickedColor.value)) {
+          // If color already exist on the raster then we just increase its counter
+          // to later know how many of pieces in this color we need
+          } else {
+            // if it doesn't then let's add it for the first time
+          }
+          // And let's colour the circle / square on the canvas with the corresponding LEGO color.
+          path.fillColor = pickedColor.value
+        }
+```
+
+Now let's just center the raster on canvas as it's in PaperJS docs and **return the callback**
+
+```js
+      paper.project.activeLayer.position = paper.view.center
+
+      // Returning colors array to create buttons with information and
+      // Returning LDraw matrix of color IDs for LDraw to draw board
+      callback(colorCodes, LDrawMatrix)
+    })
+  }
+```
+
+(Please check out [what is callback][8] in case you don't know, because it's out of scope of this how-to)
+I am using 1 function for the makeMosaic callback:
+
+```js
+this.makeMosaic(this.updateColors)
+```
+
+The **updateColors** function orders colors by amount and loads the colors (and matrix - that's later) into the state - updates state with setState.
+
+```js
+  updateColors(colors, LDrawMatrix) {
+    // Order here colours by amount of them in the picture
+    colors.sort((a, b) =>
+      a.amount > b.amount ? 1 : b.amount > a.amount ? -1 : 0
+    )
+    // Setting state updates the canvas with obtained mosaic.
+    this.setState({ colors: colors, LDrawMatrix: LDrawMatrix })
+  }
+```
+
+---
+
+_Did you learn anything reading this post? Tell me about your insights. You are most welcome to see more posts of this type - just go to [home page][100]_
+
+[100]: https://hvitis.dev
+[0]: /mosaic-art-maker
+[4]: http://paperjs.org/tutorials/images/using-pixel-colors/
+[5]: http://www.ryanhowerter.net/colors.php
+[6]: http://danieltao.com/nearest-color/
+[7]: https://github.com/dtao/nearest-color
+[8]: https://www.freecodecamp.org/news/javascript-callback-functions-what-are-callbacks-in-js-and-how-to-use-them/
+[10]: https://gist.github.com/hvitis/11712d595b9b2c32f992026c7425cd72
+[12]: /mosaic-art-creator-mosaic-and-portraits-free-online-editor
+[13]: https://www.bricklink.com/v3/studio/download.page

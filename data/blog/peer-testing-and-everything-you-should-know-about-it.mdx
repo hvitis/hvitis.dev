@@ -1,0 +1,120 @@
+---
+title: Peer testing - Everything you should know about it.
+date: '2020-04-01'
+summary: Why and how should you implement this powerful technique that increases quality and decreases costs.
+tags: ['Testing', 'QA']
+images: ['/static/images/blog/peer-testing-and-everything-you-should-know-about-it/two-men-doing-probably-programing-because-what-else.jpg']
+draft: false
+---
+
+## Why you should do peer testing?
+
+### Introduction
+
+In this article I will try to sum up all the knowledge that I have on peer testing.
+
+To give you a heads up I will to explain here:
+
+- **What is** peer testing ?
+- **Why** - what are the **benefits** of it?
+- **Who** should do it and what are the **requirements**.
+- **How** to implement and how to do it timewise?
+- Possible **disadvantages**.
+
+### What is peer testing?
+
+Let's start with a question related to testing: Did you ever hear about peer-programming? Did you ever do it? Whether you did or not I am here to say that [there are studies][0] that show an immense profit of doing 'peer' activities.
+
+<mark style='background-color:dodgerblue; color: white; padding:3px; border-radius:4px' >Peer</mark> can have three meanings, all of them can have it's place in the whole explanation:
+
+1. (verb) To look intensly, searchingly, or with difficulty. synonym: gaze.
+2. (verb) To be partially visible; show.
+3. (noun) A person who is the same age or has the same social position or the same abilities as other people in a group.
+
+<mark style="background-color:dodgerblue; color: white; padding:3px; border-radius:4px">Peer-testing is checking the functionality of other developer's code.</mark>
+
+As you can see it encapsulates all three meanings of the word:
+
+1. It is mostly looking for bugs, errors while verifying the functionality. Requires some creative efforts ( at least a minimum ).
+2. Bugs, imprefections, erorrs are sometimes hidden, sometimes partially visible.
+3. Requires another developer to do it - a person with similar positon and skills ( not necessarly the same age ;) ).
+
+### Why - what are the benefits of it?
+
+**Money and Quality** 💰- These are the biggests reasons to implement it.
+Why money? Time is money of course. By implementing peer-testing we save a lot of time. Mostly due to decrease in the amount of times when an issue gets rejected by a tester. Peer-testing is the first shield that protects users from bugs escaping to production. In case there is no tester in a team then peer-testing **is a must**. When tester is availavble then decreasing amount of simple errors increases the Tester's focus and allows him to catch things that may be too difficult to spot by a developer. As a result we need fewer testers per developer and we get higher quality even in 'testerless' teams. We can't forget that developers are good testers since they know very well how the functionality should work and they are first to know why it doesn't work. The idea of checking by another person is connected with our psychology and the fact that it's natural to see things better when having an objective view.
+
+Time saved also comes from fewer bugs that are to be found later. Everyone knows how time consuming and stressful can be implementing hotfixes and getting back to a code written in the past.
+
+**Better awareness** of the functionalities and understanding of the product. This helps a great deal when a developer is not present in the office. It may be a sick leave or permanent leave - other developer can carry on developing a feature quicker and can understand what has been done easier. Knowledge transfer in that case can be quicker or even obsolete. (saving time)
+
+**Increased collaboration** has a positive impact on a team. It is important to note that the attitude of the developers when testing has to be proactive. Testing should not be seen as a way of undermining skills or a as a boring task that is nothing but a burden. Pull request is peering to other people's code and testing it 'in-mind'. Peer-testing is like pull request but functional. Good code should also mean well-working functionality. That's why peer-testing won´t actually work without positive attitude of mutual help and pride of delivering good code.
+
+**Documentation** of the work comes natuarally when peer-testing is implemented. To test a new functionality there is to be a know-how available. A description or a Test Case or a brief overview. Sometimes we are focused or busy or just out of office. In those moments other person should not be blocked by lack of information on how to test an issue. Documenting also helps tremendously when working remotely and when an issue lands on a Tester's plate - he doesn´t have to waste time and bother developer on basics. (saving time)
+
+### Who should do it and what are the requirements:
+
+It should be done by developers, including lead developers ( setting a good example ).
+
+The most imporant here is the attitude. I can say it - basing on my first-hand experience - that this process HELPS the developers and at the end is fun and rewarding. Maybe not as much as pair-programming but when there is a process in a company that can be helpful - try it. Bad attitude can come after testing ( the process ;) )
+
+Have an open mind.
+
+Take the feedback positively.
+
+Learn from it.
+
+Don't treat it as formality.
+
+Be willing to help your collegue coder in validating the functionality.
+
+All that leads to becoming better and more confident.
+
+### How should it be done - when to implement it timewise:
+
+Just after deploying to development environment (or test - depends how stable is development)
+The flow is:
+
+- Developer writes or recieves technical specification or design for the functionality.
+- He develops and applies good practices, unit testing etc.
+- He finishes functionality.
+- He tests it on local.
+- He deploys it to dev.
+- He **rechecks** it on dev.
+- **NOW:** --Peer Testing-- (it can be done by reassigning the issue, moving it to peer-testing columns etc. depends on the tools that are sued)
+- Another developer starts testing and if the issue is:
+  <mark style='background-color:crimson; color: white; padding:3px; border-radius:4px' >Rejected</mark> then he fowards it back and explains the error.
+  <mark style='background-color:seagreen; color: white; padding:3px; border-radius:4px' >Approved</mark> then he passed the issue to a tester.
+
+**Why we need a tester?** If there is so much testing already? Well, Testers generally have another view of the functionality, another way of thinking - not that code-dependant. That allows them to see things differently from developers. We can't forget that testing takes time and on average, developer should spend between 2-4 hours on peer testing **per week**. Testing is a whole spectrum of activities indispensible in [SDLC][1] and although the title of a person responsable [may vary][2] - they are very much needed.
+
+### Possible disadvantages:
+
+If the attitude is positive - there is no disadvantages. There can be moment's of doubts when the deadlines are short but this shouldn't stop the process of peer testing. It could be adjusted e.g. shortened from 4 to 2hrs/week. The time spent on it may not be that expensive comparing to the hotfixes and UX consequences.
+
+Results depend on the attitude and implementation by the teams so remember:
+
+Have an open mind 👐
+
+Take the feedback positively 🤗
+
+Learn from it💡
+
+Don't treat it as formality.
+
+Be willing to help your collegue coder in validating the functionality.
+
+All that leads to becoming better and more confident developer
+
+🏆
+
+---
+
+---
+
+_Did you make any mistakes when using PEER TESTING or you've seen one here? Tell me about your insights. Leave a comment with You are most welcome to see more posts of this type just go to [home page][100]_
+
+[100]: https://hvitis.dev
+[0]: https://www.researchgate.net/publication/220832212_Peer_Testing_in_Software_Engineering_Projects
+[1]: https://en.wikipedia.org/wiki/Systems_development_life_cycle
+[2]: https://careers.google.com/jobs/results/?company=Google&company=YouTube&q=Test%20Engineer

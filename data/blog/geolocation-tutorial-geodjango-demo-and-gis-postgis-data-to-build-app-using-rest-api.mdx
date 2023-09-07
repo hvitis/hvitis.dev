@@ -1,0 +1,559 @@
+---
+title: Geolocation tutorial project with Geodjango and GIS data to build using REST api.
+date: '2020-11-09'
+summary: How to implement geolocation and distance solutions with GeoDjango. Examples with explanation and code ready to deploy. Use the template and learn geodjango!
+tags: ['DRF', 'GeoDjango', 'VueJS', 'JavaScript', 'Django']
+images: ['/static/images/blog/geolocation-tutorial-geodjango-demo-and-gis-postgis-data-to-build-app-using-rest-api/geodjango-tutorial-with-leaflet.png']
+draft: false
+---
+
+## Boilerplate with Geodjango and Leaflet - learn while using it and deploy to Heroku
+
+I had to make one service using geolocation for users. I searched quite a bit but haven't found any book and there is not quite that much materials online - hence this tutorial with bunch of examples. An alternative for geodjango would be to use external API provider e.g. Google Maps. You can also use [OpenLayers][17] but this is only front-end solution. The benefit of geodjango vs openlayers is that you can use it in your models and perform calculations in your backend. In the [geodjango template][18] I made for this tutorial I used VueJS with Leaflet package to display data on front-end. You can see it [live][19] or deploy with heroku Buttons:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/hvitis/geodjango-rest-vue-boilerplate)
+
+The topic we will cover here. Click to go to code examples:
+
+- [**Get geolocation from the IP**](#geolocation-from-ip) - we will get coordinates of the IP that we extract from the request itself. I mention loading IP data from other DB to not use external API.
+- [**Searching via Address**](#searching-via-address) - we will use [q django query][2] to search location fields.
+- [**Adding new objects on map**](#adding-new-objects) - we will add a few objects using demo VueJS component with api from django rest framework.
+- [**Closest object**](#closest-object) - we will use geodjango point to find closest object
+- [**Deploy geodjango**](#cdeployable-boilerplate) - what you need to do to have your geolocation app on production.
+- [**List of objects within radius**](#list-of-objects)
+- [**Calculate distance between two points**](#calculate-points-distance) - backend and frontend solution.
+
+_Plus potential error fixes_
+
+**Important:** We will be using vuejs with geodjango (connecting django rest framework api with javascript) throughout this tutorial - [django-rest-framework-gis][3]. This django package is compatible with both currently used django versions - Django 2 and Django 3. For more compatibility check [geodjango documentation][4].
+
+- [Intercepting requests](#intercepting-requests-using-proxy-and-interceptor) - using proxy and interceptor to hack your workflow ( no [swagger][4]? no problem! )
+
+## Before starting
+
+In order to work with GeoDjango you need to [install PostGIS][25] extension in your PostgreSQL database. If you want to use the SQLite you will need SQLite [with SpatiaLite][26].
+
+## <a name="geolocation-from-ip"></a>Get geolocation from the IP
+
+There are 3 ways of obtaining geolocation based on IP address:
+(easy) ⚪ Call an external geocoding webservices API that returns location data (done from frontend or backend)
+(harder) 🟠 Use geo IP database with mapped IP.
+
+First let's get IP address from the django request.
+Let's install [**django-ipware**][5]
+
+```
+pip install django-ipware
+```
+
+and use it in **class views**:
+
+```python
+from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+from rest_framework import status
+from ipware import get_client_ip
+
+class ShowUsersIP(ListPIView):
+    """
+    Sample API endpoint that shows user's IP
+    """
+    queryset = Message.objects.all()
+    serializer_class = UserSerializer
+
+    def get(self, request):
+        client_ip, is_routable = get_client_ip(request)
+        print('IP_INFO: ',client_ip, is_routable)
+        data = {
+            'client_ip': client_ip,
+            'is_routable': is_routable
+        }
+        return Response(data, status=status.HTTP_200_OK)
+```
+
+or **function based views**:
+
+```python
+from django.http.response import JsonResponse
+from ipware import get_client_ip
+
+def show_users_ip(request):
+    client_ip, is_routable = get_client_ip(request)
+    data = {
+        'client_ip': client_ip,
+        'is_routable': is_routable
+    }
+    return JsonResponse(data)
+```
+
+#### (The _easy_ one) ⚪
+
+Now that we know how to get the IP of the user we can track it's location.
+With [ipinfo.io][27] we get 50k calls on freemium which is more than enough. In order to obtain the location you need to pass the IP to the request:
+
+```python
+import sys
+import urllib.request
+import json
+
+ACCESS_TOKEN = 'YOUR_TOKEN'
+
+def get_lat_lng_from_ip(ip_address):
+    """Returns array that consists of latitude and longitude"""
+    URL = 'https://ipinfo.io/{}?token={}'.format(ip_address, ACCESS_TOKEN)
+    try:
+        result = urllib.request.urlopen(URL).read()
+        result = json.loads(result)
+        result = result['loc']
+        lat, lng = result.split(',')
+        return [lat, lng]
+    except:
+        print("Could not load: ", URL)
+        return None
+
+location = get_lat_lng_from_ip('208.80.152.201')
+print('Latitude: {0}, Longitude: {1}'.format(*location))
+# Prints: Latitude: 32.7831, Longitude: -96.8067
+```
+
+The response we get and transform to get lat and lng is this:
+
+```json
+{
+  "ip": "208.80.152.201",
+  "city": "Dallas",
+  "region": "Texas",
+  "country": "US",
+  "loc": "32.7831,-96.8067",
+  "org": "AS14907 Wikimedia Foundation Inc.",
+  "postal": "75270",
+  "timezone": "America/Chicago"
+}
+```
+
+_Responses vary between providers. Some of other service providers are: Google, [OpenCage][6]_
+
+Now let's save the latitude and longitude we got from user's IP to his account !
+All examples are shown in the [boilerplate code][8]. The User model we have [there extends Abstract user][7].
+
+```python
+# User model
+class User(AbstractUser):
+    #...
+    coordinates = models.PointField(blank=True, null=True, srid=4326)
+```
+
+```python
+# Update view
+# ...
+from rest_framework_gis.pagination import GeoJsonPagination
+from backend.accounts.api.serializers import UpdateLocationSerializer
+from backend.utils.coordinates import get_lat_lng_from_ip
+from rest_framework.response import Response
+from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import Point
+from rest_framework import status
+import json
+
+class UpdateLocation(UpdateAPIView):
+    """ Updates location of a user using it's IP taken from request"""
+    model = User
+    serializer_class = UpdateLocationSerializer
+    pagination_class = GeoJsonPagination
+
+    def update(self, request, *args, **kwargs):
+        """Here we:
+        - get location from the IP
+        - change coordinates to a randomly
+        close one in order to anonymize users location.
+        """
+
+        # Using ipware library
+        client_ip, is_routable = get_client_ip(request)
+        # Using our function created previously in utils
+        latitude, longitude = get_lat_lng_from_ip(client_ip)
+        if not latitude:
+            return Response({'message': 'IP or location was not found.'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        # Anonimizing users location before saving
+        latitude, longitude = self.anonymize_location(latitude, longitude)
+        print('Users latitude {} and longitude {}'.format(latitude, longitude))
+
+        # For GeoDjango PointField we define y and x
+        # more in docs: https://docs.djangoproject.com/en/3.1/ref/contrib/gis/geos/#point
+        point = Point(float(longitude), float(latitude), srid=4326)
+
+        # Requires at least 1 user in DB (e.g.  admin)
+        user_obj = User.objects.all().first()
+
+        # Using partial update to not create a new user obj
+        anonymize_profile = UpdateLocationSerializer(user_obj, data={'coordinates': point}, partial=True)
+        if not anonymize_profile.is_valid():
+            return Response(anonymize_profile.errors, status=status.HTTP_400_BAD_REQUEST)
+        anonymize_profile.save()
+
+        pnt = GEOSGeometry(point)
+        geojson = json.loads(pnt.geojson)
+        return Response({'coordinates': reversed(geojson['coordinates'])}, status=status.HTTP_201_CREATED)
+```
+
+For your purposes there is a high chance you should use the first solution. There is many providers with free tiers offering many calls with high degree of accuracy.
+
+#### (The _hard_ one) 🟠
+
+This option is based on downloading databases of IP and locations and querying it with the obtained IP of the user. You can check [IP2location][9] page to see how to do it. Install python package for querying the DB and download the BINs with data to query.
+
+(for more loading dbsync data check out [this realpython django tutorial][1])
+
+## <a name="searching-via-address"></a>Searching via Address
+
+Here we talk about geocoding and reverse geocoding. You can imagine that although with IP we could have location data in our DB - here, with addresses it is not going to be possible because we need much higher accuracy and the amount of data that is needed to achieve it is a lot bigger. You will be forced to use external service's API.
+
+What if you don't want to use [Google Geocoding API][10]? There is a [geopy library][11] that provides easy API access to [Nominatim geocoding information][12] that is open source. You just need to specify **the name** when using it. It can be name of your app.
+
+Let's see how easy it is:
+
+```python
+>>> from geopy.geocoders import Nominatim
+>>> geolocator = Nominatim(user_agent="mysuperapp")
+>>> location = geolocator.geocode("Warsaw Culture Palace")
+>>> print(location.address)
+Pałac Kultury, 1, Plac Defilad, Śródmieście Północne, Warszawa, województwo mazowieckie, 00-110, Polska
+>>> print((location.latitude, location.longitude))
+(52.2317641, 21.005799675616117)
+```
+
+In order to implement it we need to follow good REST API practices! How to implement it into django search endpoint?
+
+First it's important to follow a [good URL naming practices][13]:
+
+```
+yourapp.io/coordinates?address=QUERY_ADDRESS
+```
+
+In Django we can implement it like this starting from _urls.py_:
+
+```python
+# urls.py
+
+from django.urls import path
+from backend.accounts.api.views import GetCoordinatesFromAddress
+
+app_name = 'accounts'
+
+urlpatterns = [
+    # ...
+     path("coordinates", # the rest will be in views: ?address=QUERY_ADDRESS
+          GetCoordinatesFromAddress.as_view(), name="get-coordinates"),
+]
+```
+
+and in _views.py_:
+
+```python
+from geopy.geocoders import Nominatim
+# ...
+
+class GetCoordinatesFromAddress(ListAPIView, GeoFilterSet):
+    """ Shows nearby Users"""
+
+    def get(self, *args, **kwargs):
+        # We can check on the server side the location of the users, using request
+        # point = self.request.user.coordinates
+        # ?address=QUERY_ADDRESS
+        # QUERY_ADDRESS is the information user passes to the query
+        QUERY_ADDRESS = self.request.query_params.get('address', None)
+
+        if QUERY_ADDRESS not in [None, '']:
+            # here we can use the geopy library:
+            geolocator = Nominatim(user_agent="mysuperapp")
+            location = geolocator.geocode(QUERY_ADDRESS)
+            return Response({'coordinates': [location.latitude ,location.longitude]}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No address was passed in the query'}, status=status.HTTP_400_BAD_REQUEST)
+
+```
+
+Now if we call our app's API with:
+
+```
+https://geodjango-rest-vue-boilerplate.herokuapp.com/api/accounts/nearbyusers?address=warsaw
+```
+
+We get in response body:
+
+```json
+{
+  "coordinates": [52.2319581, 21.0067249]
+}
+```
+
+There is a front end example if you want to [try it][] or [see the code][].
+
+## <a name="adding-new-objects"></a>Adding new objects on map
+
+In order to add an object with coordinates on the map we need to be able to store this info in DB. For that we need a model with PointField first:
+
+```python
+
+class Profile(models.Model):
+
+    company_name = models.CharField(blank=True, null=True, max_length=100)
+    coordinates = models.PointField(blank=False, null=True, srid=4326)
+    is_premium = models.BooleanField(blank=False, null=True, default=False)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{}'.format(self.nickname)
+```
+
+Then we make a serializer for saving POST requests:
+
+```python
+from rest_framework_gis import serializers as geo_serializers
+# ...
+
+class ProfileSerializer(geo_serializers.GeoFeatureModelSerializer):
+    """ A class to serialize locations as GeoJSON compatible data """
+    is_premium = serializers.BooleanField(validators=[required])
+
+    class Meta:
+        model = Profile
+        geo_field = "coordinates"
+        id_field = False # we don't want to return id field in the response
+        fields = ["coordinates",
+                'is_premium', # to use on front-end e.g. to color pins
+                'nickname',
+                'updated_on' # to use on front-end e.g. to order Profiles
+                ]
+```
+
+Then we make the endpoint:
+
+```python
+class ProfileApiView(CreateAPIView):
+    """ Creates a new email user with geolocation and returns
+    10 closest people to the person"""
+    model = TemporaryProfile
+    serializer_class = ProfileSerializer
+    pagination_class = GeoJsonPagination
+    permission_classes = [permissions.AllowAny]
+
+    # If you need more data operations e.g. randomizing location or
+    # reading locale you can also use perform_create method
+    def create(self, request, *args, **kwargs):
+        """Request data for this endpoint should have the following body:
+        {
+            "coordinates" : [int, int],
+            "is_premium" : Boolean
+        }
+        """
+
+        # Because we used GeoFeatureModelSerializer we need to prepare
+        # the data here to be passed correctly to the serializer
+        # other way would be to pass it in a cormat of request['geometry']['coordinates']
+        # https://github.com/openwisp/django-rest-framework-gis#geofeaturemodelserializer
+        [latitude, longitude] = request.data['coordinates']
+        request.data['coordinates'] = Point(float(longitude), float(latitude), srid=4326)
+
+        profile = ProfileSerializer(data=request.data)
+        if profile_serializer.is_valid():
+            profile_serializer.save()
+            return Response(profile_serializer, status=status.HTTP_201_CREATED)
+        else:
+            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+```
+
+## <a name="closest-object"></a>Closest object
+
+We are using here _[annotate][20] distance_ to get closest User's profile with geodjango.
+
+```python
+from django.contrib.gis.db.models.functions import Distance as ClosestDistance
+from django.contrib.gis.geos import Point
+
+# ...
+
+class ClosestUserApiView(ListAPIView):
+    model = Profile
+    serializer_class = ProfileSerializer
+    pagination_class = GeoJsonPagination
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = []
+        radius = 50
+        latitude, longitude = request['coordinates'] # e.g. { coordinates : [21, -2] }
+        point = Point(float(longitude), float(latitude), srid=4326)
+
+        # We are passing
+        closest_user = Profile.objects.annotate(coordinates=ClosestDistance(
+            'coordinates', point)).first()
+        queryset.append(closest_user)
+        return queryset
+```
+
+
+🚧🏗️👷 It will be here soon! -->
+
+## <a name="list-of-objects"></a>List of objects within radius
+
+Here we list objects and use geodjango to order by distance using _order_by()_ method. You can also use filter django method to narrow down the list according to your needs.
+
+```python
+from geopy.geocoders import Nominatim
+from rest_framework_gis.filterset import GeoFilterSet
+from rest_framework_gis import filters as geofilters
+from django.db.models import Q
+from django.contrib.gis.measure import Distance
+# ...
+
+class ListNearbyUsers(ListAPIView, GeoFilterSet):
+    """ Shows nearby Users"""
+    model = User
+    serializer_class = NearbyUsersSerializer
+    pagination_class = GeoJsonPagination
+    contains_geom = geofilters.GeometryFilter(name='coordinates', lookup_expr='exists')
+
+    def get_queryset(self, *args, **kwargs):
+        QUERY_ADDRESS = self.request.query_params.get('address', None)
+        queryset = []
+
+        if QUERY_ADDRESS not in [None, '']:
+            queryset = User.objects.all()
+            # here we can use the geopy library:
+            geolocator = Nominatim(user_agent="mysuperapp.com")
+            location = geolocator.geocode(QUERY_ADDRESS)
+
+            # Let's use the obtained information to create a geodjango Point
+            point = Point(float(location.longitude), float(location.latitude), srid=4326)
+            # and query for 10 Users objects to find active users within radius
+            queryset = queryset.filter(Q(coordinates__distance_lt=(
+                point, Distance(km=settings.RADIUS_SEARCH_IN_KM))) & Q(is_active=True)).order_by('coordinates')[0:10]
+            return queryset
+        else:
+            return queryset
+```
+
+## <a name="calculate-points-distance"></a>Calculate distance between two points
+
+You can use geodjango to filter by distance between 2 points. It's a good point fields example.
+
+```python
+from django.contrib.gis.geos import GEOSGeometry
+#...
+
+# Get lat and lng from e.g. request or DB User model
+latitude1, longitude1
+
+# Get data to compare
+latitude2, longitude2
+
+# Prepare geometry points
+point1 = GEOSGeometry('SRID=4326;POINT({} {})'.format(latitude1, longitude1))
+point2 = GEOSGeometry('SRID=4326;POINT({} {})'.format(latitude2, longitude2))
+
+point1.distance(point2) * 100
+```
+
+You can also use Point fields:
+
+```python
+point_field1 = Point(float(longitude1), float(latitude1), srid=4326)
+point_field2 = Point(float(longitude2), float(latitude2), srid=4326)
+
+point1 = GEOSGeometry(point_field1)
+point2 = GEOSGeometry(point_field2)
+
+point1.distance(point2) * 100
+```
+
+Read more about [distance][16] in docs
+
+## <a name="deployable-boilerplate"></a>Deploy geodjango to production on heroku
+
+You can use the heroku button on the top of this article to get your own geodjango app. In case you would like to have more custom solution or want to just do the process of deploying yourself you need to have special heroku buildpack for geodjango. You may have found [this one][21] but **it's deprecated**. Just 4 days after starting writing this post heroku [withdraws support][22] for it.
+
+Current solution to deploy your geodjango project is:
+
+1. Add [up-to-date buildpack][23].
+2. Install [PostGIS add-on][24] in your DB.
+
+### Extras - errors
+
+Some errors you may find on the way:
+
+#### Geodjango gdal error
+
+```
+django.core.exceptions.ImproperlyConfigured: Could not find the GDAL library (tried "gdal", "GDAL", "gdal3.1.0", "gdal3.0.0", "gdal2.4.0", "gdal2.3.0", "gdal2.2.0", "gdal2.1.0", "gdal2.0.0"). Is GDAL installed? If it is, try setting GDAL_LIBRARY_PATH in your settings.
+```
+
+It can be caused by:
+
+- Wrong installation of gdal
+- Not using env variables for gdal
+- In this tutorial you won't get this error if you follow deploying according to the instructions or with the heroku button
+
+#### Geodjango with sqlite cannot be used due to extension incompatibility for postgis.
+
+Install other relational database management system.
+
+Don't forget about using correct django DB engine.
+
+```python
+DATABASES['default'] ={ 'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        # ...
+    }
+```
+
+#### toml.TomlDecodeError: Invalid date or number
+
+You may have specified python package version with wrong format in **Procfile**
+
+e.g. with == not = "==v"
+
+#### AttributeError: 'DatabaseOperations' object has no attribute 'geo_db_type'
+
+You probably have forgotten to put correct django DB engine in _settings.py_.
+
+```python
+DATABASES['default'] ={ 'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        # ...
+    }
+```
+
+Thank you for reading!
+
+---
+
+_Did you make any mistakes when using GEODJANGO or you've seen one here? Tell me about your insights. Leave a comment with YOUR opinion. You are most welcome to see more posts of this type just go to [home page][100]_
+
+[100]: https://hvitis.dev
+[0]: https://github.com/openwisp/django-rest-framework-gis
+[1]: https://realpython.com/location-based-app-with-geodjango-tutorial/
+[2]: https://docs.djangoproject.com/en/3.1/topics/db/queries/#complex-lookups-with-q-objects
+[3]: https://github.com/openwisp/django-rest-framework-gis
+[4]: https://github.com/openwisp/django-rest-framework-gis#compatibility-with-drf-django-and-python
+[5]: https://github.com/un33k/django-ipware
+[6]: https://opencagedata.com/api
+[7]: https://github.com/hvitis/geodjango-rest-vue-boilerplate/blob/main/backend/accounts/models.py#L56
+[8]: https://github.com/hvitis/geodjango-rest-vue-boilerplate
+[9]: https://www.ip2location.com/development-libraries/ip2location/python
+[10]: https://developers.google.com/maps/documentation/geocoding/overview
+[11]: https://pypi.org/project/geopy/
+[12]: https://nominatim.openstreetmap.org/ui/search.html?q=malaga+refino
+[13]: https://hvitis.dev/rest-api-design-best-practices#querystring
+[14]: https://geodjango-rest-vue-boilerplate.herokuapp.com/#/coords
+[15]: https://github.com/hvitis/geodjango-rest-vue-boilerplate/blob/main/src/components/CoordinatesFromAddress.vue
+[16]: https://docs.djangoproject.com/en/3.1/ref/contrib/gis/measure/#distance
+[17]: https://github.com/openlayers/openlayers
+[18]: https://github.com/hvitis/geodjango-rest-vue-boilerplate
+[19]: https://github.com/hvitis/geodjango-rest-vue-boilerplate
+[20]: https://docs.djangoproject.com/en/3.1/ref/models/querysets/#annotate
+[21]: https://elements.heroku.com/buildpacks/cirlabs/heroku-buildpack-geodjango
+[22]: https://help.heroku.com/D5INLB1A/python-s-build_with_geo_libraries-legacy-feature-is-now-deprecated
+[23]: https://github.com/heroku/heroku-geo-buildpack.git
+[24]: https://devcenter.heroku.com/articles/heroku-postgres-extensions-postgis-full-text-search#postgis
+[25]: https://docs.djangoproject.com/en/3.1/ref/contrib/gis/install/postgis/
+[26]: https://docs.djangoproject.com/en/3.1/ref/contrib/gis/install/spatialite/
+[27]: https://ipinfo.io/

@@ -35,7 +35,6 @@ export async function generateMetadata({
   if (!post) {
     return
   }
-
   const publishedAt = new Date(post.date).toISOString()
   const modifiedAt = new Date(post.lastmod || post.date).toISOString()
   const authors = authorDetails.map((author) => author.name)
@@ -96,7 +95,6 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
       </div>
     )
   }
-
   const prev = sortedCoreContents[postIndex + 1]
   const next = sortedCoreContents[postIndex - 1]
   const post = allBlogs.find((p) => p.slug === slug) as Blog

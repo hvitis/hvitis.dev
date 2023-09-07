@@ -1,0 +1,110 @@
+---
+title: How to Shrink (Downsize) The Droplate Size
+date: '2022-12-15'
+summary: How to migrate postgresql database from one droplet to another.
+tags: ['deploy', 'linux', 'digitalocean', 'ubuntu']
+images: ['/static/images/blog/how-to-shrink-your-droplet-on-digital-ocean-downgrading/how-to-shrink-your-droplet.png']
+draft: false
+---
+
+## TLDR
+
+You Can't.
+
+But in our world this is just a saying. Everything is possible.
+
+## How to Actually Do It?
+
+Ok, let's move to explanation. You actually cannot shrink an existing droplet size. That would be going down in price tier and would tear the server apart. Since as [they say it actually is not safe][0] because:
+
+> Data is not always sequentially written in memory, so reducing the available space would risk data loss and filesystem corruption
+
+I was having a 20\$ droplet from times when I was saving audio in colorful barcodes and doing other image heavy processing so I needed more power. Now I just want to keep my DB, learn NextJS and do incremental changes to my Django server. So what can we do?
+
+I was certain that Deploying Existing Snapshots to a new Droplet that would be smaller would be a solution. And after actually cleaning up around 10 GB of my data I was ready but... it is not possible to go back to a smaller droplet size even if the actual disk size fits below new droplet capacity.
+
+So what **can** we do?
+
+Migrate.
+
+Fortunately in my case it was just deploying the Django App to a new droplet and copying database - I had PostgreSQL with postgis extension.
+
+### Let's Migrate PostgreSQL Database
+
+The scenario I did is not the quickest but safest and easiest to do in my opinion. It is as follows: We use our computer to connect with server1, we make backup, download it to out computer, then we connect to server2 and perform data load.
+
+We need to prepare a couple of things besides the 2 servers we want to migrate the data between.
+
+1. [FileZilla][2]
+2. [Port 22][1] on both servers
+3. Magic commands (down below)
+4. Users with [admin permissions on both databases][3].
+
+#### Step 1
+
+- Log in to server 1 (via password or ssh)
+- Enter the PSQL shell with:
+
+```bash
+sudo -u postgres psql
+```
+
+- Create DB backup with:
+
+```bash
+sudo -u your_admin_user pg_dump your_db_name > the_backup.sql
+```
+
+(user should have permissions and ownership over the db)
+
+#### Step 2
+
+- Log into FileZilla and using it:
+- Connect to Server 1 (the one your connected to to do the dump)
+- Download the created **the_backup.sql** file to your machine.
+- Connect to Server 2.
+
+#### Step 3
+
+Create a clean database with:
+
+```bash
+CREATE DATABASE second_db_name;
+```
+
+Give your user all privilages over it.
+
+```bash
+GRANT ALL PRIVILEGES ON DATABASE second_db_name TO second_admin_user;
+```
+
+**Perform the backup load.**
+
+```bash
+sudo -u second_admin_user psql second_db_name < the_backup.sql
+```
+
+Remember to delete **the_backup.sql** file from all places afterwards.
+
+### Other ways
+
+Other ways of doing it would be:
+
+- Using rsync to copy whole part of disk to another folder/partition where the DB is located at. This could be done if the size to migrate is big. It can be done over the network and to a server in a different location too.
+- Using **pg_dump** to transfer data directly to another server´s DB over the network. That is in my option [more complicated][4] and less robust.
+
+Hope it helped. Ping me if you need to know more.
+
+---
+
+_Tell me about your insights and leave a comment - you are most welcome to see more posts of this type just go to [home page][100]_
+
+[100]: https://hvitis.dev
+
+
+
+[0]: https://docs.digitalocean.com/products/droplets/how-to/resize/#:~:text=You%20cannot%20decrease%20the%20size%20of%20a%20Droplet's%20disk.&text=For%20more%20flexibility%2C%20you%20can,no%20longer%20need%20the%20space.
+[1]: https://linuxconfig.org/how-to-open-ssh-port-22-on-ubuntu-20-04-focal-fossa-linux
+[2]: https://itsfoss.com/filezilla-ubuntu/
+[3]: https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04#create-the-postgresql-database-and-user
+[4]: https://www.postgresqltutorial.com/postgresql-administration/postgresql-copy-database/

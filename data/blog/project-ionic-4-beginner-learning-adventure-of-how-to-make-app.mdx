@@ -1,0 +1,209 @@
+---
+title: IONIC 4 How to make an app in a few days.
+date: '2019-12-15'
+summary: So I've always wanted to have an app...
+tags: ['Ionic4', 'Android', 'iOS', 'Angular', 'Projects']
+images: ['/static/images/blog/project-ionic-4-beginner-learning-adventure-of-how-to-make-app/ionic-4-simple-app-template-pixelated-fun.png']
+draft: false
+---
+
+# How you can make a mobile app with just JavaScript
+
+> **Disclaimer**: Title is catchy but true. App in this article was created with Angular implemented with TypeScript but you can follow it's architecture and replicate it with Vanilla JavaScript.
+
+## Why should you make an app? 📱
+
+You may have some cool idea in your head, or you want to have just an app between your friends that does X. There may be many reasons. What is common between them, that path to your own app is fun and educational. Just about anybody can learn a lot - if you are **Senior coder** with mustach :older_man: you can make your app with a new framework to get to know it! If you are not even **Junior programmer** then I'm just showing you that there is a resource / possibility of creating an app with one of the most popular and forgiving ( or should I say - beginner friendly ) languages out there. No more excuses!
+Me, personally, I just wanted to have my own app in Google Store, that's it. You don't need more!
+Each tier of experience will of course benefit from this in another way. If you're starting your journey it might be an ambitious task but it's not impossible. Some time ago I didn't even know that it's possible to make an App without knowing Java or some advanced Wizardy :crystal_ball:
+
+## So where do I start ❔ - The Big picture ( pick up a Framework )
+
+Currently there is [more than a few frameworks][2] that provide compiling from non-native code to an app bundle that you could upload to Google Shop or Apple Store. Just to name the most popular in random order:
+
+- React native
+- Flutter
+- Xamarin
+- Ionic 4
+  Which one to choose then? The title of this post is for people who come from Vanilla JavaScript (which is pure JavaScript, no frameworks, no JQuery etc). Xamarin uses C#, Flutter uses Dart, finally React Native comes closer to using JavaScript but still - you need to have knowledge of React (React Native to be exact, since it's a bit different than pure React [What's the difference between them][0] .) What's left? That's right! **Ionic 4**
+
+The Ionic 4 as a project has started with Angular architecture as a spine for App development but with time they have added support for different frameworks (Vue, React, Angular). While writing your code inside components you **CAN** you can also Vanilla JavaScript.
+
+![alt text](./ionic-4-usage-using-java-script.png 'JavaScriptUsageWithIonic4')
+
+Becauses I have already some Angular knowledge and the Ionic CLI provides very useful tools for creating the scaffold for it I picked up the Angular way of doing things. On the official website you have a great and beautiful tutorial on [how to start your own App with just 2 commands][1]. Great community and a few years of presence on the market gives you a lot of resources to study. I've used extensively [Simon Grimm's youtube chanel][3] where you can find virtually anything about Ionic (Thank You Simon) !
+
+[0]: https://stackoverflow.com/questions/34641582/what-is-the-difference-between-react-native-and-react
+[1]: https://ionicframework.com/docs/building/starting 'Ionic 4 Official Docs'
+[2]: https://appinventiv.com/blog/cross-platform-app-frameworks/ 'Frameworks for Cross Platform App Development'
+[3]: https://www.youtube.com/user/saimon1924/videos 'Simon Grimm YouTube chanel'
+
+## Project overview - What do I want to build?
+
+As I menationed before, my main goal it to have an app. The byproduct is the knowledge I will gain in the meantime. The goal is not that complicated - I don't want to earn money off it, nor change the world so the app should be pretty simple. I came up with an idea of a picture game - You get a pixelized picture and you need to guess what's on the picture. Can be extended with different settings like difficulty (amount of pixelization, languages etc).
+
+Sketches needs to be make for general planning - in order to save time.
+
+## Let's get Technical - How will it work?
+
+> The app has already been made, so if you want to see how it works [you can check it on Android][5].
+
+[5]: http://pixelated.fun/
+
+There will be one top-level module (1 router) controlling all the pages' modules.
+
+The app will consist of 4 pages (views with specific content binded to a route):
+
+- Start
+- Gameplay
+- GameOver
+- Settings
+
+There will be no backend, no API so all the data will be saves in the application's state. Angular for managing the state of apps uses services so I will make a service responsible for:
+
+- Loading pictures
+- Changing settings
+- Game progress (points earned, hints left, etc )
+
+Usage of 3rd party library will be necessary for:
+
+- Rendering pictures: will be done by 3rd party library npm package called [**Jimp**][6]. pictures will come in small size with the app itself as its **assets**.
+- Sharing buttons: will be implemented with [**cordova-plugin-x-socialsharing**][4].
+
+[4]: https://www.npmjs.com/package/cordova-plugin-x-socialsharing
+[6]: https://github.com/oliver-moran/jimp
+
+## Let's get Technical - How does it look like?
+
+### **Router** is the default app-routing created by default CLI:
+
+```JS
+
+const routes: Routes = [
+  { path: "",
+    loadChildren: "./start/start.module#StartPageModule"
+  },
+  {
+    path: "gameplay",
+    loadChildren: "./gameplay/gameplay.module#GameplayPageModule"
+  },
+  {
+    path: "settings",
+    loadChildren: "./settings/settings.module#SettingsPageModule"
+  },
+
+  {
+    path: "gameover",
+    loadChildren: "./gameover/gameover.module#GameoverPageModule"
+  }
+];
+
+```
+
+---
+
+### **Pages** is a what user sees on the screen, a view.
+
+_Start Game Page_ - the most important things it consists of are:
+
+- Start Game Button
+- Settings Button
+- Share Game Button
+
+All the buttons are nested in a [Footer][7]
+
+[7]: https://ionicframework.com/docs/api/footer
+
+**Start Game Button**:
+
+```HTML
+  <ion-toolbar color="success" (click)="startGame()">
+    <ion-title>Start Game</ion-title>
+    <ion-buttons slot="end">
+      <ion-icon name="arrow-dropright-circle"></ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+```
+
+StartGame button calls a function that using services (custom one and router) resets all game progress (gained points in previous sessions, used hints)
+
+```TS
+// start.page.ts
+// ...
+  startGame() {
+    this.settingsService.resetAllNewGame();
+    return this.router.navigateByUrl('/gameplay');
+  }
+// ...
+
+```
+
+**Settings Button**:
+Uses just a Router to navigate to a Settings Page:
+
+```HTML
+
+  <ion-toolbar color="secondary" [routerLink]="['/settings']">
+    <ion-title>Settings</ion-title>
+    <ion-buttons slot="end">
+      <ion-icon name="settings"> </ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+
+```
+
+**Share Game Button**:
+Uses the mentioned capacitor library that enables native functionalities of sharing:
+
+```HTML
+
+<ion-toolbar
+    color="primary"
+    onclick="window.plugins.socialsharing.share(
+        'Check out PixelatedFun app!',
+        'Imagine what is hidden!',
+        null,
+        'https://pixelated.fun')"
+  >
+    <ion-title>Share</ion-title>
+    <ion-buttons slot="end">
+      <ion-icon name="paper-plane"> </ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+
+```
+
+_Settings Page_ - place for adjusting difficulty etc:
+
+```HTML
+
+ <ion-list>
+      <ion-item>
+        <ion-label>Difficulty</ion-label>
+        <ion-select
+          [(ngModel)]="selectedDifficulty"
+          (ionChange)="changeDifficulty()"
+          [placeholder]="this.difficulty"
+        >
+          <ion-select-option value="easy">Easy</ion-select-option>
+          <ion-select-option value="normal">Normal</ion-select-option>
+          <ion-select-option value="hard">Hard</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+```
+
+### What did I learn? - YouTube adventure
+
+Some of the takeouts from this projects are:
+
+- How Google Android Store works, how to upload and publish an app.
+- How to use Google Analytics and how to publish an Advert on Google Ads.
+- How to get fun and ethereal Valhalla presence in Google Store.
+
+---
+
+_Did you learn anything reading this post? Tell me about your insights. You are most welcome to see more posts of this type - just go to [home page][100]_
+
+[100]: https://hvitis.dev

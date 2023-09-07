@@ -1,0 +1,97 @@
+---
+title: How to write Docs in Obsidian and Publish them with NextJS.
+summary: Learn how to configure your repo to write technical documentation like a pro.
+date: '2023-05-01'
+tags: ['Obsidian', 'Documentation', 'NextJS']
+images: ['/static/images/blog/create-maintain-and-publish-technical-documentation-obsidian-nextjs/how-to-maintain-docs-obsidian.png']
+draft: false
+---
+
+## Introduction to smooth and proffesional process
+
+What the process looks like? It's simple:
+
+1. Write in Obsidian & push (pushing can be [automated too](https://github.com/denolehov/obsidian-git).
+2. Get a cup of tea.
+3. Come back and see the updated changes on your production site.
+
+Ok. So how does it work?
+
+We trigger pre and postbuild hooks that update NextJS project with Obsidian-written docs.
+
+1. [Repo structure possibilities](#structure)
+2. [Initiating Obsidian vault](#vault)
+3. [Prepare prebuild hook](#prebuild)
+
+
+## 1. <a name="structure">Repo structure possibilities</a>
+
+Depending on the goal and size of your docs, you can have 2 choices where to settle the [Obsidian vault](https://help.obsidian.md/Getting+started/Create+a+vault).
+
+1. One would be to havr a big repo and documentation that you don´t want to publish in it's entireity. Then part of the documentation could be called  __/main_repo/docs/Tutorials__ or __/main_repo/docs/technical-documentation__. Remember that the goal of this chapter is to show how to publish the changes made with obsidian in a private or public repo to your production site visible by the whole internet. This example would use prebuild step to copy this folder content to front-end repo.
+
+2. The point here is to open the [Obsidian vault](https://help.obsidian.md/Getting+started/Create+a+vault) in a location where you have your [NextJS](https://nextjs.org/docs/advanced-features/src-directory) documentation folder. This way you will be writing your documentation directly in the NextJS repo e.g. __/main_repo/frontend/src/pages/docs/main-tutorial-page.md__. The downside of this approach is that when writing documentation it is good to have some attachments, other files etc, that could land by mistake in your pages folder and NextJS would repack them to be publicly available or creash build process if the files are not supported by webpack.
+
+I personally chose the first option and this option will be discussed here.
+
+## 2. <a name="vault">Initiating Obsidian vault </a>
+
+You can start creating docs in an exisitng repo or prepare beforehand. In the real world it's more probably that the docs are result of something that you have already made so feel free to crete _docs_ folder in your repo root (also consider learning about [documentation driven development](https://gist.github.com/zsup/9434452)).
+
+Obsidian vault is a name for opening local folder and using it in Obsidian program. The vault name is there to remind you that Obsidian can have a sligltly different formatting or needs (e.g. using [tags](https://help.obsidian.md/Editing+and+formatting/Tags)). Remember that if you had some docs created already, there might be problem with downloading your vault to Obsidian - if that happens make sure about [custom formatting](https://help.obsidian.md/Linking+notes+and+files/Internal+links) that comes with obsidian. You can adjust it in the program's settings. You can always use obsidian plugins that [help with formatting](https://publish.obsidian.md/hub/02+-+Community+Expansions/02.01+Plugins+by+Category/Markdown+formatting+plugins) (if yours was not quite markdown/obsidian aligned)
+
+You can treat this whole process as an Obsidian md files publish alternative. The main way would be to use [Obsidian paid tier](https://obsidian.md/publish). This does not fit into our goal where the docs are located in a specific URL and can be build and queried by Google robots entering the site we are documenting. This is an alternative that uses official Obsidian way of creating docs - not completly other software.
+
+## 3. <a name="prebuild">Prepare prebuild hook </a>
+
+In your _package.json_ file has scripts. Usually you run _npm run dev_ or _npm run test_, sometimes build.  What is less common to know is that when you run _npm run build_ npm will execute prebuild script [before and after](https://docs.npmjs.com/cli/v9/using-npm/scripts#pre--post-scripts) it.
+
+We need one __pre__ script and it looks like that:
+
+```js
+// package.json file
+
+//...
+"scripts": {
+    "dev": "next dev",
+    "prebuild": "node ./src/scripts/UpdateAppTutorials.js",
+    "build": "next build",
+//...
+```
+
+You can see that now we need a file caleed __UpdateAppTutorials.js__ and it's need to be located in the root __frontend__ folder with our nextjs project. Continuing the example from the point 1 it will now look like this: __/main_repo/frontend/src/scripts/UpdateAppTutorials.js__.
+
+That script will be responsible for copying the files from __/main_repo/docs/__ to __/main_repo/frontend/src/pages/docs/__
+
+The script should contain some node js code that will do the job:
+
+```js
+// UpdateAppTutorials.js
+// All documentation is written in docs folder in root of the repo.
+// Content of docs/tutorials is visible on the page after build
+// This script runs on prebuild and updates changes made to docs so they are ready for build
+
+const fse = require('fs-extra')
+const path = require('path');
+
+const DOCS_MAIN = path.join(process.cwd(), '../docs/tutorials')
+const DOCS_NEXTJS = path.join(process.cwd(), '/src/pages/docs')
+
+try {
+  fse.copySync(DOCS_MAIN, DOCS_NEXTJS, { overwrite: true })
+  console.log('Copied files from main docs repo folder!')
+} catch (err) {
+  console.error(err)
+}
+
+```
+
+Don't forget to install [fse](https://www.npmjs.com/package/fse) & [path](https://www.npmjs.com/package/path).
+
+Perfect.
+
+What now? Now you need to have logic within your NextJS project that deals with markdown files and turns them into pages.
+
+If you do not have that part and want to know, [drop me a msg](https://hvitis.dev/contact) to let me know if there is a need for such a tutorial.
+
+

@@ -2,14 +2,14 @@
 const siteMetadata = {
   title: 'Next.js Starter Blog',
   author: 'Tails Azimuth',
-  headerTitle: 'TailwindBlog',
+  headerTitle: 'Hvitis.dev',
   description: 'A blog created with Next.js and Tailwind.css',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://hvitis.dev',
   siteRepo: 'https://github.com/hvitis/hvitis.dev',
   siteLogo: '/static/images/assets/logo.png',
-  socialBanner: '/static/images/twitter-card.png',
+  socialBanner: '/static/images/assets/twitter-card.jpg',
   mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'hello@youtalky.com',
   github: 'https://github.com/hvitis',

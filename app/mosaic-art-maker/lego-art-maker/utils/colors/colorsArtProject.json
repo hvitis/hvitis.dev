@@ -1,0 +1,189 @@
+[
+    {
+        "lego_id": "26",
+        "ldraw_name": "Black",
+        "bo_name": "Black",
+        "hex_code": "#1b2a34",
+        "rgb": "0,0,0",
+        "ldraw_id": "0",
+        "bl_id": "11",
+        "lego_name": "Black",
+        "bl_name": "Black"
+    },
+    {
+        "lego_id": "140",
+        "ldraw_name": "Dark_Blue",
+        "bo_name": "Dark Blue",
+        "hex_code": "#19325a",
+        "rgb": "25,50,90",
+        "ldraw_id": "272",
+        "bl_id": "63",
+        "lego_name": "Earth Blue",
+        "bl_name": "Dark Blue"
+    },
+    {
+        "lego_id": "23",
+        "ldraw_name": "Blue",
+        "bo_name": "Blue",
+        "hex_code": "#1e5aa8",
+        "rgb": "30,90,168",
+        "ldraw_id": "1",
+        "bl_id": "7",
+        "lego_name": "Bright Blue",
+        "bl_name": "Blue"
+    },
+    {
+        "lego_id": "151",
+        "ldraw_name": "Sand_Green",
+        "bo_name": "Sand Green",
+        "hex_code": "#708e7c",
+        "rgb": "112,142,124",
+        "ldraw_id": "378",
+        "bl_id": "48",
+        "lego_name": "Sand Green",
+        "bl_name": "Sand Green"
+    },
+    {
+        "lego_id": "1",
+        "ldraw_name": "White",
+        "bo_name": "White",
+        "hex_code": "#f4f4f4",
+        "rgb": "244,244,244",
+        "ldraw_id": "15",
+        "bl_id": "1",
+        "lego_name": "White",
+        "bl_name": "White"
+    },
+    {
+        "lego_id": "9",
+        "ldraw_name": "Pink",
+        "bo_name": "Pink",
+        "hex_code": "#f6a9bb",
+        "rgb": "246,169,187",
+        "ldraw_id": "13",
+        "bl_id": "23",
+        "lego_name": "Light Reddish Violet",
+        "bl_name": "Pink"
+    },
+    {
+        "lego_id": "21",
+        "ldraw_name": "Red",
+        "bo_name": "Red",
+        "hex_code": "#b40000",
+        "rgb": "180,0,0",
+        "ldraw_id": "4",
+        "bl_id": "5",
+        "lego_name": "Bright Red",
+        "bl_name": "Red"
+    },
+    {
+        "lego_id": "12",
+        "ldraw_name": "Earth_Orange",
+        "bo_name": "Earth Orange",
+        "hex_code": "#d86d2c",
+        "rgb": "216,109,44",
+        "ldraw_id": "366",
+        "bl_id": "29",
+        "lego_name": "Light Orange Brown",
+        "bl_name": "Earth Orange"
+    },
+    {
+        "lego_id": "3",
+        "ldraw_name": "Light_Yellow",
+        "bo_name": "Light Yellow",
+        "hex_code": "#ffd67f",
+        "rgb": "255,214,141",
+        "ldraw_id": "18",
+        "bl_id": "33",
+        "lego_name": "Light Yellow",
+        "bl_name": "Light Yellow"
+    },
+    {
+        "lego_id": "191",
+        "ldraw_name": "Bright_Light_Orange",
+        "bo_name": "Bright Light Orange",
+        "hex_code": "#fcac00",
+        "rgb": "252,172,0",
+        "ldraw_id": "191",
+        "bl_id": "110",
+        "lego_name": "Flame Yellowish Orange",
+        "bl_name": "Bright Light Orange"
+    },
+    {
+        "lego_id": "24",
+        "ldraw_name": "Yellow",
+        "bo_name": "Yellow",
+        "hex_code": "#fac80a",
+        "rgb": "250,200,10",
+        "ldraw_id": "14",
+        "bl_id": "3",
+        "lego_name": "Bright Yellow",
+        "bl_name": "Yellow"
+    },
+    {
+        "lego_id": "105",
+        "ldraw_name": "Medium_Orange",
+        "bo_name": "Medium Orange",
+        "hex_code": "#f58624",
+        "rgb": "245,134,36",
+        "ldraw_id": "462",
+        "bl_id": "31",
+        "lego_name": "Bright Yellowish Orange",
+        "bl_name": "Medium Orange"
+    },
+    {
+        "lego_id": "103",
+        "ldraw_name": "Very_Light_Gray",
+        "bo_name": "Very Light Gray",
+        "hex_code": "#bcb4a5",
+        "rgb": "188,180,165",
+        "ldraw_id": "503",
+        "bl_id": "49",
+        "lego_name": "Light Grey",
+        "bl_name": "Very Light Gray"
+    },
+    {
+        "lego_id": "36",
+        "ldraw_name": "Very_Light_Orange",
+        "bo_name": "Very Light Orange",
+        "hex_code": "#fdc383",
+        "rgb": "253,195,131",
+        "ldraw_id": "68",
+        "bl_id": "96",
+        "lego_name": "Light Yellowish Orange",
+        "bl_name": "Very Light Orange"
+    },
+    {
+        "lego_id": "153",
+        "ldraw_name": "Sand_Red",
+        "bo_name": "Sand Red",
+        "hex_code": "#88605e",
+        "rgb": "136,96,94",
+        "ldraw_id": "335",
+        "bl_id": "58",
+        "lego_name": "Sand Red",
+        "bl_name": "Sand Red"
+    },
+    {
+        "lego_id": "28",
+        "ldraw_name": "Green",
+        "bo_name": "Green",
+        "hex_code": "#00852b",
+        "rgb": "0,133,43",
+        "ldraw_id": "2",
+        "bl_id": "6",
+        "lego_name": "Dark Green",
+        "bl_name": "Green"
+    },
+    {
+        "lego_id": "119",
+        "ldraw_name": "Lime",
+        "bo_name": "Lime",
+        "hex_code": "#a5ca18",
+        "rgb": "165,202,24",
+        "ldraw_id": "27",
+        "bl_id": "34",
+        "lego_name": "Bright Yellowish Green",
+        "bl_name": "Lime"
+    }
+]

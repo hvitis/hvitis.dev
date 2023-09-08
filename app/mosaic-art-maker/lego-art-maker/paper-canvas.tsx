@@ -2,158 +2,20 @@
 'use client'
 import React from 'react'
 
-import COLORS_ALL from './utils/colors/colorsAll.json'
-import COLORS_ALL_CUSTOM from './utils/colors/colorsAllCustom.json'
-import COLORS_WARHOL from './utils/colors/colorsWarhol.json'
-import COLORS_HARRY_POTTER from './utils/colors/colorsHarryPotter.json'
-import COLORS_IRON_MAN from './utils/colors/colorsIronMan.json'
-import COLORS_STAR_WARS from './utils/colors/colorsStarWars.json'
-import COLORS_THE_BEATELS from './utils/colors/colorsTheBeatelsLauras.json'
-import COLORS_MICKEY_MOUSE from './utils/colors/colorsMickeyMouseLauras.json'
-import COLORS_LEGO_WORLD_MAP from './utils/colors/worldMap.json'
-import COLORS_PORTRAIT from './utils/colors/colorsPortraits.json'
-// New
-import COLORS_BATMAN from './utils/colors/colorsBatman.json'
-import COLORS_BATMAN_QUIN from './utils/colors/colorsBatmanQuin.json'
-import COLORS_BATMAN_JOKER from './utils/colors/colorsBatmanJoker.json'
-import COLORS_ELVIS from './utils/colors/colorsElvis.json'
-import COLORS_ART_PROJECT from './utils/colors/colorsArtProject.json'
+import { formatAndDownloadBsxFile } from '@/utils/formatBsxFile'
+import { formatAndDownloadXmlFile } from '@/utils/formatXmlFile'
+import { formatAndDownloadLdrFile } from '@/utils/formatLDrawFile'
 
-import BadgeColor from './utils/edit-color-badge'
+import BadgeColor from '@/components/BadgeColor'
+import Notification from '@/components/Notification'
+import SelectColorBadge from '@/components/SelectColorBadge'
 
-import { formatAndDownloadBsxFile } from './utils/formatBsxFile'
-import { formatAndDownloadXmlFile } from './utils/formatXmlFile'
-import { formatAndDownloadLdrFile } from './utils/formatLDrawFile'
 import invert from 'invert-color'
-
-import SelectColorBadge from './utils/select-color-badge'
-
-import {
-  CheckCheckIcon,
-  CheckCircle,
-  CheckSquare,
-  Circle,
-  PanelTopClose,
-  Square,
-} from 'lucide-react'
-import Notification from '../components/Notification'
 import { clsx } from 'clsx'
+import loadedColors from 'utils/colors'
+import humanize from '@/utils/humanize'
 
-// TODO:
-// 1. Check picture editing before loading
-// 2. Check different sizes selection - slider x/y like in lego remix
-// 3. Check jspdf exporter how to make and draw inside it, draw some example things
-// 4. Maybe we could draw the matrix independently from the preview edited canvasss  (draw basing only on matrix)
-// 5. Split the matrix into x pieces depending on the selected width and height
-// 6. Change the editing mode to only rounded studs.)
-// 7. Implement edit mode information when exporting to rendering programs!
-
-const loadedColors = {
-  COLORS_ALL: COLORS_ALL,
-  COLORS_WARHOL: COLORS_WARHOL,
-  COLORS_THE_BEATELS: COLORS_THE_BEATELS,
-  COLORS_IRON_MAN: COLORS_IRON_MAN,
-  COLORS_HARRY_POTTER: COLORS_HARRY_POTTER,
-  COLORS_STAR_WARS: COLORS_STAR_WARS,
-  COLORS_MICKEY_MOUSE: COLORS_MICKEY_MOUSE,
-  COLORS_LEGO_WORLD_MAP: COLORS_LEGO_WORLD_MAP,
-  COLORS_PORTRAIT: COLORS_PORTRAIT,
-  COLORS_BATMAN: COLORS_BATMAN,
-  COLORS_BATMAN_QUIN: COLORS_BATMAN_QUIN,
-  COLORS_BATMAN_JOKER: COLORS_BATMAN_JOKER,
-  COLORS_ELVIS: COLORS_ELVIS,
-  COLORS_ART_PROJECT: COLORS_ART_PROJECT,
-}
-
-const colorsSets = [
-  {
-    id: 'All',
-    value: 'COLORS_ALL',
-  },
-  {
-    id: 'Elvis (new)',
-    value: 'COLORS_ELVIS',
-  },
-  {
-    id: 'Batman (new)',
-    value: 'COLORS_BATMAN',
-  },
-  {
-    id: 'Batman Harley Quin (new)',
-    value: 'COLORS_BATMAN_QUIN',
-  },
-  {
-    id: 'Batman Joker (new)',
-    value: 'COLORS_BATMAN_JOKER',
-  },
-  {
-    id: 'Art Project (new)',
-    value: 'COLORS_ART_PROJECT',
-  },
-  {
-    id: 'World Map',
-    value: 'COLORS_LEGO_WORLD_MAP',
-  },
-  {
-    id: 'LEGO Portraits',
-    value: 'COLORS_PORTRAIT',
-  },
-  {
-    id: 'Warhol',
-    value: 'COLORS_WARHOL',
-  },
-  {
-    id: 'The Beatels',
-    value: 'COLORS_THE_BEATELS',
-  },
-  {
-    id: 'Iron Man',
-    value: 'COLORS_IRON_MAN',
-  },
-  {
-    id: 'Harry Potter',
-    value: 'COLORS_HARRY_POTTER',
-  },
-  {
-    id: 'Star Wars',
-    value: 'COLORS_STAR_WARS',
-  },
-  {
-    id: 'Mickey Mouse',
-    value: 'COLORS_MICKEY_MOUSE',
-  },
-  {
-    id: 'Custom Colors',
-    value: 'CUSTOM_COLORS',
-  },
-]
-
-const coords = [
-  {
-    id: '10x10',
-    value: 10,
-  },
-  {
-    id: '16x16',
-    value: 16,
-  },
-  {
-    id: '32x32',
-    value: 32,
-  },
-  {
-    id: '46x46',
-    value: 46,
-  },
-  {
-    id: '48x48',
-    value: 48,
-  },
-  {
-    id: '64x64',
-    value: 64,
-  },
-]
+const boardSized = [10, 16, 32, 46, 48, 64]
 
 type MyProps = {}
 type MyState = {
@@ -669,9 +531,9 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
                   <option disabled selected>
                     Select board size
                   </option>
-                  {coords.map((sizeOfBoard) => (
-                    <option key={sizeOfBoard.id} value={sizeOfBoard.value}>
-                      {sizeOfBoard.id}
+                  {boardSized.map((sizeOfBoard, index) => (
+                    <option key={index} value={sizeOfBoard}>
+                      {`${sizeOfBoard}x${sizeOfBoard}`}
                     </option>
                   ))}
                 </select>
@@ -693,11 +555,15 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
                   <option disabled selected>
                     Select color set
                   </option>
-                  {colorsSets.map((colorSet) => (
-                    <option key={colorSet.id} value={colorSet.value}>
-                      {colorSet.id}
-                    </option>
-                  ))}
+                  {Object.keys(loadedColors)
+                    .map((set, index) => {
+                      return { id: index, name: humanize(set), value: set }
+                    })
+                    .map((colorSet) => (
+                      <option key={colorSet.id} value={colorSet.value}>
+                        {colorSet.name}
+                      </option>
+                    ))}
                 </select>
               </div>
             </div>
@@ -787,17 +653,14 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
           }
         />
         <div>
-          {this.state.colorsToCompare === 'CUSTOM_COLORS' ? (
+          {this.state.colorsToCompare === 'CUSTOM_COLORS' &&
             COLORS_ALL_CUSTOM.map((color) => (
               <SelectColorBadge
                 addCustomColor={this.addCustomColor}
                 color={color}
                 key={color.lego_name}
               />
-            ))
-          ) : (
-            <></>
-          )}
+            ))}
 
           {this.state.colors.length !== 0 ? (
             <p>

@@ -2,9 +2,8 @@
 
 import React from 'react'
 import PaperCanvas from './paper-canvas'
-import Link from 'next/link'
-import NotificationSimple from '../components/NotificationSimple'
-import Notification from '../components/Notification'
+import NotificationSimple from '@/components/NotificationSimple'
+import Notification from '@/components/Notification'
 
 class LegoArtMaker extends React.Component {
   render() {

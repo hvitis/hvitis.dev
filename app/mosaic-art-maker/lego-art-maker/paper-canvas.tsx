@@ -199,7 +199,7 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
       extraInfo: null,
       isEditMode: false,
       colorsToCompare: 'COLORS_ALL',
-      hasNotSelectedColors: false,
+      hasNotSelectedColors: true,
     }
     this.makeMosaic = this.makeMosaic.bind(this)
 
@@ -349,14 +349,14 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
           // }
           if (raster.isCircle) {
             // Create a circle ART MOSAIC shaped path:
-            const path = new paper.Path.Circle({
+            var path = new paper.Path.Circle({
               center: new paper.Point(x * spacing, y * spacing),
               // center: paper.view.center,
               // radius: gridSize / 2 / spacing,
               radius: 9,
             })
             if (raster.hasNumbers) {
-              const text = new paper.PointText(new paper.Point(x * spacing, y * spacing + 3))
+              var text = new paper.PointText(new paper.Point(x * spacing, y * spacing + 3))
               path.text = text
               // Text functionality
               text.fontSize = 8
@@ -405,19 +405,19 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
           }
           if (!raster.isCircle) {
             // Create a square PORTRAIT shaped path:
-            const path = new paper.Path.Rectangle({
+            var path = new paper.Path.Rectangle({
               point: new paper.Point(x * spacing, y * spacing),
               // center: paper.view.center,
               // radius: gridSize / 2 / spacing,
               size: 18,
             })
-            const pathDarker = new paper.Path.Circle({
+            var pathDarker = new paper.Path.Circle({
               center: new paper.Point(x * spacing + 9, y * spacing + 9),
               // center: paper.view.center,
               // radius: gridSize / 2 / spacing,
               radius: 6,
             })
-            const pathLighter = new paper.Path.Circle({
+            var pathLighter = new paper.Path.Circle({
               center: new paper.Point(x * spacing + 8, y * spacing + 8),
               // center: paper.view.center,
               // radius: gridSize / 2 / spacing,
@@ -480,13 +480,13 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
             colorCodes.push(singleColor)
           } else {
             // Getting the color code from the array of colors that will be used for BUTTONS
-            const newFilteredColour = colorCodes.filter(
+            let newFilteredColour = colorCodes.filter(
               (color) => color.hex_code === pickedColor.value
             )
             newFilteredColour[0]['amount'] += 1
           }
           // Appending a LDraw color value to vertical row
-          const singleStudDataToAppend = {
+          let singleStudDataToAppend = {
             x: LDrawXCoord,
             y: LDrawYCoord,
             z: LDrawZCoord,
@@ -600,7 +600,7 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
   }
   addCustomColor(colorObject, isSelected) {
     // Adding colors to the list of custom colors
-    const currentlySelectedColors = [...this.state.customColors, colorObject]
+    let currentlySelectedColors = [...this.state.customColors, colorObject]
     let uniqueColors
     if (isSelected) {
       // Adding object to selected colors and filtering duplicates
@@ -638,14 +638,20 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
               <div>Select image:</div>
               <div>
                 <div id="center">
-                  <input id="file" type="file" onChange={this.handleImageUpload} />
+                  <input
+                    className="file-input file-input-bordered file-input-info w-full max-w-xs"
+                    id="file"
+                    type="file"
+                    onChange={this.handleImageUpload}
+                  />
                 </div>
               </div>
             </div>
             <div>
               <div>Board size:</div>
               <div controlId="SelectToBucket">
-                <div
+                <select
+                  className="select select-info w-full max-w-xs"
                   required
                   type="text"
                   as="select"
@@ -654,18 +660,22 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
                   name="selectedToBucket"
                   value={this.state.selectedBoardSize}
                 >
+                  <option disabled selected>
+                    Select board size
+                  </option>
                   {coords.map((sizeOfBoard) => (
-                    <div key={sizeOfBoard.id} value={sizeOfBoard.value}>
+                    <option key={sizeOfBoard.id} value={sizeOfBoard.value}>
                       {sizeOfBoard.id}
-                    </div>
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
             </div>
             <div>
               <div>Colors set:</div>
               <div controlId="SelectToBucket">
-                <div
+                <select
+                  className="select select-info w-full max-w-xs"
                   required
                   type="text"
                   as="select"
@@ -674,12 +684,15 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
                   name="selectedToBucket"
                   value={this.state.colorsToCompare}
                 >
+                  <option disabled selected>
+                    Select color set
+                  </option>
                   {colorsSets.map((colorSet) => (
-                    <div key={colorSet.id} value={colorSet.value}>
+                    <option key={colorSet.id} value={colorSet.value}>
                       {colorSet.id}
-                    </div>
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
             </div>
           </div>

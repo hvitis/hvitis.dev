@@ -2,22 +2,34 @@
 
 import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
+import { useLocalStorage } from 'usehooks-ts'
 
 const ThemeSwitch = () => {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
+  const [_daisyTheme, setDaisyTheme] = useLocalStorage('theme', 'dark')
 
   // When mounted on client, now we can show the UI
   useEffect(() => setMounted(true), [])
+  //modify data-theme attribute on document.body when theme changes
+  useEffect(() => {
+    const body = document.body
+    body.setAttribute('data-theme', _daisyTheme)
+  }, [_daisyTheme])
 
   if (!mounted) {
     return null
   }
 
+  const handleThemeChange = (theme) => {
+    setTheme(theme)
+    setDaisyTheme(theme)
+  }
+
   return (
     <button
       aria-label="Toggle Dark Mode"
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      onClick={() => handleThemeChange(theme === 'dark' ? 'light' : 'dark')}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

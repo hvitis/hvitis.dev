@@ -4,6 +4,9 @@ const colors = require('tailwindcss/colors')
 
 /** @type {import("tailwindcss/types").Config } */
 module.exports = {
+  daisyui: {
+    themes: ['light', 'dark'],
+  },
   content: [
     './node_modules/pliny/**/*.js',
     './app/**/*.{js,ts,jsx,tsx}',

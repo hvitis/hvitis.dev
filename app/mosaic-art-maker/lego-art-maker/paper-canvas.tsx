@@ -36,6 +36,8 @@ import {
   PanelTopClose,
   Square,
 } from 'lucide-react'
+import Notification from '../components/Notification'
+import { clsx } from 'clsx'
 
 // TODO:
 // 1. Check picture editing before loading
@@ -181,8 +183,8 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
     super(props)
 
     this.state = {
-      height: 900,
-      width: 900,
+      height: 450,
+      width: 450,
       updated: false,
       isCircle: true,
       file: null,
@@ -199,7 +201,7 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
       extraInfo: null,
       isEditMode: false,
       colorsToCompare: 'COLORS_ALL',
-      hasNotSelectedColors: true,
+      hasNotSelectedColors: false,
     }
     this.makeMosaic = this.makeMosaic.bind(this)
 
@@ -239,7 +241,6 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
     })
   }
   generateComparableColors(colorsSet) {
-    console.log('Colors set', colorsSet)
     const NEAREST_COLOR_COMPARE = {}
     colorsSet.map((color) => (NEAREST_COLOR_COMPARE[color.bl_name.toString()] = color.hex_code))
     return NEAREST_COLOR_COMPARE
@@ -558,7 +559,6 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
     // Order here colours by amount of them in the picture
     colors.sort((a, b) => (a.amount > b.amount ? 1 : b.amount > a.amount ? -1 : 0))
     this.setState({ colors: colors, LDrawMatrix: LDrawMatrix })
-    console.log(this.state.colors)
   }
 
   handleImageUpload(event) {
@@ -613,7 +613,6 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
       // Removing object from selected colors
       uniqueColors = currentlySelectedColors.filter((color) => color.bl_id !== colorObject.bl_id)
     }
-    console.log(uniqueColors, isSelected)
     // currentlySelectedColors = currentlySelectedColors.filter(function(el) {
     //   return el.bl_id != colorObject.bl_id
     // })
@@ -632,11 +631,18 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
   render() {
     return (
       <>
-        <div>
-          <div>
+        <div className="w-full mx-auto">
+          <div className="flex flex-row gap-2 mr-auto">
             <div>
-              <div>Select image:</div>
               <div>
+                <div
+                  className={clsx(
+                    'text-center',
+                    this.state.hasFileNotUploadedError && 'text-red-600'
+                  )}
+                >
+                  Select image:
+                </div>
                 <div id="center">
                   <input
                     className="file-input file-input-bordered file-input-info w-full max-w-xs"
@@ -648,8 +654,8 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
               </div>
             </div>
             <div>
-              <div>Board size:</div>
-              <div controlId="SelectToBucket">
+              <div>
+                <div>Board size:</div>
                 <select
                   className="select select-info w-full max-w-xs"
                   required
@@ -673,7 +679,7 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
             </div>
             <div>
               <div>Colors set:</div>
-              <div controlId="SelectToBucket">
+              <div>
                 <select
                   className="select select-info w-full max-w-xs"
                   required
@@ -695,122 +701,91 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
                 </select>
               </div>
             </div>
+            <div className="">
+              <div>Settings:</div>
+              <div className="btn-group">
+                <button
+                  className="btn btn-info"
+                  onClick={() => {
+                    this.handleChangeShape()
+                  }}
+                >
+                  {this.state.isCircle ? 'Circles' : 'Squares'}
+                </button>
+                <button
+                  className="btn btn-info"
+                  onClick={() => {
+                    this.handleDrawNumbers()
+                  }}
+                >
+                  {this.state.hasNumbers && this.state.isCircle ? 'Numbers' : 'Blank'}
+                </button>
+
+                <button
+                  className="btn btn-info"
+                  onClick={() => {
+                    this.handleEditMode()
+                  }}
+                >
+                  {this.state.isEditMode ? 'Edit' : 'No Edit'}
+                </button>
+              </div>
+            </div>
           </div>
-          <div>
-            <div>
-              <div>
-                <div>{this.state.isCircle ? 'Circles ' : 'Squares '}</div>
-              </div>
-              <button
-                onClick={() => {
-                  this.handleChangeShape()
-                }}
-              >
-                {this.state.isCircle ? <CheckCircle /> : <CheckSquare />}
-              </button>
-            </div>
-            <div>
-              <div>
-                <div>Numbers </div>
-              </div>
-              <button
-                onClick={() => {
-                  this.handleDrawNumbers()
-                }}
-              >
-                {this.state.hasNumbers && this.state.isCircle ? (
-                  <Square style={{ color: '#0EE49F' }} />
-                ) : (
-                  <Circle />
-                )}
-              </button>
-            </div>
-            <div>
-              <div>
-                <div>Edit mode</div>
-              </div>
-              <button
-                onClick={() => {
-                  this.handleEditMode()
-                }}
-              >
-                {this.state.isEditMode ? (
-                  <CheckCheckIcon style={{ color: '#0EE49F' }} />
-                ) : (
-                  <PanelTopClose style={{ color: 'red' }} />
-                )}
-              </button>
-            </div>
+          <div className="w-full my-4 text-center">
+            <button
+              className="btn btn-success btn-lg mx-2"
+              onClick={() => this.clickGenerateMosaicButton(this.updateColors)}
+            >
+              Generate
+            </button>
           </div>
         </div>
-        <div>
-          <button onClick={() => this.clickGenerateMosaicButton(this.updateColors)}>
-            Generate
-          </button>
-        </div>
-        {this.state.hasFileNotUploadedError ? (
-          <div>
-            <div>Please select an image first!</div>
-          </div>
-        ) : (
-          <></>
-        )}
-        {this.state.hasNotSelectedColors ? (
-          <div>
-            <div>Please select at least 5 colors!</div>
-          </div>
-        ) : (
-          <></>
-        )}
-        {this.state.colors.length !== 0 ? (
-          <>
-            <div>
-              <p>
-                <span>
-                  <mark>Scroll down</mark> to learn how to
-                  <mark>use</mark> .bsx and .xml
-                  <mark>files</mark>
-                </span>
-                Download
-              </p>
-            </div>
-            <div>
-              <button onClick={() => this.handleBsxSave()}>.bsx file</button>
-              <button onClick={() => this.handleXmlSave()}>.xml file</button>
-              <button onClick={() => this.handleLdrSave()}>.ldr file</button>
-              <button onClick={() => this.handleCanvasSave()}>.png image</button>
-            </div>
-          </>
-        ) : (
-          <div>
-            Generate art to get
-            <p>
-              <span>
-                <mark>.png</mark> file is your
-                <mark>mosaic</mark> image to <mark>Download</mark>
-              </span>
-              .png
-            </p>{' '}
-            or
-            <p>
-              <span>
-                <mark>.xml</mark> file you can use in various places to
-                <mark>download</mark> list of needed
-                <mark>pieces</mark>
-              </span>
-              .xml
-            </p>
-            or
-            <p>
-              <span>
-                <mark>.bsx</mark> file is used to make
-                <mark>orders</mark> on
-                <mark>BrickLink.com</mark>
-              </span>
+
+        <img
+          src={this.state.file}
+          alt="Generated mosaic LEGO Image"
+          crossOrigin="*"
+          ref="mosaic"
+          id="mosaic"
+          hidden
+        />
+        <div className="mx-auto">
+          <div
+            className="btn-group text-right btn-sm mx-10"
+            style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
+          >
+            <button className="btn btn-info" disabled>
+              Download
+            </button>
+            <button className="btn" onClick={() => this.handleCanvasSave()}>
+              .Png
+            </button>
+            <button className="btn" onClick={() => this.handleBsxSave()}>
               .bsx
-            </p>
+            </button>
+            <button className="btn" onClick={() => this.handleXmlSave()}>
+              .xml
+            </button>
+            <button className="btn" onClick={() => this.handleLdrSave()}>
+              .ldr
+            </button>
           </div>
-        )}
+          <canvas
+            style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
+            className="p-10 mx-auto"
+            id="paperCanvas"
+            height={this.state.height}
+            width={this.state.width}
+          ></canvas>
+        </div>
+
+        <Notification
+          title={'Obtain various file options'}
+          msg={
+            'You can download .png file with your mosaic image to Download .png or .xml file you can use in various places to download list of needed pieces .xml or .bsx file is used to make orders on BrickLink.com'
+          }
+        />
         <div>
           {this.state.colorsToCompare === 'CUSTOM_COLORS' ? (
             COLORS_ALL_CUSTOM.map((color) => (
@@ -845,15 +820,7 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
             </p>
           )}
         </div>
-        <div>
-          <img src={this.state.file} alt="WOMAN" crossOrigin="*" ref="mosaic" id="mosaic" hidden />
-          <canvas
-            style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
-            id="paperCanvas"
-            height={this.state.height}
-            width={this.state.width}
-          ></canvas>
-        </div>
+
         {this.state.colors.length !== 0 ? (
           <p style={{ maxWidth: '200px' }}>
             <span>

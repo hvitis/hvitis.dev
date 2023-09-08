@@ -1,9 +1,10 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Next.js Starter Blog',
-  author: 'Tails Azimuth',
+  title: 'Hvitis.dev || Testing Ideas with Code. Software Development and Testing.',
+  author: 'Adam Piskorek',
   headerTitle: 'Hvitis.dev',
-  description: 'A blog created with Next.js and Tailwind.css',
+  description:
+    'Different views on Software Development Cycle - coding and testing. Tutorials that help you and ideas that confuse you - in a good way.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://hvitis.dev',
@@ -34,7 +35,7 @@ const siteMetadata = {
     //   posthogProjectApiKey: '', // e.g. 123e4567-e89b-12d3-a456-426614174000
     // },
     googleAnalytics: {
-      googleAnalyticsId: '', // e.g. G-XXXXXXX
+      googleAnalyticsId: '385591623', // e.g. G-XXXXXXX
     },
   },
   newsletter: {

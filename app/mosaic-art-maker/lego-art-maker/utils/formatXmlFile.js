@@ -29,9 +29,7 @@ function getStringXmlFromAllItems(items) {
   return bsxFile
 }
 function getItem(item) {
-  return `<ITEM>${getItemID()}${getItemTypeID()}${getColorID(item)}${getQty(
-    item
-  )}</ITEM>`
+  return `<ITEM>${getItemID()}${getItemTypeID()}${getColorID(item)}${getQty(item)}</ITEM>`
 }
 function getItemTypeID() {
   return `<ITEMTYPE>P</ITEMTYPE>`

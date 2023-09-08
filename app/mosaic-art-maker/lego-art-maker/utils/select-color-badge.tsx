@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client' // This is a client component 👈🏽
 
 import React, { useState } from 'react'

@@ -2,9 +2,7 @@ import * as React from 'react'
 
 import LegoArtMaker from './lego-art-maker'
 
-type LEGOArtProps = {}
-
-const LEGOArt: React.FunctionComponent<LEGOArtProps> = ({ ...props }) => {
+const LEGOArt: React.FunctionComponent = ({ ...props }) => {
   return (
     <div {...props}>
       <LegoArtMaker />

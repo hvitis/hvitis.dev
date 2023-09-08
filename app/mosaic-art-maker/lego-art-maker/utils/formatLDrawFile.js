@@ -71,9 +71,7 @@ function getStringLdrFromAllItems(matrix) {
 }
 
 function getSingleLine(obj) {
-  return `1 ${obj.color} ${parseNumber(obj.x)} ${parseNumber(
-    obj.y
-  )} ${parseNumber(
+  return `1 ${obj.color} ${parseNumber(obj.x)} ${parseNumber(obj.y)} ${parseNumber(
     obj.z
   )} 1.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 1.000000 98138.dat \n`
 }

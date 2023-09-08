@@ -110,7 +110,7 @@ This means, that even tho we run 174 requests **AND** measure response of each o
 
 Let's check now **authentication at the collection level**.
 
-Again - the same reason - [**DRY**][9]. In case you are calling one app / service with the same token obtained in the e.g. first request, there is no need to repeat it on each request and keep adding _{{AuthorizationToken}}_ variable. Just start your collection with authentication request and in tests, once the auth has been executed, export the token as [_collection variable_][11]
+Again - the same reason - [**DRY**][9]. In case you are calling one app / service with the same token obtained in the e.g. first request, there is no need to repeat it on each request and keep adding _AuthorizationToken_ variable. Just start your collection with authentication request and in tests, once the auth has been executed, export the token as [_collection variable_][11]
 
 ```js
 // Part of a 'Tests' sandbox in an auth request.

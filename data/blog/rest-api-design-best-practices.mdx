@@ -35,7 +35,7 @@ Here is the list of must haves:
 
 ---
 
-### <a name="error-handling"></a><span style="font-family:Roboto; font-size:2em;">E</span>rror handling
+### <a name="error-handling"></a><span>E</span>rror handling
 
 In order to provide more specific machine-readable messages with an error response, the API clients can react to errors more effectively and eventually it makes the API services much more reliable from the REST API testing perspective. Clients could benefit a lot from a good error handling since they can use the message strings comming directly from backend ( that eases translation issues ).
 
@@ -98,7 +98,7 @@ The way you name your key&value pairs in returned object is totally up to you. T
 
 **SUM_UP:** Error handling is extremely important for backend automation testing and usability, it also could bring more profits for clients. It is possible to start small with a simple error / message object that could be extended with time and complexity.
 
-### <a name="methods"></a><span style="font-family:Roboto; font-size:2em;">M</span>ethods
+### <a name="methods"></a><span>M</span>ethods
 
 There is [many HTTP methods][12] but you should use at least those:
 
@@ -211,7 +211,7 @@ RESPONSE:
 }
 ```
 
-### <a name="naming-consistency"></a><span style="font-family:Roboto; font-size:2em;">N</span>aming consistency
+### <a name="naming-consistency"></a><span>N</span>aming consistency
 
 It's simple:
 
@@ -289,7 +289,7 @@ GET: domain.com/cats?skin_color=black     ⬅️✅ Good
 
 ```
 
-### <a name="resources"></a><span style="font-family:Roboto; font-size:2em;">R</span>esources
+### <a name="resources"></a><span>R</span>esources
 
 - They should be flat, no nesting.
 
@@ -309,7 +309,7 @@ GET: domain.com/animals/{id}/cats     ⬅️✅ Good
 
 ```
 
-### <a name="returning-objects"></a><span style="font-family:Roboto; font-size:2em;">R</span>eturning objects
+### <a name="returning-objects"></a><span>R</span>eturning objects
 
 It depends on your client and architecture but in most cases it's good to return a body on creating resources.
 
@@ -326,7 +326,7 @@ It depends on your client and architecture but in most cases it's good to return
 
 You could think about wrapping the responses with additional info but you need to remember that certain requests **should return empty body** e.g. DELETE requests. Once the resource has been deleted and status code 204 returned then body should be empty. In most cases the decision on body of successful requests is up to you or your front-end collegue.
 
-### <a name="slash-redirect"></a><span style="font-family:Roboto; font-size:2em;">S</span>lash redirect
+### <a name="slash-redirect"></a><span>S</span>lash redirect
 
 As part of naming consistency: **do not use trailing forward slashes**.
 In case of using slashes e.g. by your users (mistakes / no docs etc) you should try to redirect to original resource. It's an interesting topic, try [reading more about it][16].
@@ -334,7 +334,7 @@ In case of using slashes e.g. by your users (mistakes / no docs etc) you should 
 > “The trailing slash must not have specific semantics. Resource paths must deliver the same results whether they have the trailing slash or not.”
 > \- [Zalando's RESTful API guidelines][15]
 
-### <a name="status-codes"></a><span style="font-family:Roboto; font-size:2em;">S</span>tatus codes
+### <a name="status-codes"></a><span>S</span>tatus codes
 
 Like with HTTP methods [there is many of them][17]. Try starting from the basics:
 
@@ -369,7 +369,7 @@ Important to know the **difference** between **401** and **403**:
 **401** - No credentials, no token, unauthenticated
 **402** - No authorization for the resource, role not correct, not enough eprmissions. Basically e.g. you may want to access admin resources as a simple user.
 
-### <a name="querystring"></a><span style="font-family:Roboto; font-size:2em;">Q</span>uery parameters
+### <a name="querystring"></a><span>Q</span>uery parameters
 
 Query resources via url parameters:
 
@@ -381,7 +381,7 @@ Stick with [conventional query parameters][18].
 
 ---
 
-### <a name="versioning"></a><span style="font-family:Roboto; font-size:2em;">V</span>ersioning
+### <a name="versioning"></a><span>V</span>ersioning
 
 If you are not working on a **mobile app** or in a **bigger team** you can skip it for now. This is very important if you are planning an API for a mobile app because app updates take long time to develop or deliver and it's difficult to synchronise the changes with the backend. In case you are starting a project in a bigger team or a company, versioning is also extremly important since it allows more agile development - backenders don´t have to wait for front-enders. You can deploy your new API without worrying that you'll break the client's app. There is many REST API verioning strategies, at the end the goal is to maintain backward compatibility and avoid code duplication.
 There is multiple possibilities of versioning schemes for your API:

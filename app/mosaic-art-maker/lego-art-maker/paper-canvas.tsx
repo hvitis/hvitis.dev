@@ -1,5 +1,5 @@
+// @ts-nocheck
 'use client'
-
 import React from 'react'
 
 import COLORS_ALL from './utils/colors/colorsAll.json'
@@ -46,117 +46,140 @@ import {
 // 6. Change the editing mode to only rounded studs.)
 // 7. Implement edit mode information when exporting to rendering programs!
 
-class PaperCanvas extends React.Component {
+const loadedColors = {
+  COLORS_ALL: COLORS_ALL,
+  COLORS_WARHOL: COLORS_WARHOL,
+  COLORS_THE_BEATELS: COLORS_THE_BEATELS,
+  COLORS_IRON_MAN: COLORS_IRON_MAN,
+  COLORS_HARRY_POTTER: COLORS_HARRY_POTTER,
+  COLORS_STAR_WARS: COLORS_STAR_WARS,
+  COLORS_MICKEY_MOUSE: COLORS_MICKEY_MOUSE,
+  COLORS_LEGO_WORLD_MAP: COLORS_LEGO_WORLD_MAP,
+  COLORS_PORTRAIT: COLORS_PORTRAIT,
+  COLORS_BATMAN: COLORS_BATMAN,
+  COLORS_BATMAN_QUIN: COLORS_BATMAN_QUIN,
+  COLORS_BATMAN_JOKER: COLORS_BATMAN_JOKER,
+  COLORS_ELVIS: COLORS_ELVIS,
+  COLORS_ART_PROJECT: COLORS_ART_PROJECT,
+}
+
+const colorsSets = [
+  {
+    id: 'All',
+    value: 'COLORS_ALL',
+  },
+  {
+    id: 'Elvis (new)',
+    value: 'COLORS_ELVIS',
+  },
+  {
+    id: 'Batman (new)',
+    value: 'COLORS_BATMAN',
+  },
+  {
+    id: 'Batman Harley Quin (new)',
+    value: 'COLORS_BATMAN_QUIN',
+  },
+  {
+    id: 'Batman Joker (new)',
+    value: 'COLORS_BATMAN_JOKER',
+  },
+  {
+    id: 'Art Project (new)',
+    value: 'COLORS_ART_PROJECT',
+  },
+  {
+    id: 'World Map',
+    value: 'COLORS_LEGO_WORLD_MAP',
+  },
+  {
+    id: 'LEGO Portraits',
+    value: 'COLORS_PORTRAIT',
+  },
+  {
+    id: 'Warhol',
+    value: 'COLORS_WARHOL',
+  },
+  {
+    id: 'The Beatels',
+    value: 'COLORS_THE_BEATELS',
+  },
+  {
+    id: 'Iron Man',
+    value: 'COLORS_IRON_MAN',
+  },
+  {
+    id: 'Harry Potter',
+    value: 'COLORS_HARRY_POTTER',
+  },
+  {
+    id: 'Star Wars',
+    value: 'COLORS_STAR_WARS',
+  },
+  {
+    id: 'Mickey Mouse',
+    value: 'COLORS_MICKEY_MOUSE',
+  },
+  {
+    id: 'Custom Colors',
+    value: 'CUSTOM_COLORS',
+  },
+]
+
+const coords = [
+  {
+    id: '10x10',
+    value: 10,
+  },
+  {
+    id: '16x16',
+    value: 16,
+  },
+  {
+    id: '32x32',
+    value: 32,
+  },
+  {
+    id: '46x46',
+    value: 46,
+  },
+  {
+    id: '48x48',
+    value: 48,
+  },
+  {
+    id: '64x64',
+    value: 64,
+  },
+]
+
+type MyProps = {}
+type MyState = {
+  height: number
+  width: number
+  updated: boolean
+  isCircle: boolean
+  file: any | null
+  newPhoto: boolean
+  selectedBoardSize: number
+  colors: []
+  customColors: []
+  hasFileNotUploadedError: boolean
+  LDrawMatrix: []
+  editColor: string
+  editLegoId: number
+  isGenerated: boolean
+  hasNumbers: boolean
+  extraInfo: any | null
+  isEditMode: boolean
+  colorsToCompare: string
+  hasNotSelectedColors: boolean
+}
+
+class PaperCanvas extends React.Component<MyProps, MyState> {
   constructor(props) {
     super(props)
-    // if (typeof window !== `undefined`) {
-    //   this.updateDimensions()
-    // }
-    this.loadedColors = {
-      COLORS_ALL: COLORS_ALL,
-      COLORS_WARHOL: COLORS_WARHOL,
-      COLORS_THE_BEATELS: COLORS_THE_BEATELS,
-      COLORS_IRON_MAN: COLORS_IRON_MAN,
-      COLORS_HARRY_POTTER: COLORS_HARRY_POTTER,
-      COLORS_STAR_WARS: COLORS_STAR_WARS,
-      COLORS_MICKEY_MOUSE: COLORS_MICKEY_MOUSE,
-      COLORS_LEGO_WORLD_MAP: COLORS_LEGO_WORLD_MAP,
-      COLORS_PORTRAIT: COLORS_PORTRAIT,
-      COLORS_BATMAN: COLORS_BATMAN,
-      COLORS_BATMAN_QUIN: COLORS_BATMAN_QUIN,
-      COLORS_BATMAN_JOKER: COLORS_BATMAN_JOKER,
-      COLORS_ELVIS: COLORS_ELVIS,
-      COLORS_ART_PROJECT: COLORS_ART_PROJECT,
-    }
-    this.colorsSets = [
-      {
-        id: 'All',
-        value: 'COLORS_ALL',
-      },
-      {
-        id: 'Elvis (new)',
-        value: 'COLORS_ELVIS',
-      },
-      {
-        id: 'Batman (new)',
-        value: 'COLORS_BATMAN',
-      },
-      {
-        id: 'Batman Harley Quin (new)',
-        value: 'COLORS_BATMAN_QUIN',
-      },
-      {
-        id: 'Batman Joker (new)',
-        value: 'COLORS_BATMAN_JOKER',
-      },
-      {
-        id: 'Art Project (new)',
-        value: 'COLORS_ART_PROJECT',
-      },
-      {
-        id: 'World Map',
-        value: 'COLORS_LEGO_WORLD_MAP',
-      },
-      {
-        id: 'LEGO Portraits',
-        value: 'COLORS_PORTRAIT',
-      },
-      {
-        id: 'Warhol',
-        value: 'COLORS_WARHOL',
-      },
-      {
-        id: 'The Beatels',
-        value: 'COLORS_THE_BEATELS',
-      },
-      {
-        id: 'Iron Man',
-        value: 'COLORS_IRON_MAN',
-      },
-      {
-        id: 'Harry Potter',
-        value: 'COLORS_HARRY_POTTER',
-      },
-      {
-        id: 'Star Wars',
-        value: 'COLORS_STAR_WARS',
-      },
-      {
-        id: 'Mickey Mouse',
-        value: 'COLORS_MICKEY_MOUSE',
-      },
-      {
-        id: 'Custom Colors',
-        value: 'CUSTOM_COLORS',
-      },
-    ]
 
-    this.coords = [
-      {
-        id: '10x10',
-        value: 10,
-      },
-      {
-        id: '16x16',
-        value: 16,
-      },
-      {
-        id: '32x32',
-        value: 32,
-      },
-      {
-        id: '46x46',
-        value: 46,
-      },
-      {
-        id: '48x48',
-        value: 48,
-      },
-      {
-        id: '64x64',
-        value: 64,
-      },
-    ]
     this.state = {
       height: 900,
       width: 900,
@@ -176,6 +199,7 @@ class PaperCanvas extends React.Component {
       extraInfo: null,
       isEditMode: false,
       colorsToCompare: 'COLORS_ALL',
+      hasNotSelectedColors: false,
     }
     this.makeMosaic = this.makeMosaic.bind(this)
 
@@ -221,13 +245,13 @@ class PaperCanvas extends React.Component {
     return NEAREST_COLOR_COMPARE
   }
   shadeColor(color, percent) {
-    let R = parseInt(color.substring(1, 3), 16)
-    let G = parseInt(color.substring(3, 5), 16)
-    let B = parseInt(color.substring(5, 7), 16)
+    let R: number = parseInt(color.substring(1, 3), 16)
+    let G: number = parseInt(color.substring(3, 5), 16)
+    let B: number = parseInt(color.substring(5, 7), 16)
 
-    R = parseInt((R * (100 + percent)) / 100)
-    G = parseInt((G * (100 + percent)) / 100)
-    B = parseInt((B * (100 + percent)) / 100)
+    R = (R * (100 + percent)) / 100
+    G = (G * (100 + percent)) / 100
+    B = (B * (100 + percent)) / 100
 
     R = R < 255 ? R : 255
     G = G < 255 ? G : 255
@@ -249,7 +273,7 @@ class PaperCanvas extends React.Component {
     const paper = require('paper')
     let chosenColors
     if (this.state.colorsToCompare !== 'CUSTOM_COLORS') {
-      chosenColors = this.loadedColors[this.state.colorsToCompare]
+      chosenColors = loadedColors[this.state.colorsToCompare]
     }
     if (this.state.colorsToCompare === 'CUSTOM_COLORS') {
       if (this.state.customColors.length < 5) {
@@ -325,14 +349,14 @@ class PaperCanvas extends React.Component {
           // }
           if (raster.isCircle) {
             // Create a circle ART MOSAIC shaped path:
-            var path = new paper.Path.Circle({
+            const path = new paper.Path.Circle({
               center: new paper.Point(x * spacing, y * spacing),
               // center: paper.view.center,
               // radius: gridSize / 2 / spacing,
               radius: 9,
             })
             if (raster.hasNumbers) {
-              var text = new paper.PointText(new paper.Point(x * spacing, y * spacing + 3))
+              const text = new paper.PointText(new paper.Point(x * spacing, y * spacing + 3))
               path.text = text
               // Text functionality
               text.fontSize = 8
@@ -357,7 +381,7 @@ class PaperCanvas extends React.Component {
                 for (let index = 0; index < LDrawMatrix.length; index++) {
                   // Here we have nested arrays that consist of objects
                   const nestedArray = LDrawMatrix[index]
-                  // for (var y = raster.height - 1; y >= 0; y--) {
+                  // for (let y = raster.height - 1; y >= 0; y--) {
                   for (let index = nestedArray.length - 1; index >= 0; index--) {
                     // Here we have a list of studs so we check for each stud
                     const singleStudObj = nestedArray[index]
@@ -381,19 +405,19 @@ class PaperCanvas extends React.Component {
           }
           if (!raster.isCircle) {
             // Create a square PORTRAIT shaped path:
-            var path = new paper.Path.Rectangle({
+            const path = new paper.Path.Rectangle({
               point: new paper.Point(x * spacing, y * spacing),
               // center: paper.view.center,
               // radius: gridSize / 2 / spacing,
               size: 18,
             })
-            var pathDarker = new paper.Path.Circle({
+            const pathDarker = new paper.Path.Circle({
               center: new paper.Point(x * spacing + 9, y * spacing + 9),
               // center: paper.view.center,
               // radius: gridSize / 2 / spacing,
               radius: 6,
             })
-            var pathLighter = new paper.Path.Circle({
+            const pathLighter = new paper.Path.Circle({
               center: new paper.Point(x * spacing + 8, y * spacing + 8),
               // center: paper.view.center,
               // radius: gridSize / 2 / spacing,
@@ -422,7 +446,7 @@ class PaperCanvas extends React.Component {
                   // Here we have nested arrays that consist of objects
                   const nestedArray = LDrawMatrix[index]
 
-                  // for (var y = raster.height - 1; y >= 0; y--) {
+                  // for (let y = raster.height - 1; y >= 0; y--) {
                   for (let index = nestedArray.length - 1; index >= 0; index--) {
                     // Here we have a list of studs so we check for each stud
                     const singleStudObj = nestedArray[index]
@@ -630,7 +654,7 @@ class PaperCanvas extends React.Component {
                   name="selectedToBucket"
                   value={this.state.selectedBoardSize}
                 >
-                  {this.coords.map((sizeOfBoard) => (
+                  {coords.map((sizeOfBoard) => (
                     <div key={sizeOfBoard.id} value={sizeOfBoard.value}>
                       {sizeOfBoard.id}
                     </div>
@@ -650,7 +674,7 @@ class PaperCanvas extends React.Component {
                   name="selectedToBucket"
                   value={this.state.colorsToCompare}
                 >
-                  {this.colorsSets.map((colorSet) => (
+                  {colorsSets.map((colorSet) => (
                     <div key={colorSet.id} value={colorSet.value}>
                       {colorSet.id}
                     </div>
@@ -799,15 +823,13 @@ class PaperCanvas extends React.Component {
           ) : (
             <></>
           )}
-          {this.state.extraInfo ? (
+          {this.state.extraInfo && (
             <p>
               <span>
                 <mark>Color names</mark> correspond to unofficial LEGO names.
               </span>
               {`Extra Stud Info : ${this.state.extraInfo}`}
             </p>
-          ) : (
-            <></>
           )}
         </div>
         <div>

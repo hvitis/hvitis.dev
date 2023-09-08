@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react'
 import invert from 'invert-color'
 

@@ -10,7 +10,7 @@ interface NotificationInterface {
 }
 const Notification = ({ title, msg, href }: NotificationInterface) => {
   return (
-    <div className="alert shadow-lg my-2">
+    <div className="alert shadow-lg my-3">
       <InfoIcon className="stroke-info shrink-0 w-6 h-6" />
       <div>
         <h3 className="font-bold">{title}</h3>
@@ -18,7 +18,7 @@ const Notification = ({ title, msg, href }: NotificationInterface) => {
       </div>
       {href && (
         <Link href={href} className="btn btn-sm">
-          See
+          Read more
         </Link>
       )}
     </div>

@@ -14,6 +14,7 @@ import invert from 'invert-color'
 import { clsx } from 'clsx'
 import loadedColors from 'utils/colors'
 import humanize from '@/utils/humanize'
+import Statistics from '@/components/Statistics'
 
 const boardSized = [10, 16, 32, 46, 48, 64]
 
@@ -493,82 +494,71 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
   render() {
     return (
       <>
-        <div className="w-full mx-auto">
-          <div className="flex flex-row gap-2 mr-auto">
-            <div>
-              <div>
-                <div
-                  className={clsx(
-                    'text-center',
-                    this.state.hasFileNotUploadedError && 'text-red-600'
-                  )}
-                >
-                  Select image:
-                </div>
-                <div id="center">
-                  <input
-                    className="file-input file-input-bordered file-input-info w-full max-w-xs"
-                    id="file"
-                    type="file"
-                    onChange={this.handleImageUpload}
-                  />
-                </div>
-              </div>
+        <div className="w-full">
+          <div className="flex flex-row flex-wrap gap-2 w-full">
+            <div className="flex flex-col ml-auto">
+              <label
+                className={clsx(
+                  'text-center',
+                  this.state.hasFileNotUploadedError && 'text-red-600'
+                )}
+              >
+                Select image:
+              </label>
+              <input
+                className="file-input file-input-bordered file-input-info w-full max-w-xs"
+                id="file"
+                type="file"
+                onChange={this.handleImageUpload}
+              />
             </div>
-            <div>
-              <div>
-                <div>Board size:</div>
-                <select
-                  className="select select-info w-full max-w-xs"
-                  required
-                  type="text"
-                  as="select"
-                  size="lg"
-                  onChange={this.handleSelectBoardSize}
-                  name="selectedToBucket"
-                  value={this.state.selectedBoardSize}
-                >
-                  <option disabled selected>
-                    Select board size
+
+            <div className="flex flex-col">
+              <label className="text-center">Board size:</label>
+              <select
+                className="select select-info"
+                required
+                type="text"
+                as="select"
+                size="lg"
+                onChange={this.handleSelectBoardSize}
+                name="selectedToBucket"
+                value={this.state.selectedBoardSize}
+              >
+                {boardSized.map((sizeOfBoard, index) => (
+                  <option key={index} value={sizeOfBoard}>
+                    {`${sizeOfBoard}x${sizeOfBoard}`}
                   </option>
-                  {boardSized.map((sizeOfBoard, index) => (
-                    <option key={index} value={sizeOfBoard}>
-                      {`${sizeOfBoard}x${sizeOfBoard}`}
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col">
+              <label className="text-center">Colors set:</label>
+              <select
+                className="select select-info"
+                required
+                type="text"
+                as="select"
+                size="lg"
+                onChange={this.handleSelectColorsSet}
+                name="selectedToBucket"
+                value={this.state.colorsToCompare}
+              >
+                {Object.keys(loadedColors)
+                  .map((set, index) => {
+                    return { id: index, name: humanize(set.slice(6, 30)), value: set }
+                  })
+                  .map((colorSet) => (
+                    <option key={colorSet.id} value={colorSet.value}>
+                      {colorSet.name}
                     </option>
                   ))}
-                </select>
-              </div>
+              </select>
             </div>
-            <div>
-              <div>Colors set:</div>
-              <div>
-                <select
-                  className="select select-info w-full max-w-xs"
-                  required
-                  type="text"
-                  as="select"
-                  size="lg"
-                  onChange={this.handleSelectColorsSet}
-                  name="selectedToBucket"
-                  value={this.state.colorsToCompare}
-                >
-                  <option disabled selected>
-                    Select color set
-                  </option>
-                  {Object.keys(loadedColors)
-                    .map((set, index) => {
-                      return { id: index, name: humanize(set), value: set }
-                    })
-                    .map((colorSet) => (
-                      <option key={colorSet.id} value={colorSet.value}>
-                        {colorSet.name}
-                      </option>
-                    ))}
-                </select>
-              </div>
-            </div>
-            <div className="">
-              <div>Settings:</div>
+
+            <div className="flex flex-col mr-auto">
+              <label className="text-center">Settings:</label>
               <div className="btn-group">
                 <button
                   className="btn btn-info"
@@ -598,13 +588,16 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
               </div>
             </div>
           </div>
-          <div className="w-full my-4 text-center">
-            <button
-              className="btn btn-success btn-lg mx-2"
-              onClick={() => this.clickGenerateMosaicButton(this.updateColors)}
-            >
-              Generate
-            </button>
+
+          <div className="w-full my-4 mx-auto">
+            <div>
+              <button
+                className="btn btn-success btn-lg mx-2"
+                onClick={() => this.clickGenerateMosaicButton(this.updateColors)}
+              >
+                Generate
+              </button>
+            </div>
           </div>
         </div>
 
@@ -646,13 +639,8 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
           ></canvas>
         </div>
 
-        <Notification
-          title={'Obtain various file options'}
-          msg={
-            'You can download .png file with your mosaic image to Download .png or .xml file you can use in various places to download list of needed pieces .xml or .bsx file is used to make orders on BrickLink.com'
-          }
-        />
         <div>
+          {this.state.colors && <Statistics size={this.state.selectedBoardSize} />}
           {this.state.colorsToCompare === 'CUSTOM_COLORS' &&
             COLORS_ALL_CUSTOM.map((color) => (
               <SelectColorBadge
@@ -662,18 +650,6 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
               />
             ))}
 
-          {this.state.colors.length !== 0 ? (
-            <p>
-              <span>
-                <mark>Average</mark> price of
-                <mark>all</mark> pieces.
-              </span>
-              Estimated price :{' '}
-              {`${this.state.selectedBoardSize * this.state.selectedBoardSize * 0.04} $`}
-            </p>
-          ) : (
-            <></>
-          )}
           {this.state.extraInfo && (
             <p>
               <span>
@@ -684,17 +660,6 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
           )}
         </div>
 
-        {this.state.colors.length !== 0 ? (
-          <p style={{ maxWidth: '200px' }}>
-            <span>
-              <mark>Click</mark> on item to set color in
-              <mark>EDIT</mark> mode
-            </span>
-            List of mosaic colors :
-          </p>
-        ) : (
-          <></>
-        )}
         {this.state.colors.map((color) => (
           <BadgeColor pickEditColor={this.pickEditColor} color={color} key={color.bl_id} />
         ))}

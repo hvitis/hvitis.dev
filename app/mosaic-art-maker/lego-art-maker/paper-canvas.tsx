@@ -7,7 +7,6 @@ import { formatAndDownloadXmlFile } from '@/utils/formatXmlFile'
 import { formatAndDownloadLdrFile } from '@/utils/formatLDrawFile'
 
 import BadgeColor from '@/components/BadgeColor'
-import Notification from '@/components/Notification'
 import SelectColorBadge from '@/components/SelectColorBadge'
 
 import invert from 'invert-color'
@@ -15,6 +14,7 @@ import { clsx } from 'clsx'
 import loadedColors from 'utils/colors'
 import humanize from '@/utils/humanize'
 import Statistics from '@/components/Statistics'
+import { isMobile } from 'react-device-detect'
 
 const boardSized = [10, 16, 32, 46, 48, 64]
 
@@ -41,18 +41,19 @@ type MyState = {
   hasNotSelectedColors: boolean
 }
 
+const boardSize = isMobile ? 160 : 460
 class PaperCanvas extends React.Component<MyProps, MyState> {
   constructor(props) {
     super(props)
 
     this.state = {
-      height: 450,
-      width: 450,
+      height: boardSize,
+      width: boardSize,
       updated: false,
       isCircle: true,
       file: null,
       newPhoto: false,
-      selectedBoardSize: 46,
+      selectedBoardSize: boardSize / 10,
       colors: [],
       customColors: [],
       hasFileNotUploadedError: false,
@@ -98,6 +99,7 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
     }
     window.addEventListener('resize', this.resizeMethod)
   }
+
   handleSelectColorsSet(event) {
     this.setState({
       colorsToCompare: event.target.value,
@@ -495,8 +497,8 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
     return (
       <>
         <div className="w-full">
-          <div className="flex flex-row flex-wrap gap-2 w-full">
-            <div className="flex flex-col ml-auto">
+          <div className="flex lg:flex-row flex-col flex-wrap gap-2 w-full">
+            <div className="flex flex-col lg:ml-auto mx-auto">
               <label
                 className={clsx(
                   'text-center',
@@ -557,7 +559,7 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
               </select>
             </div>
 
-            <div className="flex flex-col mr-auto">
+            <div className="flex flex-col lg:mr-auto mx-auto">
               <label className="text-center">Settings:</label>
               <div className="btn-group">
                 <button
@@ -609,34 +611,34 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
           id="mosaic"
           hidden
         />
-        <div className="mx-auto">
-          <div
-            className="btn-group text-right btn-sm mx-10"
-            style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
-          >
-            <button className="btn btn-info" onClick={() => this.handleCanvasSave()}>
-              Download
-            </button>
-            <button className="btn" onClick={() => this.handleCanvasSave()}>
-              .Png
-            </button>
-            <button className="btn" onClick={() => this.handleBsxSave()}>
-              .bsx
-            </button>
-            <button className="btn" onClick={() => this.handleXmlSave()}>
-              .xml
-            </button>
-            <button className="btn" onClick={() => this.handleLdrSave()}>
-              .ldr
-            </button>
-          </div>
-          <canvas
-            style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
-            className="p-10 mx-auto"
-            id="paperCanvas"
-            height={this.state.height}
-            width={this.state.width}
-          ></canvas>
+
+        <canvas
+          style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
+          className="p-10 mx-auto"
+          id="paperCanvas"
+          height={this.state.height}
+          width={this.state.width}
+        ></canvas>
+
+        <div
+          className="btn-group lg:mx-10 mx-auto"
+          style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
+        >
+          <button className="btn lg:btn btn-sm btn-info" onClick={() => this.handleCanvasSave()}>
+            Download
+          </button>
+          <button className="btn lg:btn btn-sm" onClick={() => this.handleCanvasSave()}>
+            .Png
+          </button>
+          <button className="btn lg:btn btn-sm" onClick={() => this.handleBsxSave()}>
+            .bsx
+          </button>
+          <button className="btn lg:btn btn-sm" onClick={() => this.handleXmlSave()}>
+            .xml
+          </button>
+          <button className="btn lg:btn btn-sm" onClick={() => this.handleLdrSave()}>
+            .ldr
+          </button>
         </div>
 
         <div className="w-full flex flex-row justify-between">

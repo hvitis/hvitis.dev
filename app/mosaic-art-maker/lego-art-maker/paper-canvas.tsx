@@ -41,19 +41,19 @@ type MyState = {
   hasNotSelectedColors: boolean
 }
 
-const boardSize = isMobile ? 160 : 460
+const mobileSize = isMobile ? 160 : null
 class PaperCanvas extends React.Component<MyProps, MyState> {
   constructor(props) {
     super(props)
 
     this.state = {
-      height: boardSize,
-      width: boardSize,
+      height: mobileSize || 460,
+      width: mobileSize || 460,
       updated: false,
       isCircle: true,
       file: null,
       newPhoto: false,
-      selectedBoardSize: boardSize / 10,
+      selectedBoardSize: (mobileSize || 460) / 10,
       colors: [],
       customColors: [],
       hasFileNotUploadedError: false,
@@ -614,7 +614,7 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
 
         <canvas
           style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
-          className="p-10 mx-auto"
+          className="p-1 mx-auto"
           id="paperCanvas"
           height={this.state.height}
           width={this.state.width}

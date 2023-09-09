@@ -2,158 +2,21 @@
 'use client'
 import React from 'react'
 
-import COLORS_ALL from './utils/colors/colorsAll.json'
-import COLORS_ALL_CUSTOM from './utils/colors/colorsAllCustom.json'
-import COLORS_WARHOL from './utils/colors/colorsWarhol.json'
-import COLORS_HARRY_POTTER from './utils/colors/colorsHarryPotter.json'
-import COLORS_IRON_MAN from './utils/colors/colorsIronMan.json'
-import COLORS_STAR_WARS from './utils/colors/colorsStarWars.json'
-import COLORS_THE_BEATELS from './utils/colors/colorsTheBeatelsLauras.json'
-import COLORS_MICKEY_MOUSE from './utils/colors/colorsMickeyMouseLauras.json'
-import COLORS_LEGO_WORLD_MAP from './utils/colors/worldMap.json'
-import COLORS_PORTRAIT from './utils/colors/colorsPortraits.json'
-// New
-import COLORS_BATMAN from './utils/colors/colorsBatman.json'
-import COLORS_BATMAN_QUIN from './utils/colors/colorsBatmanQuin.json'
-import COLORS_BATMAN_JOKER from './utils/colors/colorsBatmanJoker.json'
-import COLORS_ELVIS from './utils/colors/colorsElvis.json'
-import COLORS_ART_PROJECT from './utils/colors/colorsArtProject.json'
+import { formatAndDownloadBsxFile } from '@/utils/formatBsxFile'
+import { formatAndDownloadXmlFile } from '@/utils/formatXmlFile'
+import { formatAndDownloadLdrFile } from '@/utils/formatLDrawFile'
 
-import BadgeColor from './utils/edit-color-badge'
+import BadgeColor from '@/components/BadgeColor'
+import SelectColorBadge from '@/components/SelectColorBadge'
 
-import { formatAndDownloadBsxFile } from './utils/formatBsxFile'
-import { formatAndDownloadXmlFile } from './utils/formatXmlFile'
-import { formatAndDownloadLdrFile } from './utils/formatLDrawFile'
 import invert from 'invert-color'
-
-import SelectColorBadge from './utils/select-color-badge'
-
-import {
-  CheckCheckIcon,
-  CheckCircle,
-  CheckSquare,
-  Circle,
-  PanelTopClose,
-  Square,
-} from 'lucide-react'
-import Notification from '../components/Notification'
 import { clsx } from 'clsx'
+import loadedColors from 'utils/colors'
+import humanize from '@/utils/humanize'
+import Statistics from '@/components/Statistics'
+import { isMobile } from 'react-device-detect'
 
-// TODO:
-// 1. Check picture editing before loading
-// 2. Check different sizes selection - slider x/y like in lego remix
-// 3. Check jspdf exporter how to make and draw inside it, draw some example things
-// 4. Maybe we could draw the matrix independently from the preview edited canvasss  (draw basing only on matrix)
-// 5. Split the matrix into x pieces depending on the selected width and height
-// 6. Change the editing mode to only rounded studs.)
-// 7. Implement edit mode information when exporting to rendering programs!
-
-const loadedColors = {
-  COLORS_ALL: COLORS_ALL,
-  COLORS_WARHOL: COLORS_WARHOL,
-  COLORS_THE_BEATELS: COLORS_THE_BEATELS,
-  COLORS_IRON_MAN: COLORS_IRON_MAN,
-  COLORS_HARRY_POTTER: COLORS_HARRY_POTTER,
-  COLORS_STAR_WARS: COLORS_STAR_WARS,
-  COLORS_MICKEY_MOUSE: COLORS_MICKEY_MOUSE,
-  COLORS_LEGO_WORLD_MAP: COLORS_LEGO_WORLD_MAP,
-  COLORS_PORTRAIT: COLORS_PORTRAIT,
-  COLORS_BATMAN: COLORS_BATMAN,
-  COLORS_BATMAN_QUIN: COLORS_BATMAN_QUIN,
-  COLORS_BATMAN_JOKER: COLORS_BATMAN_JOKER,
-  COLORS_ELVIS: COLORS_ELVIS,
-  COLORS_ART_PROJECT: COLORS_ART_PROJECT,
-}
-
-const colorsSets = [
-  {
-    id: 'All',
-    value: 'COLORS_ALL',
-  },
-  {
-    id: 'Elvis (new)',
-    value: 'COLORS_ELVIS',
-  },
-  {
-    id: 'Batman (new)',
-    value: 'COLORS_BATMAN',
-  },
-  {
-    id: 'Batman Harley Quin (new)',
-    value: 'COLORS_BATMAN_QUIN',
-  },
-  {
-    id: 'Batman Joker (new)',
-    value: 'COLORS_BATMAN_JOKER',
-  },
-  {
-    id: 'Art Project (new)',
-    value: 'COLORS_ART_PROJECT',
-  },
-  {
-    id: 'World Map',
-    value: 'COLORS_LEGO_WORLD_MAP',
-  },
-  {
-    id: 'LEGO Portraits',
-    value: 'COLORS_PORTRAIT',
-  },
-  {
-    id: 'Warhol',
-    value: 'COLORS_WARHOL',
-  },
-  {
-    id: 'The Beatels',
-    value: 'COLORS_THE_BEATELS',
-  },
-  {
-    id: 'Iron Man',
-    value: 'COLORS_IRON_MAN',
-  },
-  {
-    id: 'Harry Potter',
-    value: 'COLORS_HARRY_POTTER',
-  },
-  {
-    id: 'Star Wars',
-    value: 'COLORS_STAR_WARS',
-  },
-  {
-    id: 'Mickey Mouse',
-    value: 'COLORS_MICKEY_MOUSE',
-  },
-  {
-    id: 'Custom Colors',
-    value: 'CUSTOM_COLORS',
-  },
-]
-
-const coords = [
-  {
-    id: '10x10',
-    value: 10,
-  },
-  {
-    id: '16x16',
-    value: 16,
-  },
-  {
-    id: '32x32',
-    value: 32,
-  },
-  {
-    id: '46x46',
-    value: 46,
-  },
-  {
-    id: '48x48',
-    value: 48,
-  },
-  {
-    id: '64x64',
-    value: 64,
-  },
-]
+const boardSized = [10, 16, 32, 46, 48, 64]
 
 type MyProps = {}
 type MyState = {
@@ -178,18 +41,19 @@ type MyState = {
   hasNotSelectedColors: boolean
 }
 
+const boardSize = isMobile ? 160 : 460
 class PaperCanvas extends React.Component<MyProps, MyState> {
   constructor(props) {
     super(props)
 
     this.state = {
-      height: 450,
-      width: 450,
+      height: boardSize,
+      width: boardSize,
       updated: false,
       isCircle: true,
       file: null,
       newPhoto: false,
-      selectedBoardSize: 46,
+      selectedBoardSize: boardSize / 10,
       colors: [],
       customColors: [],
       hasFileNotUploadedError: false,
@@ -235,6 +99,7 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
     }
     window.addEventListener('resize', this.resizeMethod)
   }
+
   handleSelectColorsSet(event) {
     this.setState({
       colorsToCompare: event.target.value,
@@ -631,78 +496,71 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
   render() {
     return (
       <>
-        <div className="w-full mx-auto">
-          <div className="flex flex-row gap-2 mr-auto">
-            <div>
-              <div>
-                <div
-                  className={clsx(
-                    'text-center',
-                    this.state.hasFileNotUploadedError && 'text-red-600'
-                  )}
-                >
-                  Select image:
-                </div>
-                <div id="center">
-                  <input
-                    className="file-input file-input-bordered file-input-info w-full max-w-xs"
-                    id="file"
-                    type="file"
-                    onChange={this.handleImageUpload}
-                  />
-                </div>
-              </div>
+        <div className="w-full">
+          <div className="flex lg:flex-row flex-col flex-wrap gap-2 w-full">
+            <div className="flex flex-col lg:ml-auto mx-auto">
+              <label
+                className={clsx(
+                  'text-center',
+                  this.state.hasFileNotUploadedError && 'text-red-600'
+                )}
+              >
+                Select image:
+              </label>
+              <input
+                className="file-input file-input-bordered file-input-info w-full max-w-xs"
+                id="file"
+                type="file"
+                onChange={this.handleImageUpload}
+              />
             </div>
-            <div>
-              <div>
-                <div>Board size:</div>
-                <select
-                  className="select select-info w-full max-w-xs"
-                  required
-                  type="text"
-                  as="select"
-                  size="lg"
-                  onChange={this.handleSelectBoardSize}
-                  name="selectedToBucket"
-                  value={this.state.selectedBoardSize}
-                >
-                  <option disabled selected>
-                    Select board size
+
+            <div className="flex flex-col">
+              <label className="text-center">Board size:</label>
+              <select
+                className="select select-info"
+                required
+                type="text"
+                as="select"
+                size="lg"
+                onChange={this.handleSelectBoardSize}
+                name="selectedToBucket"
+                value={this.state.selectedBoardSize}
+              >
+                {boardSized.map((sizeOfBoard, index) => (
+                  <option key={index} value={sizeOfBoard}>
+                    {`${sizeOfBoard}x${sizeOfBoard}`}
                   </option>
-                  {coords.map((sizeOfBoard) => (
-                    <option key={sizeOfBoard.id} value={sizeOfBoard.value}>
-                      {sizeOfBoard.id}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                ))}
+              </select>
             </div>
-            <div>
-              <div>Colors set:</div>
-              <div>
-                <select
-                  className="select select-info w-full max-w-xs"
-                  required
-                  type="text"
-                  as="select"
-                  size="lg"
-                  onChange={this.handleSelectColorsSet}
-                  name="selectedToBucket"
-                  value={this.state.colorsToCompare}
-                >
-                  <option disabled selected>
-                    Select color set
-                  </option>
-                  {colorsSets.map((colorSet) => (
+
+            <div className="flex flex-col">
+              <label className="text-center">Colors set:</label>
+              <select
+                className="select select-info"
+                required
+                type="text"
+                as="select"
+                size="lg"
+                onChange={this.handleSelectColorsSet}
+                name="selectedToBucket"
+                value={this.state.colorsToCompare}
+              >
+                {Object.keys(loadedColors)
+                  .map((set, index) => {
+                    return { id: index, name: humanize(set.slice(6, 30)), value: set }
+                  })
+                  .map((colorSet) => (
                     <option key={colorSet.id} value={colorSet.value}>
-                      {colorSet.id}
+                      {colorSet.name}
                     </option>
                   ))}
-                </select>
-              </div>
+              </select>
             </div>
-            <div className="">
-              <div>Settings:</div>
+
+            <div className="flex flex-col lg:mr-auto mx-auto">
+              <label className="text-center">Settings:</label>
               <div className="btn-group">
                 <button
                   className="btn btn-info"
@@ -732,13 +590,16 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
               </div>
             </div>
           </div>
-          <div className="w-full my-4 text-center">
-            <button
-              className="btn btn-success btn-lg mx-2"
-              onClick={() => this.clickGenerateMosaicButton(this.updateColors)}
-            >
-              Generate
-            </button>
+
+          <div className="w-full my-4 mx-auto">
+            <div>
+              <button
+                className="btn btn-success btn-lg mx-2"
+                onClick={() => this.clickGenerateMosaicButton(this.updateColors)}
+              >
+                Generate
+              </button>
+            </div>
           </div>
         </div>
 
@@ -750,91 +611,64 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
           id="mosaic"
           hidden
         />
-        <div className="mx-auto">
-          <div
-            className="btn-group text-right btn-sm mx-10"
-            style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
-          >
-            <button className="btn btn-info" disabled>
-              Download
-            </button>
-            <button className="btn" onClick={() => this.handleCanvasSave()}>
-              .Png
-            </button>
-            <button className="btn" onClick={() => this.handleBsxSave()}>
-              .bsx
-            </button>
-            <button className="btn" onClick={() => this.handleXmlSave()}>
-              .xml
-            </button>
-            <button className="btn" onClick={() => this.handleLdrSave()}>
-              .ldr
-            </button>
+
+        <canvas
+          style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
+          className="p-10 mx-auto"
+          id="paperCanvas"
+          height={this.state.height}
+          width={this.state.width}
+        ></canvas>
+
+        <div
+          className="btn-group lg:mx-10 mx-auto"
+          style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
+        >
+          <button className="btn lg:btn btn-sm btn-info" onClick={() => this.handleCanvasSave()}>
+            Download
+          </button>
+          <button className="btn lg:btn btn-sm" onClick={() => this.handleCanvasSave()}>
+            .Png
+          </button>
+          <button className="btn lg:btn btn-sm" onClick={() => this.handleBsxSave()}>
+            .bsx
+          </button>
+          <button className="btn lg:btn btn-sm" onClick={() => this.handleXmlSave()}>
+            .xml
+          </button>
+          <button className="btn lg:btn btn-sm" onClick={() => this.handleLdrSave()}>
+            .ldr
+          </button>
+        </div>
+
+        <div className="w-full flex flex-row justify-between">
+          <div>
+            {this.state.colorsToCompare === 'CUSTOM_COLORS' &&
+              COLORS_ALL_CUSTOM.map((color) => (
+                <SelectColorBadge
+                  addCustomColor={this.addCustomColor}
+                  color={color}
+                  key={color.lego_name}
+                />
+              ))}
           </div>
-          <canvas
-            style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
-            className="p-10 mx-auto"
-            id="paperCanvas"
-            height={this.state.height}
-            width={this.state.width}
-          ></canvas>
+
+          <div>
+            {this.state.colors.length !== 0 && (
+              <Statistics size={this.state.selectedBoardSize}>
+                {this.state.colors.map((color) => (
+                  <BadgeColor
+                    pickEditColor={this.pickEditColor}
+                    color={color}
+                    key={color.bl_id}
+                    editColor={this.state.editColor}
+                    isEditMode={this.state.isEditMode}
+                  />
+                ))}
+              </Statistics>
+            )}
+          </div>
         </div>
-
-        <Notification
-          title={'Obtain various file options'}
-          msg={
-            'You can download .png file with your mosaic image to Download .png or .xml file you can use in various places to download list of needed pieces .xml or .bsx file is used to make orders on BrickLink.com'
-          }
-        />
-        <div>
-          {this.state.colorsToCompare === 'CUSTOM_COLORS' ? (
-            COLORS_ALL_CUSTOM.map((color) => (
-              <SelectColorBadge
-                addCustomColor={this.addCustomColor}
-                color={color}
-                key={color.lego_name}
-              />
-            ))
-          ) : (
-            <></>
-          )}
-
-          {this.state.colors.length !== 0 ? (
-            <p>
-              <span>
-                <mark>Average</mark> price of
-                <mark>all</mark> pieces.
-              </span>
-              Estimated price :{' '}
-              {`${this.state.selectedBoardSize * this.state.selectedBoardSize * 0.04} $`}
-            </p>
-          ) : (
-            <></>
-          )}
-          {this.state.extraInfo && (
-            <p>
-              <span>
-                <mark>Color names</mark> correspond to unofficial LEGO names.
-              </span>
-              {`Extra Stud Info : ${this.state.extraInfo}`}
-            </p>
-          )}
-        </div>
-
-        {this.state.colors.length !== 0 ? (
-          <p style={{ maxWidth: '200px' }}>
-            <span>
-              <mark>Click</mark> on item to set color in
-              <mark>EDIT</mark> mode
-            </span>
-            List of mosaic colors :
-          </p>
-        ) : (
-          <></>
-        )}
-        {this.state.colors.map((color) => (
-          <BadgeColor pickEditColor={this.pickEditColor} color={color} key={color.bl_id} />
-        ))}
       </>
     )
   }

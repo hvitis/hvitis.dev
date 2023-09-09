@@ -1,6 +1,6 @@
 // @ts-nocheck
 'use client'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { formatAndDownloadBsxFile } from '@/utils/formatBsxFile'
 import { formatAndDownloadXmlFile } from '@/utils/formatXmlFile'
@@ -14,148 +14,70 @@ import { clsx } from 'clsx'
 import loadedColors from 'utils/colors'
 import humanize from '@/utils/humanize'
 import Statistics from '@/components/Statistics'
+import shadeColor from '@/utils/shadeColor'
 
-const boardSized = [10, 16, 32, 46, 48, 64]
+const boardSizes = [10, 16, 32, 46, 48, 64]
 
-type MyProps = {}
-type MyState = {
-  height: number
-  width: number
-  updated: boolean
-  isCircle: boolean
-  file: any | null
-  newPhoto: boolean
-  selectedBoardSize: number
-  colors: []
-  customColors: []
-  hasFileNotUploadedError: boolean
-  LDrawMatrix: []
-  editColor: string
-  editLegoId: number
-  isGenerated: boolean
-  hasNumbers: boolean
-  extraInfo: any | null
-  isEditMode: boolean
-  colorsToCompare: string
-  hasNotSelectedColors: boolean
-}
+function PaperCanvas() {
+  const mosaicRef = useRef()
 
-class PaperCanvas extends React.Component<MyProps, MyState> {
-  constructor(props) {
-    super(props)
+  const [size, setSize] = useState(120)
+  const [isCircle, setIsCircle] = useState(true)
+  const [file, setFile] = useState(null)
+  const [boardSize, setBoardSize] = useState(10)
+  const [colors, setColors] = useState([])
+  const [customColors, setCustomColors] = useState([])
+  const [hasFileNotUploadedError, setHasFileNotUploadedError] = useState(false)
+  const [LDrawMatrix, setLDrawMatrix] = useState([])
+  const [editColor, setEditColor] = useState('#ffffff')
+  const [editLegoId, setEditLegoId] = useState(1)
+  const [isGenerated, setIsGenerated] = useState(false)
+  const [hasNumbers, setHasNumbers] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [colorsToCompare, setColorsToCompare] = useState('COLORS_ALL')
+  const [hasNotSelectedColors, setHasNotSelectedColors] = useState(false)
 
-    this.state = {
-      height: 120,
-      width: 120,
-      updated: false,
-      isCircle: true,
-      file: null,
-      newPhoto: false,
-      selectedBoardSize: 10,
-      colors: [],
-      customColors: [],
-      hasFileNotUploadedError: false,
-      LDrawMatrix: [],
-      editColor: '#ffffff',
-      editLegoId: 1,
-      isGenerated: false,
-      hasNumbers: false,
-      extraInfo: null,
-      isEditMode: false,
-      colorsToCompare: 'COLORS_ALL',
-      hasNotSelectedColors: false,
-    }
-    this.makeMosaic = this.makeMosaic.bind(this)
+  useEffect(() => {
+    const paper = require('paper')
+    paper.setup('paperCanvas')
+    const raster = new paper.Raster('mosaic')
+    raster.visible = false
+    raster.position = paper.view.center
+  }, [])
 
-    this.pickEditColor = this.pickEditColor.bind(this)
-    this.addCustomColor = this.addCustomColor.bind(this)
-    this.updateMatrix = this.updateMatrix.bind(this)
-    this.handleImageUpload = this.handleImageUpload.bind(this)
-    this.updateDimensions = this.updateDimensions.bind(this)
-    this.resizeMethod = this.resizeMethod.bind(this)
-    this.clearCanvas = this.clearCanvas.bind(this)
-    this.updateColors = this.updateColors.bind(this)
-
-    this.handleSelectBoardSize = this.handleSelectBoardSize.bind(this)
-    this.handleSelectColorsSet = this.handleSelectColorsSet.bind(this)
-    this.handleChangeShape = this.handleChangeShape.bind(this)
-    this.handleDrawNumbers = this.handleDrawNumbers.bind(this)
-    this.handleEditMode = this.handleEditMode.bind(this)
-    this.showExtraStudInfo = this.showExtraStudInfo.bind(this)
-    this.handleBsxSave = this.handleBsxSave.bind(this)
-    this.handleXmlSave = this.handleXmlSave.bind(this)
-    this.handleLdrSave = this.handleLdrSave.bind(this)
-  }
-
-  componentDidMount() {
-    if (typeof window !== `undefined`) {
-      const paper = require('paper')
-      paper.setup('paperCanvas')
-      const raster = new paper.Raster('mosaic')
-      raster.visible = false
-      raster.position = paper.view.center
-    }
-  }
-
-  handleSelectColorsSet(event) {
-    this.setState({
-      colorsToCompare: event.target.value,
-    })
-  }
-  generateComparableColors(colorsSet) {
+  function generateComparableColors(colorsSet) {
     const NEAREST_COLOR_COMPARE = {}
     colorsSet.map((color) => (NEAREST_COLOR_COMPARE[color.bl_name.toString()] = color.hex_code))
     return NEAREST_COLOR_COMPARE
   }
-  shadeColor(color, percent) {
-    let R: number = parseInt(color.substring(1, 3), 16)
-    let G: number = parseInt(color.substring(3, 5), 16)
-    let B: number = parseInt(color.substring(5, 7), 16)
 
-    R = (R * (100 + percent)) / 100
-    G = (G * (100 + percent)) / 100
-    B = (B * (100 + percent)) / 100
-
-    R = R < 255 ? R : 255
-    G = G < 255 ? G : 255
-    B = B < 255 ? B : 255
-
-    const RR = R.toString(16).length == 1 ? '0' + R.toString(16) : R.toString(16)
-    const GG = G.toString(16).length == 1 ? '0' + G.toString(16) : G.toString(16)
-    const BB = B.toString(16).length == 1 ? '0' + B.toString(16) : B.toString(16)
-
-    return '#' + RR + GG + BB
-  }
-  updateMatrix(newMatrix) {
-    this.setState({ LDrawMatrix: newMatrix })
-  }
-  makeMosaic(callback) {
-    this.setState({ isGenerated: true })
-    this.setState({ hasFileNotUploadedError: false })
-    this.clearCanvas()
+  function makeMosaic(callback) {
+    setIsGenerated(true)
+    setHasFileNotUploadedError(false)
+    clearCanvas()
     const paper = require('paper')
     let chosenColors
-    if (this.state.colorsToCompare !== 'CUSTOM_COLORS') {
-      chosenColors = loadedColors[this.state.colorsToCompare]
+    if (colorsToCompare !== 'CUSTOM_COLORS') {
+      chosenColors = loadedColors[colorsToCompare]
     }
-    if (this.state.colorsToCompare === 'CUSTOM_COLORS') {
-      if (this.state.customColors.length < 5) {
-        this.setState({ hasNotSelectedColors: true })
+    if (colorsToCompare === 'CUSTOM_COLORS') {
+      if (customColors.length < 5) {
+        setHasNotSelectedColors(true)
         return
       }
-      chosenColors = this.state.customColors
+      chosenColors = customColors
     }
 
-    const colorsToCompare = this.generateComparableColors(chosenColors)
-    const nearestColor = require('nearest-color').from(colorsToCompare)
+    const compareColors = generateComparableColors(chosenColors)
+    const nearestColor = require('nearest-color').from(compareColors)
 
     // Create a raster item using the image tag with id='mona'
     const raster = new paper.Raster('mosaic')
     // Hide the Raster:
     raster.position = paper.view.center
     raster.visible = false
-    // The size of our grid cells:
-    const gridSize = this.state.selectedBoardSize
+    // The  of our grid cells:
+    const gridSize = boardSize
 
     // Space the cells by 120%:
     const spacing = 19
@@ -164,9 +86,9 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
     // before we can perform any operation on its pixels.
 
     // passing type of points to raster
-    raster.isCircle = this.state.isCircle
-    raster.isEditMode = this.state.isEditMode
-    raster.hasNumbers = this.state.hasNumbers
+    raster.isCircle = isCircle
+    raster.isEditMode = isEditMode
+    raster.hasNumbers = hasNumbers
     raster.thus = this
     raster.chosenColors = chosenColors
     raster.on('load', function () {
@@ -240,7 +162,7 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
               // path.text = text // Appending to matrix instead
               // When the mouse enters the stud, get its fill color in HE:
               path.onClick = function () {
-                this.fillColor = raster.thus.state.editColor
+                this.fillColor = raster.thus.editColor
                 for (let index = 0; index < LDrawMatrix.length; index++) {
                   // Here we have nested arrays that consist of objects
                   const nestedArray = LDrawMatrix[index]
@@ -251,18 +173,17 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
                     // If it matches the stud we are updating
                     if (singleStudObj.pdf_x == this.x) {
                       if (singleStudObj.pdf_y == this.y) {
-                        singleStudObj.hex_code = raster.thus.state.editColor
+                        singleStudObj.hex_code = raster.thus.editColor
                         // Getting bl_id for the Hex color from clicking on a badge.
-                        singleStudObj.text.content = raster.thus.state.editLegoId
-                        singleStudObj.text.fillColor = invert(raster.thus.state.editColor, true)
+                        singleStudObj.text.content = editLegoId
+                        singleStudObj.text.fillColor = invert(raster.thus.editColor, true)
                         break
                       }
                     }
                   }
                 }
-                const extraInfo = `LEGO id: ${filteredColour.lego_id}, Hex code: ${filteredColour.hex_code}, RGB: ${filteredColour.rgb}, Color name: ${filteredColour.lego_name}`
-                raster.thus.showExtraStudInfo(extraInfo)
-                raster.thus.updateMatrix(LDrawMatrix)
+
+                setLDrawMatrix(LDrawMatrix)
               }
             }
           }
@@ -303,8 +224,8 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
             if (raster.isEditMode) {
               // When the mouse enters the stud, get its fill color in HE:
               path.onClick = function () {
-                this.fillColor = raster.thus.state.editColor
-                pathLighter.fillColor = raster.thus.state.editColor
+                this.fillColor = raster.thus.editColor
+                pathLighter.fillColor = raster.thus.editColor
                 for (let index = 0; index < LDrawMatrix.length; index++) {
                   // Here we have nested arrays that consist of objects
                   const nestedArray = LDrawMatrix[index]
@@ -316,22 +237,17 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
                     // If it matches the stud we are updating
                     if (singleStudObj.pdf_x == this.x) {
                       if (singleStudObj.pdf_y == this.y) {
-                        singleStudObj.hex_code = raster.thus.state.editColor
+                        singleStudObj.hex_code = raster.thus.editColor
 
                         break
                       }
                     }
                   }
                 }
-                raster.thus.updateMatrix(LDrawMatrix)
+                setLDrawMatrix(LDrawMatrix)
               }
             }
           }
-
-          // pathDarker.onClick = function() {
-          //   console.log( this.x, this.y, this.LDrawZCoord, this.LDrawXCoord )
-          //   this.fillColor = raster.thus.state.editColor
-          // }
 
           if (!colorCodesVerify.includes(pickedColor.value)) {
             /* colors contains already the color we're iterating */
@@ -368,8 +284,8 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
           path.fillColor = pickedColor.value
           if (!raster.isCircle) {
             // Coloring drawn studs with shadow
-            pathDarker.fillColor = raster.thus.shadeColor(pickedColor.value, -40)
-            pathLighter.fillColor = raster.thus.shadeColor(pickedColor.value, 10)
+            pathDarker.fillColor = shadeColor(pickedColor.value, -40)
+            pathLighter.fillColor = shadeColor(pickedColor.value, 10)
           }
         }
         LDrawMatrix.push(verticalRowBotToTop)
@@ -380,91 +296,57 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
 
       // Returning colors array to create buttons with information and
       // Returning LDraw matrix of color IDs for LDraw to draw board
-      callback(colorCodes, LDrawMatrix)
+      // callback(colorCodes, LDrawMatrix)
+      setColors(colorCodes)
+      setLDrawMatrix(LDrawMatrix)
     })
   }
 
-  clearCanvas() {
-    if (typeof window !== `undefined`) {
-      const paper = require('paper')
-      paper.project.activeLayer.removeChildren()
-      paper.project.clear()
-    }
+  function clearCanvas() {
+    const paper = require('paper')
+    paper.project.activeLayer.removeChildren()
+    paper.project.clear()
   }
 
-  updateDimensions(width, height) {
-    this.setState({
-      height: width || window.innerWidth,
-      width: height || window.innerWidth,
-    })
-  }
-
-  resizeMethod() {
-    this.makeMosaic(this.updateColors)
-  }
-
-  clickGenerateMosaicButton() {
-    if (!this.state.file) {
-      this.setState({ hasFileNotUploadedError: true })
+  function clickGenerateMosaicButton() {
+    if (!file) {
+      setHasFileNotUploadedError(true)
       return
     }
-
-    this.makeMosaic(this.updateColors)
+    updateColors()
+    makeMosaic()
   }
 
-  showExtraStudInfo(extraInfo) {
-    // Showing span with all info on a stud
-    this.setState({ extraInfo: extraInfo })
-  }
-
-  updateColors(colors, LDrawMatrix) {
+  function updateColors() {
     // Order here colours by amount of them in the picture
     colors.sort((a, b) => (a.amount > b.amount ? 1 : b.amount > a.amount ? -1 : 0))
-    this.setState({ colors: colors, LDrawMatrix: LDrawMatrix })
+    setColors(colors)
+    setLDrawMatrix(LDrawMatrix)
   }
 
-  handleImageUpload(event) {
-    this.setState({
-      file: URL.createObjectURL(event.target.files[0]),
-    })
-  }
-  handleSelectBoardSize(event) {
-    this.setState({
-      selectedBoardSize: event.target.value,
-    })
-    const newSizePx = parseInt(event.target.value * 12)
-    this.updateDimensions(newSizePx, newSizePx)
-  }
-  handleBsxSave() {
-    formatAndDownloadBsxFile(this.state.colors)
-  }
-  handleLdrSave() {
-    formatAndDownloadLdrFile(this.state.LDrawMatrix)
-  }
-
-  handleXmlSave() {
-    formatAndDownloadXmlFile(this.state.colors)
-  }
-
-  handleCanvasSave() {
+  function handleCanvasSave() {
     const FileSaver = require('file-saver')
     const canvas = document.getElementById('paperCanvas')
     canvas.toBlob(function (blob) {
       FileSaver.saveAs(blob, 'Hvitis.dev-MOSAIC-Art.png')
     })
   }
-  handleChangeShape() {
-    this.setState({ isCircle: !this.state.isCircle })
+
+  function handleDrawNumbers() {
+    setHasNumbers(!hasNumbers)
+    setIsCircle(true)
+    setIsEditMode(false)
   }
-  handleDrawNumbers() {
-    this.setState({ hasNumbers: !this.state.hasNumbers, isCircle: true, isEditMode: false })
+
+  function handleEditMode() {
+    setIsEditMode(!isEditMode)
+    setHasNumbers(true)
+    setIsCircle(true)
   }
-  handleEditMode() {
-    this.setState({ isEditMode: !this.state.isEditMode, hasNumbers: true, isCircle: true })
-  }
-  addCustomColor(colorObject, isSelected) {
+
+  function addCustomColor(colorObject, isSelected) {
     // Adding colors to the list of custom colors
-    let currentlySelectedColors = [...this.state.customColors, colorObject]
+    let currentlySelectedColors = [...customColors, colorObject]
     let uniqueColors
     if (isSelected) {
       // Adding object to selected colors and filtering duplicates
@@ -480,197 +362,185 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
     // currentlySelectedColors = currentlySelectedColors.filter(function(el) {
     //   return el.bl_id != colorObject.bl_id
     // })
-    this.setState({
-      customColors: uniqueColors,
-      hasNotSelectedColors: false,
-    })
+    setCustomColors(uniqueColors)
+    setHasNotSelectedColors(hasNotSelectedColors)
   }
-  pickEditColor(badgeColor, bl_id) {
+  function pickEditColor(badgeColor, bl_id) {
     // Setting color for editing to state for editing canvas
-    this.setState({
-      editColor: badgeColor,
-      editLegoId: bl_id,
-    })
+    setEditColor(badgeColor)
+    setEditLegoId(bl_id)
   }
-  render() {
-    return (
-      <>
-        <div className="w-full">
-          <div className="flex lg:flex-row flex-col flex-wrap gap-2 w-full">
-            <div className="flex flex-col lg:ml-auto mx-auto">
-              <label
-                className={clsx(
-                  'text-center',
-                  this.state.hasFileNotUploadedError && 'text-red-600'
-                )}
-              >
-                Select image:
-              </label>
-              <input
-                className="file-input file-input-bordered file-input-info w-full max-w-xs"
-                id="file"
-                type="file"
-                onChange={this.handleImageUpload}
-              />
-            </div>
 
-            <div className="flex flex-col">
-              <label className="text-center">Board size:</label>
-              <select
-                className="select select-info"
-                required
-                type="text"
-                as="select"
-                size="lg"
-                onChange={this.handleSelectBoardSize}
-                name="selectedToBucket"
-                value={this.state.selectedBoardSize}
-              >
-                {boardSized.map((sizeOfBoard, index) => (
-                  <option key={index} value={sizeOfBoard}>
-                    {`${sizeOfBoard}x${sizeOfBoard}`}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col">
-              <label className="text-center">Colors set:</label>
-              <select
-                className="select select-info"
-                required
-                type="text"
-                as="select"
-                size="lg"
-                onChange={this.handleSelectColorsSet}
-                name="selectedToBucket"
-                value={this.state.colorsToCompare}
-              >
-                {Object.keys(loadedColors)
-                  .map((set, index) => {
-                    return { id: index, name: humanize(set.slice(6, 30)), value: set }
-                  })
-                  .map((colorSet) => (
-                    <option key={colorSet.id} value={colorSet.value}>
-                      {colorSet.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col lg:mr-auto mx-auto">
-              <label className="text-center">Settings:</label>
-              <div className="btn-group">
-                <button
-                  className="btn btn-info"
-                  onClick={() => {
-                    this.handleChangeShape()
-                  }}
-                >
-                  {this.state.isCircle ? 'Circles' : 'Squares'}
-                </button>
-                <button
-                  className="btn btn-info"
-                  onClick={() => {
-                    this.handleDrawNumbers()
-                  }}
-                >
-                  {this.state.hasNumbers && this.state.isCircle ? 'Numbers' : 'Blank'}
-                </button>
-
-                <button
-                  className="btn btn-info"
-                  onClick={() => {
-                    this.handleEditMode()
-                  }}
-                >
-                  {this.state.isEditMode ? 'Edit' : 'No Edit'}
-                </button>
-              </div>
-            </div>
+  return (
+    <>
+      <div className="w-full">
+        <div className="flex lg:flex-row flex-col flex-wrap gap-2 w-full">
+          <div className="flex flex-col lg:ml-auto mx-auto">
+            <label className={clsx('text-center', hasFileNotUploadedError && 'text-red-600')}>
+              Select image:
+            </label>
+            <input
+              className="file-input file-input-bordered file-input-info w-full max-w-xs"
+              id="file"
+              type="file"
+              onChange={(e) => setFile(URL.createObjectURL(e.target.files[0]))}
+            />
           </div>
 
-          <div className="w-full my-4 mx-auto">
-            <div>
+          <div className="flex flex-col">
+            <label className="text-center">Board size:</label>
+            <select
+              className="select select-info"
+              as="select"
+              size="lg"
+              onChange={(e) => {
+                setBoardSize(e.target.value)
+              }}
+              name="selectedToBucket"
+              value={boardSize}
+            >
+              {boardSizes.map((sideInStuds) => (
+                <option key={sideInStuds} value={sideInStuds}>
+                  {`${sideInStuds}x${sideInStuds}`}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-center">Colors set:</label>
+            <select
+              className="select select-info"
+              required
+              type="text"
+              as="select"
+              size="lg"
+              onChange={setColorsToCompare}
+              name="selectedToBucket"
+              value={colorsToCompare}
+            >
+              {Object.keys(loadedColors)
+                .map((set, index) => {
+                  return { id: index, name: humanize(set.slice(6, 30)), value: set }
+                })
+                .map((colorSet) => (
+                  <option key={colorSet.id} value={colorSet.value}>
+                    {colorSet.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col lg:mr-auto mx-auto">
+            <label className="text-center">Settings:</label>
+            <div className="btn-group">
               <button
-                className="btn btn-success btn-lg mx-2"
-                onClick={() => this.clickGenerateMosaicButton(this.updateColors)}
+                className="btn btn-info"
+                onClick={() => {
+                  setIsCircle(!isCircle)
+                }}
               >
-                Generate
+                {isCircle ? 'Circles' : 'Squares'}
+              </button>
+              <button
+                className="btn btn-info"
+                onClick={() => {
+                  handleDrawNumbers()
+                }}
+              >
+                {hasNumbers && isCircle ? 'Numbers' : 'Blank'}
+              </button>
+
+              <button
+                className="btn btn-info"
+                onClick={() => {
+                  handleEditMode()
+                }}
+              >
+                {isEditMode ? 'Edit' : 'No Edit'}
               </button>
             </div>
           </div>
         </div>
 
-        <img
-          src={this.state.file}
-          alt="Generated mosaic LEGO Image"
-          crossOrigin="*"
-          ref="mosaic"
-          id="mosaic"
-          hidden
-        />
+        <div className="w-full my-4 mx-auto">
+          <div>
+            <button
+              className="btn btn-success btn-lg mx-2"
+              onClick={() => clickGenerateMosaicButton(updateColors())}
+            >
+              Generate
+            </button>
+          </div>
+        </div>
+      </div>
 
-        <canvas
-          style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
-          className="p-1 mx-auto"
-          id="paperCanvas"
-          height={this.state.height}
-          width={this.state.width}
-        ></canvas>
+      {/* console.log(this.mosaicRef.current.editor.getValue()); */}
+      <img
+        src={file}
+        alt="Generated mosaic LEGO Image"
+        crossOrigin="*"
+        ref={mosaicRef}
+        id="mosaic"
+        hidden
+      />
+      <canvas
+        className="p-1 mx-auto"
+        id="paperCanvas"
+        height={boardSize * 10}
+        width={boardSize * 10}
+      ></canvas>
 
-        <div
-          className="btn-group lg:mx-10 mx-auto"
-          style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
-        >
-          <button className="btn lg:btn btn-sm btn-info" onClick={() => this.handleCanvasSave()}>
-            Download
-          </button>
-          <button className="btn lg:btn btn-sm" onClick={() => this.handleCanvasSave()}>
-            .Png
-          </button>
-          <button className="btn lg:btn btn-sm" onClick={() => this.handleBsxSave()}>
-            .bsx
-          </button>
-          <button className="btn lg:btn btn-sm" onClick={() => this.handleXmlSave()}>
-            .xml
-          </button>
-          <button className="btn lg:btn btn-sm" onClick={() => this.handleLdrSave()}>
-            .ldr
-          </button>
+      <div
+        className="btn-group lg:mx-10 mx-auto"
+        style={{ display: isGenerated ? 'inherit' : 'none' }}
+      >
+        <button className="btn lg:btn btn-sm btn-info" onClick={() => handleCanvasSave()}>
+          Download
+        </button>
+        <button className="btn lg:btn btn-sm" onClick={() => handleCanvasSave()}>
+          .Png
+        </button>
+        <button className="btn lg:btn btn-sm" onClick={() => formatAndDownloadBsxFile(colors)}>
+          .bsx
+        </button>
+        <button className="btn lg:btn btn-sm" onClick={() => formatAndDownloadXmlFile(colors)}>
+          .xml
+        </button>
+        <button className="btn lg:btn btn-sm" onClick={() => formatAndDownloadLdrFile(LDrawMatrix)}>
+          .ldr
+        </button>
+      </div>
+      <div className="w-full flex flex-row justify-between">
+        <div>
+          {colorsToCompare === 'CUSTOM_COLORS' &&
+            COLORS_ALL_CUSTOM.map((color) => (
+              <SelectColorBadge
+                addCustomColor={addCustomColor}
+                color={color}
+                key={color.lego_name}
+              />
+            ))}
         </div>
 
-        <div className="w-full flex flex-row justify-between">
-          <div>
-            {this.state.colorsToCompare === 'CUSTOM_COLORS' &&
-              COLORS_ALL_CUSTOM.map((color) => (
-                <SelectColorBadge
-                  addCustomColor={this.addCustomColor}
+        <div>
+          {colors.length !== 0 && (
+            <Statistics size={boardSize}>
+              {colors.map((color) => (
+                <BadgeColor
+                  pickEditColor={pickEditColor}
                   color={color}
-                  key={color.lego_name}
+                  key={color.bl_id}
+                  editColor={editColor}
+                  isEditMode={isEditMode}
                 />
               ))}
-          </div>
-
-          <div>
-            {this.state.colors.length !== 0 && (
-              <Statistics size={this.state.selectedBoardSize}>
-                {this.state.colors.map((color) => (
-                  <BadgeColor
-                    pickEditColor={this.pickEditColor}
-                    color={color}
-                    key={color.bl_id}
-                    editColor={this.state.editColor}
-                    isEditMode={this.state.isEditMode}
-                  />
-                ))}
-              </Statistics>
-            )}
-          </div>
+            </Statistics>
+          )}
         </div>
-      </>
-    )
-  }
+      </div>
+    </>
+  )
 }
 
 export default PaperCanvas

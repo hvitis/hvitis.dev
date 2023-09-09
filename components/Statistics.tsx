@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 
 interface StatisticsInterface {
   size: number
-  children: any
+  children: React.ReactNode
 }
 
 const CURRENCIES = {

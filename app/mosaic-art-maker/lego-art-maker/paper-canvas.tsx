@@ -14,7 +14,6 @@ import { clsx } from 'clsx'
 import loadedColors from 'utils/colors'
 import humanize from '@/utils/humanize'
 import Statistics from '@/components/Statistics'
-import { isMobile } from 'react-device-detect'
 
 const boardSized = [10, 16, 32, 46, 48, 64]
 
@@ -41,19 +40,18 @@ type MyState = {
   hasNotSelectedColors: boolean
 }
 
-const mobileSize = isMobile ? 160 : null
 class PaperCanvas extends React.Component<MyProps, MyState> {
   constructor(props) {
     super(props)
 
     this.state = {
-      height: mobileSize || 460,
-      width: mobileSize || 460,
+      height: 120,
+      width: 120,
       updated: false,
       isCircle: true,
       file: null,
       newPhoto: false,
-      selectedBoardSize: (mobileSize || 460) / 10,
+      selectedBoardSize: 10,
       colors: [],
       customColors: [],
       hasFileNotUploadedError: false,
@@ -97,7 +95,6 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
       raster.visible = false
       raster.position = paper.view.center
     }
-    window.addEventListener('resize', this.resizeMethod)
   }
 
   handleSelectColorsSet(event) {
@@ -395,10 +392,10 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
     }
   }
 
-  updateDimensions() {
+  updateDimensions(width, height) {
     this.setState({
-      height: window.innerWidth,
-      width: window.innerWidth,
+      height: width || window.innerWidth,
+      width: height || window.innerWidth,
     })
   }
 
@@ -435,6 +432,8 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
     this.setState({
       selectedBoardSize: event.target.value,
     })
+    const newSizePx = parseInt(event.target.value * 12)
+    this.updateDimensions(newSizePx, newSizePx)
   }
   handleBsxSave() {
     formatAndDownloadBsxFile(this.state.colors)

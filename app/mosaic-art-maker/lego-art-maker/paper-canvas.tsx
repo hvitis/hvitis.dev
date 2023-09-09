@@ -614,7 +614,7 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
             className="btn-group text-right btn-sm mx-10"
             style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
           >
-            <button className="btn btn-info" disabled>
+            <button className="btn btn-info" onClick={() => this.handleCanvasSave()}>
               Download
             </button>
             <button className="btn" onClick={() => this.handleCanvasSave()}>
@@ -639,30 +639,34 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
           ></canvas>
         </div>
 
-        <div>
-          {this.state.colors && <Statistics size={this.state.selectedBoardSize} />}
-          {this.state.colorsToCompare === 'CUSTOM_COLORS' &&
-            COLORS_ALL_CUSTOM.map((color) => (
-              <SelectColorBadge
-                addCustomColor={this.addCustomColor}
-                color={color}
-                key={color.lego_name}
-              />
-            ))}
+        <div className="w-full flex flex-row justify-between">
+          <div>
+            {this.state.colorsToCompare === 'CUSTOM_COLORS' &&
+              COLORS_ALL_CUSTOM.map((color) => (
+                <SelectColorBadge
+                  addCustomColor={this.addCustomColor}
+                  color={color}
+                  key={color.lego_name}
+                />
+              ))}
+          </div>
 
-          {this.state.extraInfo && (
-            <p>
-              <span>
-                <mark>Color names</mark> correspond to unofficial LEGO names.
-              </span>
-              {`Extra Stud Info : ${this.state.extraInfo}`}
-            </p>
-          )}
+          <div>
+            {this.state.colors.length !== 0 && (
+              <Statistics size={this.state.selectedBoardSize}>
+                {this.state.colors.map((color) => (
+                  <BadgeColor
+                    pickEditColor={this.pickEditColor}
+                    color={color}
+                    key={color.bl_id}
+                    editColor={this.state.editColor}
+                    isEditMode={this.state.isEditMode}
+                  />
+                ))}
+              </Statistics>
+            )}
+          </div>
         </div>
-
-        {this.state.colors.map((color) => (
-          <BadgeColor pickEditColor={this.pickEditColor} color={color} key={color.bl_id} />
-        ))}
       </>
     )
   }

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 
 interface StatisticsInterface {
   size: number
+  children: any
 }
 
 const CURRENCIES = {
@@ -26,7 +27,7 @@ const CURRENCIES = {
   },
 }
 
-const Statistics = ({ size = 10 }: StatisticsInterface) => {
+const Statistics = ({ size = 10, children }: StatisticsInterface) => {
   const [currency, setCurrency] = useState(CURRENCIES['EUR'])
   const [rates, setRates] = useState(null)
   const [price, setPrice] = useState(size * size * 0.04)
@@ -48,7 +49,6 @@ const Statistics = ({ size = 10 }: StatisticsInterface) => {
     let data
     if (!rates) {
       data = await getExchangeRates(currency)
-      console.log(data)
       setRates(data)
     }
     setPriceInCurrency(price * (rates ? rates[currency] : data[currency]))
@@ -60,7 +60,12 @@ const Statistics = ({ size = 10 }: StatisticsInterface) => {
   }
 
   return (
-    <div className="stats bg-primary text-primary">
+    <div className="stats bg-primary text-primary lg:block flex flex-wrap">
+      <div className="stat lg:px-20">
+        <div className="stat-title">Colors</div>
+        <div className="stat-value">{children.length}</div>
+        <div className="stat-actions flex flex-row flex-wrap">{children}</div>
+      </div>
       <div className="stat">
         <div className="stat-title">Approximated price</div>
         <div className="stat-value">

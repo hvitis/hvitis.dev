@@ -30,6 +30,7 @@ const CURRENCIES = {
 const Statistics = ({ size = 10, children }: StatisticsInterface) => {
   const [currency, setCurrency] = useState(CURRENCIES['EUR'])
   const [rates, setRates] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [price, setPrice] = useState(size * size * 0.04)
   const [priceInCurrency, setPriceInCurrency] = useState(null)
 
@@ -48,11 +49,13 @@ const Statistics = ({ size = 10, children }: StatisticsInterface) => {
   const calculateExchangeRateTo = async (currency) => {
     let data
     if (!rates) {
+      setIsLoading(true)
       data = await getExchangeRates(currency)
       setRates(data)
     }
     setPriceInCurrency(price * (rates ? rates[currency] : data[currency]))
     setCurrency(CURRENCIES[currency])
+    setIsLoading(false)
   }
 
   const roundUp = (num) => {
@@ -69,7 +72,12 @@ const Statistics = ({ size = 10, children }: StatisticsInterface) => {
       <div className="stat">
         <div className="stat-title">Approximated price</div>
         <div className="stat-value">
-          {roundUp(priceInCurrency || price)} {currency.sign}
+          {!isLoading && (
+            <span>
+              {roundUp(priceInCurrency || price)} {currency.sign}
+            </span>
+          )}
+          {isLoading && <span className="loading loading-dots loading-lg"></span>}
         </div>
         <div className="stat-actions">
           {Object.keys(CURRENCIES).map((currencyName) => {

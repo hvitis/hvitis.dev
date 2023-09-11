@@ -20,13 +20,22 @@ const boardSizes = [10, 16, 32, 46, 48, 64]
 
 function PaperCanvas() {
   const mosaicRef = useRef()
-  const canvasRef = useRef()
-
+  const [spacing, setSpacing] = useState(19)
   const [radius, setRadius] = useState(9)
   const [boardSize, setBoardSize] = useState(10)
-  const [canvasSize, setCanvasSize] = useState(190)
+
+  const calculateCanvasSize = () => {
+    return boardSize * (radius * 2 + (spacing - radius * 2)) + 2 * radius
+  }
+
+  const calculateShiftRange = () => {
+    let shift = (window.screen.width - calculateCanvasSize()) / 2
+    console.log(shift)
+    return shift
+  }
+
+  const [canvasSize, setCanvasSize] = useState(calculateCanvasSize())
   const [isCircle, setIsCircle] = useState(true)
-  const [spacing, setSpacing] = useState(19)
   const [file, setFile] = useState(null)
   const [colors, setColors] = useState([])
   const [customColors, setCustomColors] = useState([])
@@ -35,8 +44,10 @@ function PaperCanvas() {
   const [editColor, setEditColor] = useState('#ffffff')
   const [editLegoId, setEditLegoId] = useState(1)
   const [isGenerated, setIsGenerated] = useState(false)
+  const [reInitialiseCanvas, setReInitialiseCanvas] = useState(true)
   const [hasNumbers, setHasNumbers] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
+  const [shift, setShift] = useState(0)
   const [colorsToCompare, setColorsToCompare] = useState('COLORS_ALL')
 
   useEffect(() => {
@@ -44,9 +55,11 @@ function PaperCanvas() {
   }, [editColor])
 
   useEffect(() => {
-    // canvasRef.current.height = getCanvasSize(boardSize)
-    // canvasRef.current.width = getCanvasSize(boardSize)
-    // setCanvasSize(boardSize * radius * 2 + boardSize)
+    setShift(calculateShiftRange())
+    setReInitialiseCanvas(false)
+    setCanvasSize(calculateCanvasSize())
+    setReInitialiseCanvas(true)
+    setIsGenerated(false)
   }, [boardSize])
 
   function makeMosaic() {
@@ -287,16 +300,19 @@ function PaperCanvas() {
         id="mosaic"
         hidden
       />
-      <div className="w-full">
-        <canvas
-          className="p-1 mx-auto w-full"
-          id="paperCanvas"
-          height={1170}
-          width={1170}
-          ref={canvasRef}
-          data-paper-resize
-          hidden={!isGenerated}
-        ></canvas>
+      <div className="w-full mb-5 ">
+        {/* Re init canvas to change it´s size in hard mode. data-paper-resize could
+        be another option if it was not shifting path's onClick events. */}
+        {reInitialiseCanvas && (
+          <canvas
+            className={clsx('mx-auto', boardSize > 48 ? `w-max relative` : '')}
+            id="paperCanvas"
+            height={canvasSize}
+            width={canvasSize}
+            hidden={!isGenerated}
+            style={{ left: boardSize > 48 ? `-${shift}px` : '' }}
+          ></canvas>
+        )}
       </div>
 
       <div

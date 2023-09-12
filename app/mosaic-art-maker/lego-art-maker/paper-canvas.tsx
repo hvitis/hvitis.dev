@@ -1,6 +1,6 @@
 // @ts-nocheck
 'use client'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { formatAndDownloadBsxFile } from '@/utils/formatBsxFile'
 import { formatAndDownloadXmlFile } from '@/utils/formatXmlFile'
@@ -9,499 +9,309 @@ import { formatAndDownloadLdrFile } from '@/utils/formatLDrawFile'
 import BadgeColor from '@/components/BadgeColor'
 import SelectColorBadge from '@/components/SelectColorBadge'
 
+import Paper from 'paper'
 import invert from 'invert-color'
-import { clsx } from 'clsx'
+import tinycolor from 'tinycolor2'
 import loadedColors from 'utils/colors'
+
+import { clsx } from 'clsx'
 import humanize from '@/utils/humanize'
 import Statistics from '@/components/Statistics'
+import { CheckCircle, CheckSquare, Circle } from 'lucide-react'
+import Toast from '@/components/Toast'
+import Helper from '@/components/Helper'
 
-const boardSized = [10, 16, 32, 46, 48, 64]
+function PaperCanvas() {
+  const radius = 9
+  const spacing = 19
+  const defBoardSize = 10
+  const maxBoardSizes = [10, 64]
 
-type MyProps = {}
-type MyState = {
-  height: number
-  width: number
-  updated: boolean
-  isCircle: boolean
-  file: any | null
-  newPhoto: boolean
-  selectedBoardSize: number
-  colors: []
-  customColors: []
-  hasFileNotUploadedError: boolean
-  LDrawMatrix: []
-  editColor: string
-  editLegoId: number
-  isGenerated: boolean
-  hasNumbers: boolean
-  extraInfo: any | null
-  isEditMode: boolean
-  colorsToCompare: string
-  hasNotSelectedColors: boolean
-}
+  const mosaicRef = useRef()
+  const canvasRef = useRef()
 
-class PaperCanvas extends React.Component<MyProps, MyState> {
-  constructor(props) {
-    super(props)
+  const [notification, setNotification] = useState(null)
+  const [boardSize, setBoardSize] = useState({ width: defBoardSize, height: defBoardSize })
 
-    this.state = {
-      height: 120,
-      width: 120,
-      updated: false,
-      isCircle: true,
-      file: null,
-      newPhoto: false,
-      selectedBoardSize: 10,
-      colors: [],
-      customColors: [],
-      hasFileNotUploadedError: false,
-      LDrawMatrix: [],
-      editColor: '#ffffff',
-      editLegoId: 1,
-      isGenerated: false,
-      hasNumbers: false,
-      extraInfo: null,
-      isEditMode: false,
-      colorsToCompare: 'COLORS_ALL',
-      hasNotSelectedColors: false,
+  const calcCanvas = (sideSize) => {
+    return sideSize * (radius * 2 + (spacing - radius * 2)) + 2 * radius
+  }
+
+  const calculateShiftRange = (size) => {
+    return (window.screen.width - calcCanvas(size)) / 2
+  }
+
+  const [canvasSize, setCanvasSize] = useState({
+    width: 100,
+    height: 100,
+  })
+
+  const [isRound, setIsRound] = useState(true)
+  const [file, setFile] = useState(null)
+  const [colors, setColors] = useState([])
+  const [hasFileNotUploadedError, setHasFileNotUploadedError] = useState(false)
+  const [LDrawMatrix, setLDrawMatrix] = useState([])
+  const [editColor, setEditColor] = useState('#ffffff')
+  const [editLegoId, setEditLegoId] = useState(1)
+  const [isGenerated, setIsGenerated] = useState(false)
+  const [reInitialiseCanvas, setReInitialiseCanvas] = useState(false)
+  const [hasNumbers, setHasNumbers] = useState(false)
+  const [shift, setShift] = useState(0)
+  const [colorsToCompare, setColorsToCompare] = useState('COLORS_ALL')
+
+  useEffect(() => {
+    canvasRef.current.getContext('2d', { willReadFrequently: true })
+  }, [])
+
+  useEffect(() => {
+    window.editColor = editColor
+  }, [editColor])
+
+  useEffect(() => {
+    setReInitialiseCanvas(false)
+  }, [reInitialiseCanvas])
+
+  useEffect(() => {
+    setTimeout(() => setNotification(null), 7000)
+  }, [notification])
+
+  useEffect(() => {
+    let size = { ...boardSize }
+    let newWidth = calcCanvas(size.width)
+    let newHeight = calcCanvas(size.height)
+
+    setShift(calculateShiftRange(size.width))
+    setReInitialiseCanvas(true)
+    setCanvasSize({ width: newWidth, height: newHeight })
+    setIsGenerated(false)
+  }, [boardSize, hasNumbers])
+
+  function generateMosaic() {
+    Paper.setup('paperCanvas')
+    const raster = new Paper.Raster('mosaic')
+    raster.visible = false
+    raster.position = Paper.view.center
+    raster.size = new Paper.Size([boardSize.width, boardSize.height])
+
+    // Hide the Raster:
+    raster.visible = false
+
+    let chosenColors = loadedColors[colorsToCompare]
+    const compareColors = generateComparableColors(chosenColors)
+    const nearestColor = require('nearest-color').from(compareColors)
+
+    // passing type of points to raster
+    raster.isRound = isRound
+    raster.hasNumbers = hasNumbers
+
+    raster.chosenColors = chosenColors
+
+    const colorCodes = []
+    const colorCodesVerify = []
+
+    for (let x = 0; x < raster.width; x++) {
+      for (let y = raster.height - 1; y >= 0; y--) {
+        // Get the color of the pixel:
+        const singleColor = {}
+        const color = raster.getPixel(x, y)
+        const hexColor = color.toCSS(true)
+        const pickedColor = nearestColor(hexColor)
+
+        // Filtering the color to get more info, besides hex
+        let filteredColour = raster.chosenColors.filter(
+          (color) => color.hex_code === pickedColor.value
+        )
+        filteredColour = filteredColour[0]
+        let path
+        if (!raster.isRound) {
+          // Create a square PORTRAIT shaped path:
+          path = new Paper.Path.Rectangle({
+            point: new Paper.Point(x * spacing, y * spacing),
+            size: 18,
+          })
+          path.fillColor = pickedColor.value
+
+          var pathDarker = new Paper.Path.Circle({
+            center: new Paper.Point(x * spacing + 9, y * spacing + 9),
+            radius: 7,
+          })
+          pathDarker.fillColor = tinycolor(pickedColor.value).darken().toString()
+
+          let light = new Paper.Path.Circle({
+            center: new Paper.Point(x * spacing + 8, y * spacing + 8),
+            radius: 6,
+          })
+          light.fillColor = pickedColor.value
+
+          let transparent = new Paper.Path.Rectangle({
+            point: new Paper.Point(x * spacing, y * spacing),
+            size: 18,
+          })
+          transparent.fillColor = pickedColor.value
+          transparent.opacity = 0
+
+          transparent.path = path
+          transparent.light = light
+          transparent.pathDarker = pathDarker
+          transparent.onClick = function () {
+            this.path.fillColor = window.editColor
+            this.light.fillColor = window.editColor
+            this.pathDarker.fillColor = tinycolor(window.editColor).darken().toString()
+          }
+        } else {
+          path = new Paper.Path.Circle({
+            center: new Paper.Point(x, y).multiply(spacing),
+            radius: radius,
+          })
+          path.onClick = function () {
+            this.fillColor = window.editColor
+          }
+        }
+
+        if (raster.hasNumbers) {
+          let text
+          if (raster.isRound)
+            text = new Paper.PointText(new Paper.Point(x * spacing, y * spacing + 3))
+          if (!raster.isRound)
+            text = new Paper.PointText(new Paper.Point(x * spacing + 7, y * spacing + 10))
+
+          text.fontSize = 8
+          text.content = filteredColour.bl_id
+          text.justification = 'center'
+          text.fontFamily = 'Fira Sans'
+          text.fontWeight = '700'
+          text.fillColor = invert(hexColor, true)
+        }
+
+        if (!colorCodesVerify.includes(pickedColor.value)) {
+          /* colors contains already the color we're iterating */
+          colorCodesVerify.push(pickedColor.value)
+          singleColor['hex_code'] = pickedColor.value
+          singleColor['name'] = pickedColor.name
+          singleColor['bl_id'] = filteredColour.bl_id
+          singleColor['amount'] = 1
+          colorCodes.push(singleColor)
+        } else {
+          // Getting the color code from the array of colors that will be used for BUTTONS
+          let newFilteredColour = colorCodes.filter((color) => color.hex_code === pickedColor.value)
+          newFilteredColour[0]['amount'] += 1
+        }
+      }
     }
-    this.makeMosaic = this.makeMosaic.bind(this)
+    Paper.project.activeLayer.position = Paper.view.center
 
-    this.pickEditColor = this.pickEditColor.bind(this)
-    this.addCustomColor = this.addCustomColor.bind(this)
-    this.updateMatrix = this.updateMatrix.bind(this)
-    this.handleImageUpload = this.handleImageUpload.bind(this)
-    this.updateDimensions = this.updateDimensions.bind(this)
-    this.resizeMethod = this.resizeMethod.bind(this)
-    this.clearCanvas = this.clearCanvas.bind(this)
-    this.updateColors = this.updateColors.bind(this)
-
-    this.handleSelectBoardSize = this.handleSelectBoardSize.bind(this)
-    this.handleSelectColorsSet = this.handleSelectColorsSet.bind(this)
-    this.handleChangeShape = this.handleChangeShape.bind(this)
-    this.handleDrawNumbers = this.handleDrawNumbers.bind(this)
-    this.handleEditMode = this.handleEditMode.bind(this)
-    this.showExtraStudInfo = this.showExtraStudInfo.bind(this)
-    this.handleBsxSave = this.handleBsxSave.bind(this)
-    this.handleXmlSave = this.handleXmlSave.bind(this)
-    this.handleLdrSave = this.handleLdrSave.bind(this)
+    // Returning colors array to create buttons with information and
+    setColors(colorCodes)
+    setIsGenerated(true)
   }
 
-  componentDidMount() {
-    if (typeof window !== `undefined`) {
-      const paper = require('paper')
-      paper.setup('paperCanvas')
-      const raster = new paper.Raster('mosaic')
-      raster.visible = false
-      raster.position = paper.view.center
-    }
-  }
-
-  handleSelectColorsSet(event) {
-    this.setState({
-      colorsToCompare: event.target.value,
-    })
-  }
-  generateComparableColors(colorsSet) {
+  function generateComparableColors(colorsSet) {
     const NEAREST_COLOR_COMPARE = {}
     colorsSet.map((color) => (NEAREST_COLOR_COMPARE[color.bl_name.toString()] = color.hex_code))
     return NEAREST_COLOR_COMPARE
   }
-  shadeColor(color, percent) {
-    let R: number = parseInt(color.substring(1, 3), 16)
-    let G: number = parseInt(color.substring(3, 5), 16)
-    let B: number = parseInt(color.substring(5, 7), 16)
 
-    R = (R * (100 + percent)) / 100
-    G = (G * (100 + percent)) / 100
-    B = (B * (100 + percent)) / 100
-
-    R = R < 255 ? R : 255
-    G = G < 255 ? G : 255
-    B = B < 255 ? B : 255
-
-    const RR = R.toString(16).length == 1 ? '0' + R.toString(16) : R.toString(16)
-    const GG = G.toString(16).length == 1 ? '0' + G.toString(16) : G.toString(16)
-    const BB = B.toString(16).length == 1 ? '0' + B.toString(16) : B.toString(16)
-
-    return '#' + RR + GG + BB
-  }
-  updateMatrix(newMatrix) {
-    this.setState({ LDrawMatrix: newMatrix })
-  }
-  makeMosaic(callback) {
-    this.setState({ isGenerated: true })
-    this.setState({ hasFileNotUploadedError: false })
-    this.clearCanvas()
-    const paper = require('paper')
-    let chosenColors
-    if (this.state.colorsToCompare !== 'CUSTOM_COLORS') {
-      chosenColors = loadedColors[this.state.colorsToCompare]
-    }
-    if (this.state.colorsToCompare === 'CUSTOM_COLORS') {
-      if (this.state.customColors.length < 5) {
-        this.setState({ hasNotSelectedColors: true })
-        return
-      }
-      chosenColors = this.state.customColors
-    }
-
-    const colorsToCompare = this.generateComparableColors(chosenColors)
-    const nearestColor = require('nearest-color').from(colorsToCompare)
-
-    // Create a raster item using the image tag with id='mona'
-    const raster = new paper.Raster('mosaic')
-    // Hide the Raster:
-    raster.position = paper.view.center
-    raster.visible = false
-    // The size of our grid cells:
-    const gridSize = this.state.selectedBoardSize
-
-    // Space the cells by 120%:
-    const spacing = 19
-
-    // As the web is asynchronous, we need to wait for the raster to load
-    // before we can perform any operation on its pixels.
-
-    // passing type of points to raster
-    raster.isCircle = this.state.isCircle
-    raster.isEditMode = this.state.isEditMode
-    raster.hasNumbers = this.state.hasNumbers
-    raster.thus = this
-    raster.chosenColors = chosenColors
-    raster.on('load', function () {
-      const colorCodes = []
-      // This verification is an additional copy of colorCodes array
-      // in order to push just hex codes and not Objects
-      // this can be refactored if only I knew how to filter
-      // for keys of objects in array
-      const colorCodesVerify = []
-
-      // LDraw matrix
-      const LDrawMatrix = []
-      // Since the example image we're using is much too large,
-      // and therefore has way too many pixels, lets downsize it to
-      // 40 pixels wide and 30 pixels high:
-      raster.size = new paper.Size(gridSize, gridSize)
-
-      // LDraw board is x, y, z coordinates. Here we start by placing first x coordinate
-      // that we will be increasing during iteration.
-      let LDrawXCoord = 10
-      const LDrawYCoord = -24
-      for (let x = 0; x < raster.width; x++) {
-        const verticalRowBotToTop = []
-        let LDrawZCoord = -10
-        for (let y = raster.height - 1; y >= 0; y--) {
-          // Get the color of the pixel:
-          const color = raster.getPixel(x, y)
-          // Set the fill color of the path to the color
-          // of the pixel:
-          const singleColor = {}
-          const hexColor = color.toCSS(true)
-
-          // Filtering the color to get more info, besides hex
-          const pickedColor = nearestColor(hexColor)
-          let filteredColour
-          // if (raster.chosenColors.length > 20) {
-          filteredColour = raster.chosenColors.filter(
-            (color) => color.hex_code === pickedColor.value
-          )
-          filteredColour = filteredColour[0]
-          // } else {
-          //   filteredColour = pickedColor
-          // }
-          if (raster.isCircle) {
-            // Create a circle ART MOSAIC shaped path:
-            var path = new paper.Path.Circle({
-              center: new paper.Point(x * spacing, y * spacing),
-              // center: paper.view.center,
-              // radius: gridSize / 2 / spacing,
-              radius: 9,
-            })
-            if (raster.hasNumbers) {
-              var text = new paper.PointText(new paper.Point(x * spacing, y * spacing + 3))
-              path.text = text
-              // Text functionality
-              text.fontSize = 8
-              if (filteredColour.bl_id > 99) {
-                text.fontSize = 7
-              }
-              text.content = filteredColour.bl_id
-              text.justification = 'center'
-              text.fontFamily = 'Fira Sans'
-              text.fontWeight = '700'
-              text.fillColor = invert(hexColor, true)
-            }
-            if (raster.isEditMode) {
-              // Editing functionality starts here
-              path.x = x
-              path.y = y
-              path.LDrawZCoord = LDrawZCoord
-              // path.text = text // Appending to matrix instead
-              // When the mouse enters the stud, get its fill color in HE:
-              path.onClick = function () {
-                this.fillColor = raster.thus.state.editColor
-                for (let index = 0; index < LDrawMatrix.length; index++) {
-                  // Here we have nested arrays that consist of objects
-                  const nestedArray = LDrawMatrix[index]
-                  // for (let y = raster.height - 1; y >= 0; y--) {
-                  for (let index = nestedArray.length - 1; index >= 0; index--) {
-                    // Here we have a list of studs so we check for each stud
-                    const singleStudObj = nestedArray[index]
-                    // If it matches the stud we are updating
-                    if (singleStudObj.pdf_x == this.x) {
-                      if (singleStudObj.pdf_y == this.y) {
-                        singleStudObj.hex_code = raster.thus.state.editColor
-                        // Getting bl_id for the Hex color from clicking on a badge.
-                        singleStudObj.text.content = raster.thus.state.editLegoId
-                        singleStudObj.text.fillColor = invert(raster.thus.state.editColor, true)
-                        break
-                      }
-                    }
-                  }
-                }
-                const extraInfo = `LEGO id: ${filteredColour.lego_id}, Hex code: ${filteredColour.hex_code}, RGB: ${filteredColour.rgb}, Color name: ${filteredColour.lego_name}`
-                raster.thus.showExtraStudInfo(extraInfo)
-                raster.thus.updateMatrix(LDrawMatrix)
-              }
-            }
-          }
-          if (!raster.isCircle) {
-            // Create a square PORTRAIT shaped path:
-            var path = new paper.Path.Rectangle({
-              point: new paper.Point(x * spacing, y * spacing),
-              // center: paper.view.center,
-              // radius: gridSize / 2 / spacing,
-              size: 18,
-            })
-            var pathDarker = new paper.Path.Circle({
-              center: new paper.Point(x * spacing + 9, y * spacing + 9),
-              // center: paper.view.center,
-              // radius: gridSize / 2 / spacing,
-              radius: 6,
-            })
-            var pathLighter = new paper.Path.Circle({
-              center: new paper.Point(x * spacing + 8, y * spacing + 8),
-              // center: paper.view.center,
-              // radius: gridSize / 2 / spacing,
-              radius: 6,
-            })
-            // path.mainColor = hexColor
-            // pathLighter.mainColor = hexColor
-            // pathDarker.mainColor = hexColor
-
-            path.x = x
-            pathLighter.x = x
-
-            path.y = y
-            pathLighter.y = y
-
-            pathLighter.LDrawXCoord = LDrawXCoord
-
-            path.LDrawZCoord = LDrawZCoord
-            pathLighter.LDrawZCoord = LDrawZCoord
-            if (raster.isEditMode) {
-              // When the mouse enters the stud, get its fill color in HE:
-              path.onClick = function () {
-                this.fillColor = raster.thus.state.editColor
-                pathLighter.fillColor = raster.thus.state.editColor
-                for (let index = 0; index < LDrawMatrix.length; index++) {
-                  // Here we have nested arrays that consist of objects
-                  const nestedArray = LDrawMatrix[index]
-
-                  // for (let y = raster.height - 1; y >= 0; y--) {
-                  for (let index = nestedArray.length - 1; index >= 0; index--) {
-                    // Here we have a list of studs so we check for each stud
-                    const singleStudObj = nestedArray[index]
-                    // If it matches the stud we are updating
-                    if (singleStudObj.pdf_x == this.x) {
-                      if (singleStudObj.pdf_y == this.y) {
-                        singleStudObj.hex_code = raster.thus.state.editColor
-
-                        break
-                      }
-                    }
-                  }
-                }
-                raster.thus.updateMatrix(LDrawMatrix)
-              }
-            }
-          }
-
-          // pathDarker.onClick = function() {
-          //   console.log( this.x, this.y, this.LDrawZCoord, this.LDrawXCoord )
-          //   this.fillColor = raster.thus.state.editColor
-          // }
-
-          if (!colorCodesVerify.includes(pickedColor.value)) {
-            /* colors contains already the color we're iterating */
-            colorCodesVerify.push(pickedColor.value)
-            singleColor['hex_code'] = pickedColor.value
-            singleColor['name'] = pickedColor.name
-            singleColor['bl_id'] = filteredColour.bl_id
-            singleColor['amount'] = 1
-            colorCodes.push(singleColor)
-          } else {
-            // Getting the color code from the array of colors that will be used for BUTTONS
-            let newFilteredColour = colorCodes.filter(
-              (color) => color.hex_code === pickedColor.value
-            )
-            newFilteredColour[0]['amount'] += 1
-          }
-          // Appending a LDraw color value to vertical row
-          let singleStudDataToAppend = {
-            x: LDrawXCoord,
-            y: LDrawYCoord,
-            z: LDrawZCoord,
-            color: filteredColour.ldraw_id,
-            hex_code: filteredColour.hex_code,
-            pdf_x: x,
-            pdf_y: y,
-          }
-          if (raster.isEditMode) {
-            singleStudDataToAppend.text = text
-          }
-          verticalRowBotToTop.push(singleStudDataToAppend)
-          // Increasing vertical location of a next piece
-          LDrawZCoord += 20
-
-          path.fillColor = pickedColor.value
-          if (!raster.isCircle) {
-            // Coloring drawn studs with shadow
-            pathDarker.fillColor = raster.thus.shadeColor(pickedColor.value, -40)
-            pathLighter.fillColor = raster.thus.shadeColor(pickedColor.value, 10)
-          }
-        }
-        LDrawMatrix.push(verticalRowBotToTop)
-        // Increasing horizontal location of next piece
-        LDrawXCoord += 20
-      }
-      paper.project.activeLayer.position = paper.view.center
-
-      // Returning colors array to create buttons with information and
-      // Returning LDraw matrix of color IDs for LDraw to draw board
-      callback(colorCodes, LDrawMatrix)
-    })
+  function clearCanvas() {
+    Paper.project.activeLayer.removeChildren()
+    Paper.project.clear()
+    Paper.project.remove()
   }
 
-  clearCanvas() {
-    if (typeof window !== `undefined`) {
-      const paper = require('paper')
-      paper.project.activeLayer.removeChildren()
-      paper.project.clear()
-    }
-  }
-
-  updateDimensions(width, height) {
-    this.setState({
-      height: width || window.innerWidth,
-      width: height || window.innerWidth,
-    })
-  }
-
-  resizeMethod() {
-    this.makeMosaic(this.updateColors)
-  }
-
-  clickGenerateMosaicButton() {
-    if (!this.state.file) {
-      this.setState({ hasFileNotUploadedError: true })
+  function clickGenerateButton() {
+    if (!isCorrectBoardSize()) {
+      setNotification({ msg: 'Incorrect board size.' })
       return
     }
+    if (!file) {
+      setHasFileNotUploadedError(true)
+      setNotification({ msg: 'You must add an image to generate mosaic.' })
+      return
+    }
+    if (isGenerated) clearCanvas()
 
-    this.makeMosaic(this.updateColors)
+    updateColors()
+    generateMosaic()
   }
 
-  showExtraStudInfo(extraInfo) {
-    // Showing span with all info on a stud
-    this.setState({ extraInfo: extraInfo })
-  }
-
-  updateColors(colors, LDrawMatrix) {
+  function updateColors() {
     // Order here colours by amount of them in the picture
     colors.sort((a, b) => (a.amount > b.amount ? 1 : b.amount > a.amount ? -1 : 0))
-    this.setState({ colors: colors, LDrawMatrix: LDrawMatrix })
+    setColors(colors)
+    setLDrawMatrix(LDrawMatrix)
   }
 
-  handleImageUpload(event) {
-    this.setState({
-      file: URL.createObjectURL(event.target.files[0]),
-    })
-  }
-  handleSelectBoardSize(event) {
-    this.setState({
-      selectedBoardSize: event.target.value,
-    })
-    const newSizePx = parseInt(event.target.value * 12)
-    this.updateDimensions(newSizePx, newSizePx)
-  }
-  handleBsxSave() {
-    formatAndDownloadBsxFile(this.state.colors)
-  }
-  handleLdrSave() {
-    formatAndDownloadLdrFile(this.state.LDrawMatrix)
-  }
-
-  handleXmlSave() {
-    formatAndDownloadXmlFile(this.state.colors)
-  }
-
-  handleCanvasSave() {
+  function handleCanvasSave() {
     const FileSaver = require('file-saver')
     const canvas = document.getElementById('paperCanvas')
     canvas.toBlob(function (blob) {
       FileSaver.saveAs(blob, 'Hvitis.dev-MOSAIC-Art.png')
     })
   }
-  handleChangeShape() {
-    this.setState({ isCircle: !this.state.isCircle })
+
+  function handleDrawNumbers() {
+    setHasNumbers(!hasNumbers)
   }
-  handleDrawNumbers() {
-    this.setState({ hasNumbers: !this.state.hasNumbers, isCircle: true, isEditMode: false })
-  }
-  handleEditMode() {
-    this.setState({ isEditMode: !this.state.isEditMode, hasNumbers: true, isCircle: true })
-  }
-  addCustomColor(colorObject, isSelected) {
-    // Adding colors to the list of custom colors
-    let currentlySelectedColors = [...this.state.customColors, colorObject]
-    let uniqueColors
-    if (isSelected) {
-      // Adding object to selected colors and filtering duplicates
-      uniqueColors = Array.from(new Set(currentlySelectedColors.map((color) => color.bl_id))).map(
-        (bl_id) => {
-          return currentlySelectedColors.find((color) => color.bl_id === bl_id)
-        }
-      )
-    } else {
-      // Removing object from selected colors
-      uniqueColors = currentlySelectedColors.filter((color) => color.bl_id !== colorObject.bl_id)
-    }
-    // currentlySelectedColors = currentlySelectedColors.filter(function(el) {
-    //   return el.bl_id != colorObject.bl_id
-    // })
-    this.setState({
-      customColors: uniqueColors,
-      hasNotSelectedColors: false,
+
+  function handleEditMode() {
+    setNotification({
+      msg: 'Edit mode is now always ON. Allows you to edit colors by clicking on studs. Button will be removed in next version.',
     })
   }
-  pickEditColor(badgeColor, bl_id) {
+
+  function pickEditColor(badgeColor, bl_id) {
     // Setting color for editing to state for editing canvas
-    this.setState({
-      editColor: badgeColor,
-      editLegoId: bl_id,
-    })
+    setEditColor(badgeColor)
+    setEditLegoId(bl_id)
   }
-  render() {
+
+  function handleCustomBoard(val) {
+    if (val.match(/[^xX0-9]/)) {
+      setNotification({ msg: 'Only numbers and character "x" are allowed ( E.g. 12x18 )' })
+      return
+    }
+    if (!val || !val.includes('x'))
+      return setBoardSize({ width: defBoardSize, height: defBoardSize })
+
+    let [width, height] = val.split('x')
+
+    if (height === '') height = 10
+    if (width === '') width = 10
+
+    console.log(`Setting w: ${width} h: ${height}`)
+    return setBoardSize({ width, height })
+  }
+
+  function handleSliderChange(val) {
+    setBoardSize({ width: val, height: val })
+  }
+
+  function isCorrectBoardSize() {
     return (
-      <>
-        <div className="w-full">
-          <div className="flex lg:flex-row flex-col flex-wrap gap-2 w-full">
-            <div className="flex flex-col lg:ml-auto mx-auto">
+      boardSize.width !== '' &&
+      boardSize.height !== undefined &&
+      parseInt(boardSize.width) >= 10 &&
+      parseInt(boardSize.width) <= 64 &&
+      parseInt(boardSize.height) >= 10 &&
+      parseInt(boardSize.height) <= 64
+    )
+  }
+
+  function isCustomSize() {
+    return boardSize.width !== boardSize.height
+  }
+
+  return (
+    <>
+      <div className="w-full">
+        <div className="flex flex-col flex-wrap gap-2 w-full">
+          {/* Image and size selection  */}
+          {/* Select an image  */}
+          <div className="flex flex-row xs:flex-wrap justify-start">
+            <div className="flex flex-col w-1/2 mx-4">
               <label
                 className={clsx(
-                  'text-center',
-                  this.state.hasFileNotUploadedError && 'text-red-600'
+                  'text-left font-medium text-gray-700 my-1',
+                  hasFileNotUploadedError && 'text-red-700'
                 )}
               >
                 Select image:
@@ -510,31 +320,63 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
                 className="file-input file-input-bordered file-input-info w-full max-w-xs"
                 id="file"
                 type="file"
-                onChange={this.handleImageUpload}
+                onChange={(e) => setFile(URL.createObjectURL(e.target.files[0]))}
               />
             </div>
 
-            <div className="flex flex-col">
-              <label className="text-center">Board size:</label>
-              <select
-                className="select select-info"
-                required
-                type="text"
-                as="select"
-                size="lg"
-                onChange={this.handleSelectBoardSize}
-                name="selectedToBucket"
-                value={this.state.selectedBoardSize}
-              >
-                {boardSized.map((sizeOfBoard, index) => (
-                  <option key={index} value={sizeOfBoard}>
-                    {`${sizeOfBoard}x${sizeOfBoard}`}
-                  </option>
-                ))}
-              </select>
+            {/* Adjust board by slider or custom selector  */}
+            <div className="flex flex-col w-full mx-4">
+              <div className="flex flex-row">
+                <div className="flex flex-col w-full">
+                  <label className="text-left font-medium text-gray-700 my-1">
+                    Board size:
+                    <span className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}>
+                      {`width ${boardSize.width} x height ${boardSize.height}`}
+                    </span>
+                    {!isCorrectBoardSize() && (
+                      <Helper
+                        title="Board sizes"
+                        text="Each board side must be minimum 10 and maximum 64 studs."
+                      />
+                    )}
+                  </label>
+                  <div className="w-full mt-2.5 flex flex-col mx-2">
+                    <input
+                      value={boardSize.width}
+                      onChange={(e) => handleSliderChange(e.target.value)}
+                      type="range"
+                      min={10}
+                      max="64"
+                      className={clsx('range', !isCustomSize() && 'range-info')}
+                    />
+                    <div className="w-full flex justify-between text-xs px-2 my-auto">
+                      <span>min {maxBoardSizes[0]}</span>
+                      <span className="relative lg:-left-5 xl:-left-10 hidden lg:block">
+                        {maxBoardSizes[[maxBoardSizes.length - 1]] / 2}
+                      </span>
+                      <span>max {maxBoardSizes[[maxBoardSizes.length - 1]]}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-28 mx-4 my-auto">
+                  <label className="input-group input-group-vertical">
+                    <span className={clsx(isCustomSize() && 'bg-info text-white')}>Custom</span>
+                    <input
+                      type="text"
+                      value={`${boardSize.width}x${boardSize.height}`}
+                      onChange={(e) => handleCustomBoard(e.target.value)}
+                      placeholder="e.g. 10x16"
+                      className="input input-bordered"
+                    />
+                  </label>
+                </div>
+              </div>
             </div>
+          </div>
 
-            <div className="flex flex-col">
+          <div className="flex flex-row xs:flex-wrap justify-start my-3">
+            {/* Colors selector */}
+            <div className="flex flex-col w-full lg:w-1/3 mx-4">
               <label className="text-center">Colors set:</label>
               <select
                 className="select select-info"
@@ -542,9 +384,11 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
                 type="text"
                 as="select"
                 size="lg"
-                onChange={this.handleSelectColorsSet}
+                onChange={(e) => {
+                  setColorsToCompare(e.target.value)
+                }}
                 name="selectedToBucket"
-                value={this.state.colorsToCompare}
+                value={colorsToCompare}
               >
                 {Object.keys(loadedColors)
                   .map((set, index) => {
@@ -558,119 +402,149 @@ class PaperCanvas extends React.Component<MyProps, MyState> {
               </select>
             </div>
 
-            <div className="flex flex-col lg:mr-auto mx-auto">
-              <label className="text-center">Settings:</label>
-              <div className="btn-group">
+            {/* Settings button group */}
+            <div className="flex flex-col lg:mr-auto mx-4">
+              <label className="text-left">Settings:</label>
+              <div className="btn-group rounded-r-lg">
                 <button
-                  className="btn btn-info"
+                  className="btn btn-info text-white my-auto"
                   onClick={() => {
-                    this.handleChangeShape()
+                    setIsRound(!isRound)
                   }}
                 >
-                  {this.state.isCircle ? 'Circles' : 'Squares'}
+                  {isRound && (
+                    <>
+                      Round
+                      <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
+                    </>
+                  )}
+                  {!isRound && (
+                    <>
+                      Square
+                      <CheckSquare className="h-5 w-5 text-white"></CheckSquare>
+                    </>
+                  )}
                 </button>
                 <button
-                  className="btn btn-info"
+                  className="btn btn-info text-white"
                   onClick={() => {
-                    this.handleDrawNumbers()
+                    handleDrawNumbers()
                   }}
                 >
-                  {this.state.hasNumbers && this.state.isCircle ? 'Numbers' : 'Blank'}
+                  Numbered
+                  {hasNumbers ? (
+                    <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
+                  ) : (
+                    <Circle className="h-5 w-5 text-white"></Circle>
+                  )}
                 </button>
 
-                <button
-                  className="btn btn-info"
+                {/* <button
+                  className="btn btn-info text-white"
                   onClick={() => {
-                    this.handleEditMode()
+                    handleDrawNumbers()
                   }}
                 >
-                  {this.state.isEditMode ? 'Edit' : 'No Edit'}
-                </button>
+                  Custom colors
+                  {hasNumbers ? (
+                    <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
+                  ) : (
+                    <Circle className="h-5 w-5 text-white"></Circle>
+                  )}
+                </button> */}
+
+                <div
+                  onClick={() => {
+                    handleEditMode()
+                  }}
+                  className="hidden lg:block"
+                >
+                  <button className="btn btn-info text-white rounded-l-none" disabled>
+                    Edit mode
+                    <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="w-full my-4 mx-auto">
-            <div>
-              <button
-                className="btn btn-success btn-lg mx-2"
-                onClick={() => this.clickGenerateMosaicButton(this.updateColors)}
-              >
-                Generate
-              </button>
-            </div>
+        <div className="w-full my-4 mx-auto">
+          <div>
+            <button
+              className="btn btn-success btn-lg mx-2 text-white"
+              onClick={() => clickGenerateButton()}
+            >
+              Generate
+            </button>
           </div>
         </div>
+      </div>
 
-        <img
-          src={this.state.file}
-          alt="Generated mosaic LEGO Image"
-          crossOrigin="*"
-          ref="mosaic"
-          id="mosaic"
-          hidden
-        />
+      <img
+        src={file}
+        alt="Generated mosaic LEGO Image"
+        crossOrigin="*"
+        ref={mosaicRef}
+        id="mosaic"
+        hidden
+      />
+      <div className="w-full mb-5 ">
+        {/* Re init canvas to change it´s size in hard mode. data-paper-resize could
+        be another option if it was not shifting path's onClick events. */}
+        {!reInitialiseCanvas && (
+          <canvas
+            id="paperCanvas"
+            ref={canvasRef}
+            style={{ left: boardSize.width > 54 ? `-${shift}px` : '' }}
+            className={clsx('mx-auto', boardSize.width > 50 ? `w-max relative` : '')}
+            width={canvasSize.width}
+            height={canvasSize.height}
+            hidden={!isGenerated}
+            willReadFrequently
+          ></canvas>
+        )}
+      </div>
 
-        <canvas
-          style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
-          className="p-1 mx-auto"
-          id="paperCanvas"
-          height={this.state.height}
-          width={this.state.width}
-        ></canvas>
-
-        <div
-          className="btn-group lg:mx-10 mx-auto"
-          style={{ display: this.state.isGenerated ? 'inherit' : 'none' }}
-        >
-          <button className="btn lg:btn btn-sm btn-info" onClick={() => this.handleCanvasSave()}>
-            Download
-          </button>
-          <button className="btn lg:btn btn-sm" onClick={() => this.handleCanvasSave()}>
-            .Png
-          </button>
-          <button className="btn lg:btn btn-sm" onClick={() => this.handleBsxSave()}>
-            .bsx
-          </button>
-          <button className="btn lg:btn btn-sm" onClick={() => this.handleXmlSave()}>
-            .xml
-          </button>
-          <button className="btn lg:btn btn-sm" onClick={() => this.handleLdrSave()}>
-            .ldr
-          </button>
-        </div>
-
-        <div className="w-full flex flex-row justify-between">
-          <div>
-            {this.state.colorsToCompare === 'CUSTOM_COLORS' &&
-              COLORS_ALL_CUSTOM.map((color) => (
-                <SelectColorBadge
-                  addCustomColor={this.addCustomColor}
+      <div
+        className="btn-group lg:mx-10 mx-auto"
+        style={{ display: isGenerated ? 'inherit' : 'none' }}
+      >
+        <button className="btn lg:btn btn-sm btn-info" onClick={() => handleCanvasSave()}>
+          Download
+        </button>
+        <button className="btn lg:btn btn-sm" onClick={() => handleCanvasSave()}>
+          .Png
+        </button>
+        <button className="btn lg:btn btn-sm" onClick={() => formatAndDownloadBsxFile(colors)}>
+          .bsx
+        </button>
+        <button className="btn lg:btn btn-sm" onClick={() => formatAndDownloadXmlFile(colors)}>
+          .xml
+        </button>
+        <button className="btn lg:btn btn-sm" onClick={() => formatAndDownloadLdrFile(LDrawMatrix)}>
+          .ldr
+        </button>
+      </div>
+      <div className="w-full flex flex-row justify-between">
+        <div>
+          {colors.length !== 0 && isGenerated && (
+            <Statistics size={boardSize}>
+              {colors.map((color) => (
+                <BadgeColor
+                  pickEditColor={pickEditColor}
                   color={color}
-                  key={color.lego_name}
+                  key={color.bl_id}
+                  editColor={editColor}
                 />
               ))}
-          </div>
-
-          <div>
-            {this.state.colors.length !== 0 && (
-              <Statistics size={this.state.selectedBoardSize}>
-                {this.state.colors.map((color) => (
-                  <BadgeColor
-                    pickEditColor={this.pickEditColor}
-                    color={color}
-                    key={color.bl_id}
-                    editColor={this.state.editColor}
-                    isEditMode={this.state.isEditMode}
-                  />
-                ))}
-              </Statistics>
-            )}
-          </div>
+            </Statistics>
+          )}
         </div>
-      </>
-    )
-  }
+      </div>
+      {notification && <Toast text={notification.msg}></Toast>}
+    </>
+  )
 }
 
 export default PaperCanvas

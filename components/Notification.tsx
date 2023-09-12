@@ -14,7 +14,7 @@ const Notification = ({ title, msg, href }: NotificationInterface) => {
       <InfoIcon className="stroke-info shrink-0 w-6 h-6" />
       <div>
         <h3 className="font-bold">{title}</h3>
-        <div className="text-xs" dangerouslySetInnerHTML={{ __html: msg }}></div>
+        <div className="text-sm" dangerouslySetInnerHTML={{ __html: msg }}></div>
       </div>
       {href && (
         <Link href={href} className="btn btn-sm">

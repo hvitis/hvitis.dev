@@ -8,67 +8,91 @@ import { formatAndDownloadLdrFile } from '@/utils/formatLDrawFile'
 
 import BadgeColor from '@/components/BadgeColor'
 import SelectColorBadge from '@/components/SelectColorBadge'
+
 import Paper from 'paper'
 import invert from 'invert-color'
-import { clsx } from 'clsx'
+import tinycolor from 'tinycolor2'
 import loadedColors from 'utils/colors'
+
+import { clsx } from 'clsx'
 import humanize from '@/utils/humanize'
 import Statistics from '@/components/Statistics'
-import shadeColor from '@/utils/shadeColor'
-
-const boardSizes = [10, 16, 32, 46, 48, 64]
+import { CheckCircle, CheckSquare, Circle } from 'lucide-react'
+import Toast from '@/components/Toast'
+import Helper from '@/components/Helper'
 
 function PaperCanvas() {
+  const radius = 9
+  const spacing = 19
+  const defBoardSize = 10
+  const maxBoardSizes = [10, 64]
+
   const mosaicRef = useRef()
-  const [spacing, setSpacing] = useState(19)
-  const [radius, setRadius] = useState(9)
-  const [boardSize, setBoardSize] = useState(10)
+  const canvasRef = useRef()
 
-  const calculateCanvasSize = () => {
-    return boardSize * (radius * 2 + (spacing - radius * 2)) + 2 * radius
+  const [notification, setNotification] = useState(null)
+  const [boardSize, setBoardSize] = useState({ width: defBoardSize, height: defBoardSize })
+
+  const calcCanvas = (sideSize) => {
+    return sideSize * (radius * 2 + (spacing - radius * 2)) + 2 * radius
   }
 
-  const calculateShiftRange = () => {
-    let shift = (window.screen.width - calculateCanvasSize()) / 2
-    console.log(shift)
-    return shift
+  const calculateShiftRange = (size) => {
+    return (window.screen.width - calcCanvas(size)) / 2
   }
 
-  const [canvasSize, setCanvasSize] = useState(calculateCanvasSize())
-  const [isCircle, setIsCircle] = useState(true)
+  const [canvasSize, setCanvasSize] = useState({
+    width: 100,
+    height: 100,
+  })
+
+  const [isRound, setIsRound] = useState(true)
   const [file, setFile] = useState(null)
   const [colors, setColors] = useState([])
-  const [customColors, setCustomColors] = useState([])
   const [hasFileNotUploadedError, setHasFileNotUploadedError] = useState(false)
   const [LDrawMatrix, setLDrawMatrix] = useState([])
   const [editColor, setEditColor] = useState('#ffffff')
   const [editLegoId, setEditLegoId] = useState(1)
   const [isGenerated, setIsGenerated] = useState(false)
-  const [reInitialiseCanvas, setReInitialiseCanvas] = useState(true)
+  const [reInitialiseCanvas, setReInitialiseCanvas] = useState(false)
   const [hasNumbers, setHasNumbers] = useState(false)
-  const [isEditMode, setIsEditMode] = useState(false)
   const [shift, setShift] = useState(0)
   const [colorsToCompare, setColorsToCompare] = useState('COLORS_ALL')
+
+  useEffect(() => {
+    canvasRef.current.getContext('2d', { willReadFrequently: true })
+  }, [])
 
   useEffect(() => {
     window.editColor = editColor
   }, [editColor])
 
   useEffect(() => {
-    setShift(calculateShiftRange())
     setReInitialiseCanvas(false)
-    setCanvasSize(calculateCanvasSize())
-    setReInitialiseCanvas(true)
-    setIsGenerated(false)
-  }, [boardSize])
+  }, [reInitialiseCanvas])
 
-  function makeMosaic() {
-    if (isGenerated) clearCanvas()
+  useEffect(() => {
+    setTimeout(() => setNotification(null), 7000)
+  }, [notification])
+
+  useEffect(() => {
+    let size = { ...boardSize }
+    let newWidth = calcCanvas(size.width)
+    let newHeight = calcCanvas(size.height)
+
+    setShift(calculateShiftRange(size.width))
+    setReInitialiseCanvas(true)
+    setCanvasSize({ width: newWidth, height: newHeight })
+    setIsGenerated(false)
+  }, [boardSize, hasNumbers])
+
+  function generateMosaic() {
     Paper.setup('paperCanvas')
     const raster = new Paper.Raster('mosaic')
     raster.visible = false
     raster.position = Paper.view.center
-    raster.size = new Paper.Size(boardSize, boardSize)
+    raster.size = new Paper.Size([boardSize.width, boardSize.height])
+
     // Hide the Raster:
     raster.visible = false
 
@@ -77,8 +101,7 @@ function PaperCanvas() {
     const nearestColor = require('nearest-color').from(compareColors)
 
     // passing type of points to raster
-    raster.isCircle = isCircle
-    raster.isEditMode = isEditMode
+    raster.isRound = isRound
     raster.hasNumbers = hasNumbers
 
     raster.chosenColors = chosenColors
@@ -99,17 +122,67 @@ function PaperCanvas() {
           (color) => color.hex_code === pickedColor.value
         )
         filteredColour = filteredColour[0]
+        let path
+        if (!raster.isRound) {
+          // Create a square PORTRAIT shaped path:
+          path = new Paper.Path.Rectangle({
+            point: new Paper.Point(x * spacing, y * spacing),
+            size: 18,
+          })
+          path.fillColor = pickedColor.value
 
-        // Create a circle ART MOSAIC shaped path:
-        var path = new Paper.Path.Circle({
-          center: new Paper.Point(x, y).multiply(spacing),
-          radius: radius,
-        })
-        path.fillColor = pickedColor.value
+          var pathDarker = new Paper.Path.Circle({
+            center: new Paper.Point(x * spacing + 9, y * spacing + 9),
+            radius: 7,
+          })
+          pathDarker.fillColor = tinycolor(pickedColor.value).darken().toString()
 
-        path.onClick = function () {
-          this.fillColor = window.editColor
+          let light = new Paper.Path.Circle({
+            center: new Paper.Point(x * spacing + 8, y * spacing + 8),
+            radius: 6,
+          })
+          light.fillColor = pickedColor.value
+
+          let transparent = new Paper.Path.Rectangle({
+            point: new Paper.Point(x * spacing, y * spacing),
+            size: 18,
+          })
+          transparent.fillColor = pickedColor.value
+          transparent.opacity = 0
+
+          transparent.path = path
+          transparent.light = light
+          transparent.pathDarker = pathDarker
+          transparent.onClick = function () {
+            this.path.fillColor = window.editColor
+            this.light.fillColor = window.editColor
+            this.pathDarker.fillColor = tinycolor(window.editColor).darken().toString()
+          }
+        } else {
+          path = new Paper.Path.Circle({
+            center: new Paper.Point(x, y).multiply(spacing),
+            radius: radius,
+          })
+          path.onClick = function () {
+            this.fillColor = window.editColor
+          }
         }
+
+        if (raster.hasNumbers) {
+          let text
+          if (raster.isRound)
+            text = new Paper.PointText(new Paper.Point(x * spacing, y * spacing + 3))
+          if (!raster.isRound)
+            text = new Paper.PointText(new Paper.Point(x * spacing + 7, y * spacing + 10))
+
+          text.fontSize = 8
+          text.content = filteredColour.bl_id
+          text.justification = 'center'
+          text.fontFamily = 'Fira Sans'
+          text.fontWeight = '700'
+          text.fillColor = invert(hexColor, true)
+        }
+
         if (!colorCodesVerify.includes(pickedColor.value)) {
           /* colors contains already the color we're iterating */
           colorCodesVerify.push(pickedColor.value)
@@ -141,15 +214,23 @@ function PaperCanvas() {
   function clearCanvas() {
     Paper.project.activeLayer.removeChildren()
     Paper.project.clear()
+    Paper.project.remove()
   }
 
-  function clickGenerateMosaicButton() {
-    if (!file) {
-      setHasFileNotUploadedError(true)
+  function clickGenerateButton() {
+    if (!isCorrectBoardSize()) {
+      setNotification({ msg: 'Incorrect board size.' })
       return
     }
+    if (!file) {
+      setHasFileNotUploadedError(true)
+      setNotification({ msg: 'You must add an image to generate mosaic.' })
+      return
+    }
+    if (isGenerated) clearCanvas()
+
     updateColors()
-    makeMosaic()
+    generateMosaic()
   }
 
   function updateColors() {
@@ -169,14 +250,12 @@ function PaperCanvas() {
 
   function handleDrawNumbers() {
     setHasNumbers(!hasNumbers)
-    setIsCircle(true)
-    setIsEditMode(false)
   }
 
   function handleEditMode() {
-    setIsEditMode(!isEditMode)
-    setHasNumbers(true)
-    setIsCircle(true)
+    setNotification({
+      msg: 'Edit mode is now always ON. Allows you to edit colors by clicking on studs. Button will be removed in next version.',
+    })
   }
 
   function pickEditColor(badgeColor, bl_id) {
@@ -185,96 +264,207 @@ function PaperCanvas() {
     setEditLegoId(bl_id)
   }
 
+  function handleCustomBoard(val) {
+    if (val.match(/[^xX0-9]/)) {
+      setNotification({ msg: 'Only numbers and character "x" are allowed ( E.g. 12x18 )' })
+      return
+    }
+    if (!val || !val.includes('x'))
+      return setBoardSize({ width: defBoardSize, height: defBoardSize })
+
+    let [width, height] = val.split('x')
+
+    if (height === '') height = 10
+    if (width === '') width = 10
+
+    console.log(`Setting w: ${width} h: ${height}`)
+    return setBoardSize({ width, height })
+  }
+
+  function handleSliderChange(val) {
+    setBoardSize({ width: val, height: val })
+  }
+
+  function isCorrectBoardSize() {
+    return (
+      boardSize.width !== '' &&
+      boardSize.height !== undefined &&
+      parseInt(boardSize.width) >= 10 &&
+      parseInt(boardSize.width) <= 64 &&
+      parseInt(boardSize.height) >= 10 &&
+      parseInt(boardSize.height) <= 64
+    )
+  }
+
+  function isCustomSize() {
+    return boardSize.width !== boardSize.height
+  }
+
   return (
     <>
       <div className="w-full">
-        <div className="flex lg:flex-row flex-col flex-wrap gap-2 w-full">
-          <div className="flex flex-col lg:ml-auto mx-auto">
-            <label className={clsx('text-center', hasFileNotUploadedError && 'text-red-600')}>
-              Select image:
-            </label>
-            <input
-              className="file-input file-input-bordered file-input-info w-full max-w-xs"
-              id="file"
-              type="file"
-              onChange={(e) => setFile(URL.createObjectURL(e.target.files[0]))}
-            />
+        <div className="flex flex-col flex-wrap gap-2 w-full">
+          {/* Image and size selection  */}
+          {/* Select an image  */}
+          <div className="flex flex-row xs:flex-wrap justify-start">
+            <div className="flex flex-col w-1/2 mx-4">
+              <label
+                className={clsx(
+                  'text-left font-medium text-gray-700 my-1',
+                  hasFileNotUploadedError && 'text-red-700'
+                )}
+              >
+                Select image:
+              </label>
+              <input
+                className="file-input file-input-bordered file-input-info w-full max-w-xs"
+                id="file"
+                type="file"
+                onChange={(e) => setFile(URL.createObjectURL(e.target.files[0]))}
+              />
+            </div>
+
+            {/* Adjust board by slider or custom selector  */}
+            <div className="flex flex-col w-full mx-4">
+              <div className="flex flex-row">
+                <div className="flex flex-col w-full">
+                  <label className="text-left font-medium text-gray-700 my-1">
+                    Board size:
+                    <span className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}>
+                      {`width ${boardSize.width} x height ${boardSize.height}`}
+                    </span>
+                    {!isCorrectBoardSize() && (
+                      <Helper
+                        title="Board sizes"
+                        text="Each board side must be minimum 10 and maximum 64 studs."
+                      />
+                    )}
+                  </label>
+                  <div className="w-full mt-2.5 flex flex-col mx-2">
+                    <input
+                      value={boardSize.width}
+                      onChange={(e) => handleSliderChange(e.target.value)}
+                      type="range"
+                      min={10}
+                      max="64"
+                      className={clsx('range', !isCustomSize() && 'range-info')}
+                    />
+                    <div className="w-full flex justify-between text-xs px-2 my-auto">
+                      <span>min {maxBoardSizes[0]}</span>
+                      <span className="relative lg:-left-5 xl:-left-10 hidden lg:block">
+                        {maxBoardSizes[[maxBoardSizes.length - 1]] / 2}
+                      </span>
+                      <span>max {maxBoardSizes[[maxBoardSizes.length - 1]]}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-28 mx-4 my-auto">
+                  <label className="input-group input-group-vertical">
+                    <span className={clsx(isCustomSize() && 'bg-info text-white')}>Custom</span>
+                    <input
+                      type="text"
+                      value={`${boardSize.width}x${boardSize.height}`}
+                      onChange={(e) => handleCustomBoard(e.target.value)}
+                      placeholder="e.g. 10x16"
+                      className="input input-bordered"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-center">Board size:</label>
-            <select
-              className="select select-info"
-              as="select"
-              size="lg"
-              onChange={(e) => {
-                setBoardSize(e.target.value)
-              }}
-              name="selectedToBucket"
-              value={boardSize}
-            >
-              {boardSizes.map((sideInStuds) => (
-                <option key={sideInStuds} value={sideInStuds}>
-                  {`${sideInStuds}x${sideInStuds}`}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-center">Colors set:</label>
-            <select
-              className="select select-info"
-              required
-              type="text"
-              as="select"
-              size="lg"
-              onChange={(e) => {
-                setColorsToCompare(e.target.value)
-              }}
-              name="selectedToBucket"
-              value={colorsToCompare}
-            >
-              {Object.keys(loadedColors)
-                .map((set, index) => {
-                  return { id: index, name: humanize(set.slice(6, 30)), value: set }
-                })
-                .map((colorSet) => (
-                  <option key={colorSet.id} value={colorSet.value}>
-                    {colorSet.name}
-                  </option>
-                ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col lg:mr-auto mx-auto">
-            <label className="text-center">Settings:</label>
-            <div className="btn-group">
-              <button
-                className="btn btn-info"
-                onClick={() => {
-                  setIsCircle(!isCircle)
+          <div className="flex flex-row xs:flex-wrap justify-start my-3">
+            {/* Colors selector */}
+            <div className="flex flex-col w-full lg:w-1/3 mx-4">
+              <label className="text-center">Colors set:</label>
+              <select
+                className="select select-info"
+                required
+                type="text"
+                as="select"
+                size="lg"
+                onChange={(e) => {
+                  setColorsToCompare(e.target.value)
                 }}
+                name="selectedToBucket"
+                value={colorsToCompare}
               >
-                {isCircle ? 'Circles' : 'Squares'}
-              </button>
-              <button
-                className="btn btn-info"
-                onClick={() => {
-                  handleDrawNumbers()
-                }}
-              >
-                {hasNumbers && isCircle ? 'Numbers' : 'Blank'}
-              </button>
+                {Object.keys(loadedColors)
+                  .map((set, index) => {
+                    return { id: index, name: humanize(set.slice(6, 30)), value: set }
+                  })
+                  .map((colorSet) => (
+                    <option key={colorSet.id} value={colorSet.value}>
+                      {colorSet.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
 
-              <button
-                className="btn btn-info"
-                onClick={() => {
-                  handleEditMode()
-                }}
-              >
-                {isEditMode ? 'Edit' : 'No Edit'}
-              </button>
+            {/* Settings button group */}
+            <div className="flex flex-col lg:mr-auto mx-4">
+              <label className="text-left">Settings:</label>
+              <div className="btn-group rounded-r-lg">
+                <button
+                  className="btn btn-info text-white my-auto"
+                  onClick={() => {
+                    setIsRound(!isRound)
+                  }}
+                >
+                  {isRound && (
+                    <>
+                      Round
+                      <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
+                    </>
+                  )}
+                  {!isRound && (
+                    <>
+                      Square
+                      <CheckSquare className="h-5 w-5 text-white"></CheckSquare>
+                    </>
+                  )}
+                </button>
+                <button
+                  className="btn btn-info text-white"
+                  onClick={() => {
+                    handleDrawNumbers()
+                  }}
+                >
+                  Numbered
+                  {hasNumbers ? (
+                    <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
+                  ) : (
+                    <Circle className="h-5 w-5 text-white"></Circle>
+                  )}
+                </button>
+
+                {/* <button
+                  className="btn btn-info text-white"
+                  onClick={() => {
+                    handleDrawNumbers()
+                  }}
+                >
+                  Custom colors
+                  {hasNumbers ? (
+                    <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
+                  ) : (
+                    <Circle className="h-5 w-5 text-white"></Circle>
+                  )}
+                </button> */}
+
+                <div
+                  onClick={() => {
+                    handleEditMode()
+                  }}
+                  className="hidden lg:block"
+                >
+                  <button className="btn btn-info text-white rounded-l-none" disabled>
+                    Edit mode
+                    <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -282,8 +472,8 @@ function PaperCanvas() {
         <div className="w-full my-4 mx-auto">
           <div>
             <button
-              className="btn btn-success btn-lg mx-2"
-              onClick={() => clickGenerateMosaicButton()}
+              className="btn btn-success btn-lg mx-2 text-white"
+              onClick={() => clickGenerateButton()}
             >
               Generate
             </button>
@@ -291,7 +481,6 @@ function PaperCanvas() {
         </div>
       </div>
 
-      {/* console.log(this.mosaicRef.current.editor.getValue()); */}
       <img
         src={file}
         alt="Generated mosaic LEGO Image"
@@ -303,14 +492,16 @@ function PaperCanvas() {
       <div className="w-full mb-5 ">
         {/* Re init canvas to change it´s size in hard mode. data-paper-resize could
         be another option if it was not shifting path's onClick events. */}
-        {reInitialiseCanvas && (
+        {!reInitialiseCanvas && (
           <canvas
-            className={clsx('mx-auto', boardSize > 48 ? `w-max relative` : '')}
             id="paperCanvas"
-            height={canvasSize}
-            width={canvasSize}
+            ref={canvasRef}
+            style={{ left: boardSize.width > 54 ? `-${shift}px` : '' }}
+            className={clsx('mx-auto', boardSize.width > 50 ? `w-max relative` : '')}
+            width={canvasSize.width}
+            height={canvasSize.height}
             hidden={!isGenerated}
-            style={{ left: boardSize > 48 ? `-${shift}px` : '' }}
+            willReadFrequently
           ></canvas>
         )}
       </div>
@@ -337,7 +528,7 @@ function PaperCanvas() {
       </div>
       <div className="w-full flex flex-row justify-between">
         <div>
-          {colors.length !== 0 && (
+          {colors.length !== 0 && isGenerated && (
             <Statistics size={boardSize}>
               {colors.map((color) => (
                 <BadgeColor
@@ -345,13 +536,13 @@ function PaperCanvas() {
                   color={color}
                   key={color.bl_id}
                   editColor={editColor}
-                  isEditMode={isEditMode}
                 />
               ))}
             </Statistics>
           )}
         </div>
       </div>
+      {notification && <Toast text={notification.msg}></Toast>}
     </>
   )
 }

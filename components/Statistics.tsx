@@ -1,37 +1,18 @@
 // @ts-nocheck
-import { InfoIcon } from 'lucide-react'
+import currencies from '@/data/currencies'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 interface StatisticsInterface {
-  size: number
+  size: { width: string; height: string }
   children: React.ReactNode
 }
 
-const CURRENCIES = {
-  EUR: {
-    name: 'EUR',
-    sign: '€',
-  },
-  PLN: {
-    name: 'PLN',
-    sign: 'zł',
-  },
-  DKK: {
-    name: 'DKK',
-    sign: 'kr.',
-  },
-  USD: {
-    name: 'USD',
-    sign: '$',
-  },
-}
-
-const Statistics = ({ size = 10, children }: StatisticsInterface) => {
-  const [currency, setCurrency] = useState(CURRENCIES['EUR'])
+const Statistics = ({ size, children }: StatisticsInterface) => {
+  const [currency, setCurrency] = useState(currencies['EUR'])
   const [rates, setRates] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [price, setPrice] = useState(size * size * 0.04)
+  const [price, setPrice] = useState(size.height * size.height * 0.04)
   const [priceInCurrency, setPriceInCurrency] = useState(null)
 
   const getExchangeRates = async (currency) => {
@@ -41,9 +22,9 @@ const Statistics = ({ size = 10, children }: StatisticsInterface) => {
   }
 
   useEffect(() => {
-    setPrice(size * size * 0.04)
+    setPrice(size.height * size.height * 0.04)
     setPriceInCurrency(null)
-    setCurrency(CURRENCIES['EUR'])
+    setCurrency(currencies['EUR'])
   }, [size])
 
   const calculateExchangeRateTo = async (currency) => {
@@ -54,7 +35,7 @@ const Statistics = ({ size = 10, children }: StatisticsInterface) => {
       setRates(data)
     }
     setPriceInCurrency(price * (rates ? rates[currency] : data[currency]))
-    setCurrency(CURRENCIES[currency])
+    setCurrency(currencies[currency])
     setIsLoading(false)
   }
 
@@ -80,7 +61,7 @@ const Statistics = ({ size = 10, children }: StatisticsInterface) => {
           {isLoading && <span className="loading loading-dots loading-lg"></span>}
         </div>
         <div className="stat-actions">
-          {Object.keys(CURRENCIES).map((currencyName) => {
+          {Object.keys(currencies).map((currencyName) => {
             return (
               <button
                 key={currencyName}
@@ -95,7 +76,7 @@ const Statistics = ({ size = 10, children }: StatisticsInterface) => {
       </div>
       <div className="stat">
         <div className="stat-title">Studs</div>
-        <div className="stat-value">{size * size}</div>
+        <div className="stat-value">{size.height * size.height}</div>
         <div className="stat-actions">
           <Link
             href={'https://www.bricklink.com/v2/catalog/catalogitem.page?P=4073#T=C'}

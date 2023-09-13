@@ -2,6 +2,7 @@
 import currencies from '@/data/currencies'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import { Children, cloneElement } from 'react'
 
 interface StatisticsInterface {
   size: { width: string; height: string }
@@ -45,11 +46,18 @@ const Statistics = ({ size, children }: StatisticsInterface) => {
 
   return (
     <div className="my-5 stats bg-primary text-primary flex lg:flex-row flex-col">
-      <div className="stat lg:px-20">
-        <div className="stat-title">Colors</div>
-        <div className="stat-value">{children.length}</div>
-        <div className="stat-actions flex flex-row flex-wrap">{children}</div>
-      </div>
+      {Children.map(children, (child, index) => {
+        const isLast = index === children.length - 1
+        return (
+          <>
+            <div className="stat lg:px-20">
+              <div className="stat-title">Colors</div>
+              <div className="stat-value">{child.length}</div>
+              <div className="stat-actions flex flex-row flex-wrap">{child}</div>
+            </div>
+          </>
+        )
+      })}
       <div className="stat">
         <div className="stat-title">Approximated price</div>
         <div className="stat-value">

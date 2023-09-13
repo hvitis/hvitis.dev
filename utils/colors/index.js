@@ -1,5 +1,4 @@
 import COLORS_ALL from './colorsAll.json'
-import COLORS_ALL_CUSTOM from './colorsAllCustom.json'
 import COLORS_WARHOL from './colorsWarhol.json'
 import COLORS_HARRY_POTTER from './colorsHarryPotter.json'
 import COLORS_IRON_MAN from './colorsIronMan.json'

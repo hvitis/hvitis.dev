@@ -7,13 +7,11 @@ import { formatAndDownloadXmlFile } from '@/utils/formatXmlFile'
 import { formatAndDownloadLdrFile } from '@/utils/formatLDrawFile'
 
 import BadgeColor from '@/components/BadgeColor'
-import SelectColorBadge from '@/components/SelectColorBadge'
 
 import Paper from 'paper'
-import invert from 'invert-color'
 import tinycolor from 'tinycolor2'
 import loadedColors from 'utils/colors'
-
+import customColors from '@/utils/colors/customColors'
 import { clsx } from 'clsx'
 import humanize from '@/utils/humanize'
 import Statistics from '@/components/Statistics'
@@ -21,11 +19,24 @@ import { CheckCircle, CheckSquare, Circle } from 'lucide-react'
 import Toast from '@/components/Toast'
 import Helper from '@/components/Helper'
 
+interface BadgeProps {
+  bl_id: string
+  bl_name: string
+  bo_name: string
+  hex_code: string
+  ldraw_id: string
+  ldraw_name: string
+  lego_id: string
+  lego_name: string
+  rgb: string
+}
+
 function PaperCanvas() {
   const radius = 9
   const spacing = 19
   const defBoardSize = 10
   const maxBoardSizes = [10, 64]
+  const textColor = '#94a3b8'
 
   const mosaicRef = useRef()
   const canvasRef = useRef()
@@ -46,22 +57,21 @@ function PaperCanvas() {
     height: 100,
   })
 
+  const [selectCustomColors, setSelectCustomColors] = useState(customColors)
+  const [selectedCustomColors, setSelectedCustomColors] = useState([])
+  const [isCustomColorSelection, setCanSelectCustomColors] = useState(true)
+
   const [isRound, setIsRound] = useState(true)
   const [file, setFile] = useState(null)
   const [colors, setColors] = useState([])
   const [hasFileNotUploadedError, setHasFileNotUploadedError] = useState(false)
   const [LDrawMatrix, setLDrawMatrix] = useState([])
   const [editColor, setEditColor] = useState('#ffffff')
-  const [editLegoId, setEditLegoId] = useState(1)
   const [isGenerated, setIsGenerated] = useState(false)
   const [reInitialiseCanvas, setReInitialiseCanvas] = useState(false)
   const [hasNumbers, setHasNumbers] = useState(false)
   const [shift, setShift] = useState(0)
   const [colorsToCompare, setColorsToCompare] = useState('COLORS_ALL')
-
-  useEffect(() => {
-    canvasRef.current.getContext('2d', { willReadFrequently: true })
-  }, [])
 
   useEffect(() => {
     window.editColor = editColor
@@ -86,6 +96,34 @@ function PaperCanvas() {
     setIsGenerated(false)
   }, [boardSize, hasNumbers])
 
+  function writeText(raster, x, y, content) {
+    let text
+    if (raster.isRound) text = new Paper.PointText(new Paper.Point(x * spacing, y * spacing + 3))
+    if (!raster.isRound)
+      text = new Paper.PointText(new Paper.Point(x * spacing + 7, y * spacing + 10))
+
+    text.fontSize = 8
+    text.content = content
+    text.justification = 'center'
+    text.fontFamily = 'Fira Sans'
+    text.fontWeight = '700'
+    text.fillColor = textColor
+    return text
+  }
+
+  function drawCircle(x, y, rad) {
+    return new Paper.Path.Circle({
+      center: new Paper.Point(x, y),
+      radius: rad,
+    })
+  }
+  function drawRectangle(x, y, size) {
+    return new Paper.Path.Rectangle({
+      point: new Paper.Point(x, y),
+      size: size,
+    })
+  }
+
   function generateMosaic() {
     Paper.setup('paperCanvas')
     const raster = new Paper.Raster('mosaic')
@@ -96,7 +134,12 @@ function PaperCanvas() {
     // Hide the Raster:
     raster.visible = false
 
-    let chosenColors = loadedColors[colorsToCompare]
+    let chosenColors
+    if (isCustomColorSelection) {
+      chosenColors = selectedCustomColors
+    } else {
+      chosenColors = loadedColors[colorsToCompare]
+    }
     const compareColors = generateComparableColors(chosenColors)
     const nearestColor = require('nearest-color').from(compareColors)
 
@@ -121,66 +164,49 @@ function PaperCanvas() {
         let filteredColour = raster.chosenColors.filter(
           (color) => color.hex_code === pickedColor.value
         )
+
         filteredColour = filteredColour[0]
         let path
+        let transparent
+
         if (!raster.isRound) {
           // Create a square PORTRAIT shaped path:
-          path = new Paper.Path.Rectangle({
-            point: new Paper.Point(x * spacing, y * spacing),
-            size: 18,
-          })
+          path = drawRectangle(x * spacing, y * spacing, 18)
           path.fillColor = pickedColor.value
 
-          var pathDarker = new Paper.Path.Circle({
-            center: new Paper.Point(x * spacing + 9, y * spacing + 9),
-            radius: 7,
-          })
+          var pathDarker = drawCircle(x * spacing + 9, y * spacing + 9, 7)
           pathDarker.fillColor = tinycolor(pickedColor.value).darken().toString()
 
-          let light = new Paper.Path.Circle({
-            center: new Paper.Point(x * spacing + 8, y * spacing + 8),
-            radius: 6,
-          })
+          let light = drawCircle(x * spacing + 8, y * spacing + 8, 6)
           light.fillColor = pickedColor.value
 
-          let transparent = new Paper.Path.Rectangle({
-            point: new Paper.Point(x * spacing, y * spacing),
-            size: 18,
-          })
-          transparent.fillColor = pickedColor.value
-          transparent.opacity = 0
+          if (raster.hasNumbers) writeText(raster, x, y, filteredColour.bl_id)
 
+          transparent = drawRectangle(x * spacing, y * spacing, 18)
+          transparent.fillColor = pickedColor.value
+
+          transparent.opacity = 0
           transparent.path = path
           transparent.light = light
           transparent.pathDarker = pathDarker
+        }
+        if (raster.isRound) {
+          path = drawCircle(x * spacing, y * spacing, spacing / 2)
+          path.fillColor = pickedColor.value
+          if (raster.hasNumbers) writeText(raster, x, y, filteredColour.bl_id)
+        }
+
+        if (!raster.isRound) {
           transparent.onClick = function () {
             this.path.fillColor = window.editColor
             this.light.fillColor = window.editColor
             this.pathDarker.fillColor = tinycolor(window.editColor).darken().toString()
           }
-        } else {
-          path = new Paper.Path.Circle({
-            center: new Paper.Point(x, y).multiply(spacing),
-            radius: radius,
-          })
+        }
+        if (raster.isRound) {
           path.onClick = function () {
             this.fillColor = window.editColor
           }
-        }
-
-        if (raster.hasNumbers) {
-          let text
-          if (raster.isRound)
-            text = new Paper.PointText(new Paper.Point(x * spacing, y * spacing + 3))
-          if (!raster.isRound)
-            text = new Paper.PointText(new Paper.Point(x * spacing + 7, y * spacing + 10))
-
-          text.fontSize = 8
-          text.content = filteredColour.bl_id
-          text.justification = 'center'
-          text.fontFamily = 'Fira Sans'
-          text.fontWeight = '700'
-          text.fillColor = invert(hexColor, true)
         }
 
         if (!colorCodesVerify.includes(pickedColor.value)) {
@@ -258,10 +284,20 @@ function PaperCanvas() {
     })
   }
 
-  function pickEditColor(badgeColor, bl_id) {
-    // Setting color for editing to state for editing canvas
-    setEditColor(badgeColor)
-    setEditLegoId(bl_id)
+  function pickEditColor(color) {
+    setEditColor(color.badgeColor)
+  }
+
+  function addCustomColor(color: BadgeProps) {
+    let isAlreadySelected = selectedCustomColors.find((clr) => clr.hex_code == color.hex_code)
+
+    if (isAlreadySelected) {
+      const filteredNumbers = selectedCustomColors.filter((clr) => clr.hex_code !== color.hex_code)
+      setSelectedCustomColors([...filteredNumbers])
+    }
+    if (!isAlreadySelected) {
+      setSelectedCustomColors([...selectedCustomColors, color])
+    }
   }
 
   function handleCustomBoard(val) {
@@ -310,7 +346,7 @@ function PaperCanvas() {
             <div className="flex flex-col w-1/2 mx-4">
               <label
                 className={clsx(
-                  'text-left font-medium text-gray-700 my-1',
+                  'text-left font-medium text-gray-600 my-1',
                   hasFileNotUploadedError && 'text-red-700'
                 )}
               >
@@ -328,7 +364,7 @@ function PaperCanvas() {
             <div className="flex flex-col w-full mx-4">
               <div className="flex flex-row">
                 <div className="flex flex-col w-full">
-                  <label className="text-left font-medium text-gray-700 my-1">
+                  <label className="text-left font-medium text-gray-600 my-1">
                     Board size:
                     <span className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}>
                       {`width ${boardSize.width} x height ${boardSize.height}`}
@@ -377,7 +413,7 @@ function PaperCanvas() {
           <div className="flex flex-row xs:flex-wrap justify-start my-3">
             {/* Colors selector */}
             <div className="flex flex-col w-full lg:w-1/3 mx-4">
-              <label className="text-center">Colors set:</label>
+              <label className="text-left font-medium text-gray-600 my-1">Colors set:</label>
               <select
                 className="select select-info"
                 required
@@ -389,6 +425,7 @@ function PaperCanvas() {
                 }}
                 name="selectedToBucket"
                 value={colorsToCompare}
+                disabled={isCustomColorSelection}
               >
                 {Object.keys(loadedColors)
                   .map((set, index) => {
@@ -404,7 +441,7 @@ function PaperCanvas() {
 
             {/* Settings button group */}
             <div className="flex flex-col lg:mr-auto mx-4">
-              <label className="text-left">Settings:</label>
+              <label className="text-left font-medium text-gray-600 my-1">Settings:</label>
               <div className="btn-group rounded-r-lg">
                 <button
                   className="btn btn-info text-white my-auto"
@@ -439,19 +476,19 @@ function PaperCanvas() {
                   )}
                 </button>
 
-                {/* <button
+                <button
                   className="btn btn-info text-white"
                   onClick={() => {
-                    handleDrawNumbers()
+                    setCanSelectCustomColors(!isCustomColorSelection)
                   }}
                 >
                   Custom colors
-                  {hasNumbers ? (
+                  {isCustomColorSelection ? (
                     <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
                   ) : (
                     <Circle className="h-5 w-5 text-white"></Circle>
                   )}
-                </button> */}
+                </button>
 
                 <div
                   onClick={() => {
@@ -467,6 +504,38 @@ function PaperCanvas() {
               </div>
             </div>
           </div>
+          {isCustomColorSelection && (
+            <>
+              <div className="text-left mx-4">
+                <label className="text-left font-medium text-gray-600 my-1">Custom colors:</label>
+                <div className="flex flex-wrap my-2">
+                  {selectCustomColors.map((color, index) => (
+                    <BadgeColor
+                      key={index}
+                      onClick={addCustomColor}
+                      color={color}
+                      editColor={editColor}
+                      custom
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="text-left mx-4">
+                <label className="text-left font-medium text-gray-600 my-1">Colors selected:</label>
+                <div className="flex flex-wrap my-2">
+                  {selectedCustomColors.map((color, index) => (
+                    <BadgeColor
+                      key={index}
+                      onClick={addCustomColor}
+                      color={color}
+                      editColor={editColor}
+                      custom
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="w-full my-4 mx-auto">
@@ -501,7 +570,6 @@ function PaperCanvas() {
             width={canvasSize.width}
             height={canvasSize.height}
             hidden={!isGenerated}
-            willReadFrequently
           ></canvas>
         )}
       </div>
@@ -528,16 +596,18 @@ function PaperCanvas() {
       </div>
       <div className="w-full flex flex-row justify-between">
         <div>
-          {colors.length !== 0 && isGenerated && (
+          {colors.length === 0 && !isGenerated && (
             <Statistics size={boardSize}>
-              {colors.map((color) => (
-                <BadgeColor
-                  pickEditColor={pickEditColor}
-                  color={color}
-                  key={color.bl_id}
-                  editColor={editColor}
-                />
-              ))}
+              <div>
+                {colors.map((color, index) => (
+                  <BadgeColor
+                    key={index}
+                    onClick={pickEditColor}
+                    color={color}
+                    editColor={editColor}
+                  />
+                ))}
+              </div>
             </Statistics>
           )}
         </div>

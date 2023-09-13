@@ -18,18 +18,7 @@ import Statistics from '@/components/Statistics'
 import { CheckCircle, CheckSquare, Circle } from 'lucide-react'
 import Toast from '@/components/Toast'
 import Helper from '@/components/Helper'
-
-interface BadgeProps {
-  bl_id: string
-  bl_name: string
-  bo_name: string
-  hex_code: string
-  ldraw_id: string
-  ldraw_name: string
-  lego_id: string
-  lego_name: string
-  rgb: string
-}
+import ColorInterface from 'interfaces/ColorInterface'
 
 function PaperCanvas() {
   const radius = 9
@@ -66,16 +55,12 @@ function PaperCanvas() {
   const [colors, setColors] = useState([])
   const [hasFileNotUploadedError, setHasFileNotUploadedError] = useState(false)
   const [LDrawMatrix, setLDrawMatrix] = useState([])
-  const [editColor, setEditColor] = useState('#ffffff')
+  const [editColor, setEditColor] = useState({ hex_color: '#ffffff' })
   const [isGenerated, setIsGenerated] = useState(false)
   const [reInitialiseCanvas, setReInitialiseCanvas] = useState(false)
   const [hasNumbers, setHasNumbers] = useState(false)
   const [shift, setShift] = useState(0)
   const [colorsToCompare, setColorsToCompare] = useState('COLORS_ALL')
-
-  useEffect(() => {
-    window.editColor = editColor
-  }, [editColor])
 
   useEffect(() => {
     setReInitialiseCanvas(false)
@@ -198,14 +183,14 @@ function PaperCanvas() {
 
         if (!raster.isRound) {
           transparent.onClick = function () {
-            this.path.fillColor = window.editColor
-            this.light.fillColor = window.editColor
-            this.pathDarker.fillColor = tinycolor(window.editColor).darken().toString()
+            this.path.fillColor = window.editColor.hex_code
+            this.light.fillColor = window.editColor.hex_code
+            this.pathDarker.fillColor = tinycolor(window.editColor.hex_code).darken().toString()
           }
         }
         if (raster.isRound) {
           path.onClick = function () {
-            this.fillColor = window.editColor
+            this.fillColor = window.editColor.hex_code
           }
         }
 
@@ -285,10 +270,12 @@ function PaperCanvas() {
   }
 
   function pickEditColor(color) {
-    setEditColor(color.badgeColor)
+    setEditColor(color)
+    window.editColor = color
+    console.log(window.editColor)
   }
 
-  function addCustomColor(color: BadgeProps) {
+  function addCustomColor(color: ColorInterface) {
     let isAlreadySelected = selectedCustomColors.find((clr) => clr.hex_code == color.hex_code)
 
     if (isAlreadySelected) {
@@ -596,7 +583,7 @@ function PaperCanvas() {
       </div>
       <div className="w-full flex flex-row justify-between">
         <div>
-          {colors.length === 0 && !isGenerated && (
+          {colors.length !== 0 && isGenerated && (
             <Statistics size={boardSize}>
               <div>
                 {colors.map((color, index) => (

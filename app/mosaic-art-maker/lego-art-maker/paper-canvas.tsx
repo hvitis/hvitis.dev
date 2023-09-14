@@ -18,6 +18,7 @@ import { CheckCircle, CheckSquare, Circle } from 'lucide-react'
 import Toast from '@/components/Toast'
 import Helper from '@/components/Helper'
 import ColorInterface from 'interfaces/ColorInterface'
+import FileInput from '@/components/FileInput/FileInput'
 
 function PaperCanvas() {
   const radius = 9
@@ -332,22 +333,10 @@ function PaperCanvas() {
           {/* Image and size selection  */}
           {/* Select an image  */}
           <div className="flex flex-row xs:flex-wrap justify-start">
-            <div className="flex flex-col w-1/2 mx-4">
-              <label
-                className={clsx(
-                  'text-left font-medium text-gray-600 my-1',
-                  hasFileNotUploadedError && 'text-red-700'
-                )}
-              >
-                Select image:
-              </label>
-              <input
-                className="file-input file-input-bordered file-input-info w-full max-w-xs"
-                id="file"
-                type="file"
-                onChange={(e) => setFile(URL.createObjectURL(e.target.files[0]))}
-              />
-            </div>
+            <FileInput
+              onClick={(e) => setFile(e.target.files[0])}
+              error={hasFileNotUploadedError}
+            />
 
             {/* Adjust board by slider or custom selector  */}
             <div className="flex flex-col w-full mx-4">

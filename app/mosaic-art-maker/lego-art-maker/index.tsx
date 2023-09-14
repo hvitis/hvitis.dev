@@ -28,14 +28,16 @@ class LegoArtMaker extends React.Component {
               <p className="py-6">Make your favourite LEGO mosaic even better.</p>
             </div>
           </div>
-          <PaperCanvas />
+          <Notification
+            title={'New version has arrived!'}
+            msg={'Learn what is new and what I am working on for the next version 3.0'}
+            href={'blog/'}
+            className="mb-20 w-5/6 mx-auto"
+          ></Notification>
+          <div className="mb-20">
+            <PaperCanvas />
+          </div>
           <div>
-            <Notification
-              title={'New version has arrived!'}
-              msg={'Learn what is new and help me make it even better by giving your feedback.'}
-              href={'blog/'}
-            ></Notification>
-
             <div className="divider"></div>
 
             <p className="text-xs font-thin">

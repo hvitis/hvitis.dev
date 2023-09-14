@@ -21,6 +21,7 @@ import ColorInterface from 'interfaces/ColorInterface'
 import FileInput from '@/components/FileInput/FileInput'
 import Badge from '@/components/Badge'
 import { Button } from '@nextui-org/react'
+import SelectMultiply from '@/components/Selectors/SelectMultiply'
 
 function PaperCanvas() {
   const radius = 9
@@ -401,7 +402,8 @@ function PaperCanvas() {
               <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
                 Colors set:
               </label>
-              <select
+              <SelectMultiply options={loadedColors}></SelectMultiply>
+              {/* <select
                 className="select select-info"
                 required
                 type="text"
@@ -422,7 +424,7 @@ function PaperCanvas() {
                       {colorSet.name}
                     </option>
                   ))}
-              </select>
+              </select> */}
             </div>
 
             {/* Settings button group */}

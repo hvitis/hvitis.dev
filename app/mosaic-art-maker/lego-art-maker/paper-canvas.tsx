@@ -339,7 +339,7 @@ function PaperCanvas() {
             <div className="flex flex-col w-full mx-4">
               <div className="flex flex-row">
                 <div className="flex flex-col w-full">
-                  <label className="text-left font-medium text-gray-600 my-1">
+                  <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
                     Board size:
                     <span className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}>
                       {`width ${boardSize.width} x height ${boardSize.height}`}
@@ -388,7 +388,9 @@ function PaperCanvas() {
           <div className="flex flex-row xs:flex-wrap justify-between my-3">
             {/* Colors selector */}
             <div className="flex flex-col w-full lg:w-1/3 mx-4">
-              <label className="text-left font-medium text-gray-600 my-1">Colors set:</label>
+              <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
+                Colors set:
+              </label>
               <select
                 className="select select-info"
                 required
@@ -415,7 +417,9 @@ function PaperCanvas() {
 
             {/* Settings button group */}
             <div className="flex flex-col lg:ml-auto mx-6">
-              <label className="text-left font-medium text-gray-600 my-1">Settings:</label>
+              <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
+                Settings:
+              </label>
               <div className="btn-group rounded-r-lg">
                 <button
                   className="btn btn-info text-white my-auto"
@@ -481,7 +485,9 @@ function PaperCanvas() {
           {
             <>
               <div className="text-left mx-4">
-                <label className="text-left font-medium text-gray-600 my-1">Custom colors:</label>
+                <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
+                  Custom colors:
+                </label>
                 <div className="flex flex-wrap my-2">
                   {selectedColorset.map((color, index) => (
                     <BadgeColor
@@ -496,7 +502,7 @@ function PaperCanvas() {
               </div>
               {isCustomColorSelection && (
                 <div className="text-left mx-4">
-                  <label className="text-left font-medium text-gray-600 my-1">
+                  <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
                     Select from above:
                   </label>
                   <div className="flex flex-wrap my-2">

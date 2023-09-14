@@ -5,15 +5,8 @@ import PaperCanvas from './paper-canvas'
 import NotificationSimple from '@/components/NotificationSimple'
 import Notification from '@/components/Notification'
 import { isMobile } from 'react-device-detect'
-import { useEffect } from 'react'
 
 const LegoArtMaker = () => {
-  // useEffect(() => {
-  //   const body = document.body
-  //   body.style.backgroundImage = "url('/svg/dotsDark.svg')"
-  //   body.style.backgroundSize = `${window.innerWidth / 2}px`
-  // }, [])
-
   return (
     <>
       <div className="w-full mx-auto text-center ">

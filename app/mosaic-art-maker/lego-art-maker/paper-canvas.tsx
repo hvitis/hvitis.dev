@@ -19,6 +19,7 @@ import Toast from '@/components/Toast'
 import Helper from '@/components/Helper'
 import ColorInterface from 'interfaces/ColorInterface'
 import FileInput from '@/components/FileInput/FileInput'
+import Badge from '@/components/Badge'
 
 function PaperCanvas() {
   const radius = 9
@@ -66,6 +67,10 @@ function PaperCanvas() {
   useEffect(() => {
     setReInitialiseCanvas(false)
   }, [reInitialiseCanvas])
+
+  useEffect(() => {
+    if (file) setHasFileNotUploadedError(false)
+  }, [file])
 
   useEffect(() => {
     setTimeout(() => setNotification(null), 7000)
@@ -233,6 +238,10 @@ function PaperCanvas() {
     if (!file) {
       setHasFileNotUploadedError(true)
       setNotification({ msg: 'You must add an image to generate mosaic.' })
+      return
+    }
+    if (selectedCustomColors.length === 0) {
+      setNotification({ msg: 'Select colors first or switch to normal mode.' })
       return
     }
     if (isGenerated) clearCanvas()
@@ -460,7 +469,7 @@ function PaperCanvas() {
                     setCanSelectCustomColors(!isCustomColorSelection)
                   }}
                 >
-                  Colors in set:
+                  Custom mode:
                   {isCustomColorSelection ? (
                     <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
                   ) : (
@@ -505,16 +514,21 @@ function PaperCanvas() {
                   <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
                     Select from above:
                   </label>
+                  {selectedCustomColors.length !== 0 && (
+                    <div className="flex flex-wrap my-2">
+                      {selectedCustomColors.map((color, index) => (
+                        <BadgeColor
+                          key={index}
+                          onClick={addCustomColor}
+                          color={color}
+                          editColor={editColor}
+                          custom
+                        />
+                      ))}
+                    </div>
+                  )}
                   <div className="flex flex-wrap my-2">
-                    {selectedCustomColors.map((color, index) => (
-                      <BadgeColor
-                        key={index}
-                        onClick={addCustomColor}
-                        color={color}
-                        editColor={editColor}
-                        custom
-                      />
-                    ))}
+                    {selectedCustomColors.length === 0 && <Badge>No colors selected yet.</Badge>}
                   </div>
                 </div>
               )}

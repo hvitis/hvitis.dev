@@ -7,7 +7,7 @@ const FileInput = ({ onClick, error, file }) => {
     <div className={clsx('flex flex-col w-1/2 mx-4')}>
       <label
         className={clsx(
-          'text-left font-medium text-gray-600 my-1 range-accent',
+          'text-left font-medium text-gray-600 dark:text-gray-300 my-1 range-accent',
           error && 'text-red-700'
         )}
       >

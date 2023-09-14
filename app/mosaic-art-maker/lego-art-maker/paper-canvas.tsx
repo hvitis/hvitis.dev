@@ -240,7 +240,7 @@ function PaperCanvas() {
       setNotification({ msg: 'You must add an image to generate mosaic.' })
       return
     }
-    if (selectedCustomColors.length === 0) {
+    if (isCustomColorSelection && selectedCustomColors.length === 0) {
       setNotification({ msg: 'Select colors first or switch to normal mode.' })
       return
     }
@@ -563,7 +563,7 @@ function PaperCanvas() {
           <canvas
             id="paperCanvas"
             ref={canvasRef}
-            style={{ left: boardSize.width > 54 ? `-${shift}px` : '' }}
+            style={{ left: boardSize.width > 58 ? `-${shift}px` : '' }}
             className={clsx('mx-auto', boardSize.width > 50 ? `w-max relative` : '')}
             width={canvasSize.width}
             height={canvasSize.height}

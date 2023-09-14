@@ -16,7 +16,7 @@ class LegoArtMaker extends React.Component {
               msg={' For the best experience open this page on your macOS or PC.'}
             />
           )}
-          <div className="hero-content">
+          <div className="hero-content mb-4">
             <div className="max-w-md">
               <div className="indicator">
                 <span className="indicator-item indicator-bottom badge badge-secondary -right-5">

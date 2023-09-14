@@ -11,7 +11,6 @@ import BadgeColor from '@/components/BadgeColor'
 import Paper from 'paper'
 import tinycolor from 'tinycolor2'
 import loadedColors from 'utils/colors'
-import customColors from '@/utils/colors/customColors'
 import { clsx } from 'clsx'
 import humanize from '@/utils/humanize'
 import Statistics from '@/components/Statistics'
@@ -46,9 +45,11 @@ function PaperCanvas() {
     height: 100,
   })
 
-  const [selectCustomColors, setSelectCustomColors] = useState(customColors)
   const [selectedCustomColors, setSelectedCustomColors] = useState([])
-  const [isCustomColorSelection, setCanSelectCustomColors] = useState(true)
+  const [isCustomColorSelection, setCanSelectCustomColors] = useState(false)
+
+  const [colorsNameset, setColorsNameset] = useState('COLORS_ALL')
+  const [selectedColorset, setSelectedColorset] = useState(loadedColors['COLORS_ALL'])
 
   const [isRound, setIsRound] = useState(true)
   const [file, setFile] = useState(null)
@@ -60,7 +61,6 @@ function PaperCanvas() {
   const [reInitialiseCanvas, setReInitialiseCanvas] = useState(false)
   const [hasNumbers, setHasNumbers] = useState(false)
   const [shift, setShift] = useState(0)
-  const [colorsToCompare, setColorsToCompare] = useState('COLORS_ALL')
 
   useEffect(() => {
     setReInitialiseCanvas(false)
@@ -119,12 +119,8 @@ function PaperCanvas() {
     // Hide the Raster:
     raster.visible = false
 
-    let chosenColors
-    if (isCustomColorSelection) {
-      chosenColors = selectedCustomColors
-    } else {
-      chosenColors = loadedColors[colorsToCompare]
-    }
+    let chosenColors = isCustomColorSelection ? selectedCustomColors : selectedColorset
+
     const compareColors = generateComparableColors(chosenColors)
     const nearestColor = require('nearest-color').from(compareColors)
 
@@ -269,10 +265,9 @@ function PaperCanvas() {
     })
   }
 
-  function pickEditColor(color) {
+  function pickEditColor(color: ColorInterface) {
     setEditColor(color)
     window.editColor = color
-    console.log(window.editColor)
   }
 
   function addCustomColor(color: ColorInterface) {
@@ -285,6 +280,7 @@ function PaperCanvas() {
     if (!isAlreadySelected) {
       setSelectedCustomColors([...selectedCustomColors, color])
     }
+    pickEditColor(color)
   }
 
   function handleCustomBoard(val) {
@@ -306,6 +302,12 @@ function PaperCanvas() {
 
   function handleSliderChange(val) {
     setBoardSize({ width: val, height: val })
+  }
+
+  function handleSelectColorSet(val) {
+    setCanSelectCustomColors(false)
+    setColorsNameset(val)
+    setSelectedColorset(loadedColors[val])
   }
 
   function isCorrectBoardSize() {
@@ -381,7 +383,7 @@ function PaperCanvas() {
                     </div>
                   </div>
                 </div>
-                <div className="w-28 mx-4 my-auto">
+                <div className="w-28 ml-6 mr-2 my-auto">
                   <label className="input-group input-group-vertical">
                     <span className={clsx(isCustomSize() && 'bg-info text-white')}>Custom</span>
                     <input
@@ -397,7 +399,7 @@ function PaperCanvas() {
             </div>
           </div>
 
-          <div className="flex flex-row xs:flex-wrap justify-start my-3">
+          <div className="flex flex-row xs:flex-wrap justify-between my-3">
             {/* Colors selector */}
             <div className="flex flex-col w-full lg:w-1/3 mx-4">
               <label className="text-left font-medium text-gray-600 my-1">Colors set:</label>
@@ -408,11 +410,10 @@ function PaperCanvas() {
                 as="select"
                 size="lg"
                 onChange={(e) => {
-                  setColorsToCompare(e.target.value)
+                  handleSelectColorSet(e.target.value)
                 }}
                 name="selectedToBucket"
-                value={colorsToCompare}
-                disabled={isCustomColorSelection}
+                value={colorsNameset}
               >
                 {Object.keys(loadedColors)
                   .map((set, index) => {
@@ -427,7 +428,7 @@ function PaperCanvas() {
             </div>
 
             {/* Settings button group */}
-            <div className="flex flex-col lg:mr-auto mx-4">
+            <div className="flex flex-col lg:ml-auto mx-6">
               <label className="text-left font-medium text-gray-600 my-1">Settings:</label>
               <div className="btn-group rounded-r-lg">
                 <button
@@ -469,7 +470,7 @@ function PaperCanvas() {
                     setCanSelectCustomColors(!isCustomColorSelection)
                   }}
                 >
-                  Custom colors
+                  Colors in set:
                   {isCustomColorSelection ? (
                     <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
                   ) : (
@@ -491,12 +492,12 @@ function PaperCanvas() {
               </div>
             </div>
           </div>
-          {isCustomColorSelection && (
+          {
             <>
               <div className="text-left mx-4">
                 <label className="text-left font-medium text-gray-600 my-1">Custom colors:</label>
                 <div className="flex flex-wrap my-2">
-                  {selectCustomColors.map((color, index) => (
+                  {selectedColorset.map((color, index) => (
                     <BadgeColor
                       key={index}
                       onClick={addCustomColor}
@@ -507,22 +508,26 @@ function PaperCanvas() {
                   ))}
                 </div>
               </div>
-              <div className="text-left mx-4">
-                <label className="text-left font-medium text-gray-600 my-1">Colors selected:</label>
-                <div className="flex flex-wrap my-2">
-                  {selectedCustomColors.map((color, index) => (
-                    <BadgeColor
-                      key={index}
-                      onClick={addCustomColor}
-                      color={color}
-                      editColor={editColor}
-                      custom
-                    />
-                  ))}
+              {isCustomColorSelection && (
+                <div className="text-left mx-4">
+                  <label className="text-left font-medium text-gray-600 my-1">
+                    Select from above:
+                  </label>
+                  <div className="flex flex-wrap my-2">
+                    {selectedCustomColors.map((color, index) => (
+                      <BadgeColor
+                        key={index}
+                        onClick={addCustomColor}
+                        color={color}
+                        editColor={editColor}
+                        custom
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </>
-          )}
+          }
         </div>
 
         <div className="w-full my-4 mx-auto">
@@ -585,16 +590,14 @@ function PaperCanvas() {
         <div>
           {colors.length !== 0 && isGenerated && (
             <Statistics size={boardSize}>
-              <div>
-                {colors.map((color, index) => (
-                  <BadgeColor
-                    key={index}
-                    onClick={pickEditColor}
-                    color={color}
-                    editColor={editColor}
-                  />
-                ))}
-              </div>
+              {colors.map((color, index) => (
+                <BadgeColor
+                  key={index}
+                  onClick={pickEditColor}
+                  color={color}
+                  editColor={editColor}
+                />
+              ))}
             </Statistics>
           )}
         </div>

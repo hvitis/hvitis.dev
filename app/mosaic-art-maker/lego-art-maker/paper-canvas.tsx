@@ -20,6 +20,7 @@ import Helper from '@/components/Helper'
 import ColorInterface from 'interfaces/ColorInterface'
 import FileInput from '@/components/FileInput/FileInput'
 import Badge from '@/components/Badge'
+import { Button } from '@nextui-org/react'
 
 function PaperCanvas() {
   const radius = 9
@@ -348,7 +349,7 @@ function PaperCanvas() {
             <div className="flex flex-col w-full mx-4">
               <div className="flex flex-row">
                 <div className="flex flex-col w-full">
-                  <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
+                  <label className="flex text-left font-medium text-gray-600 dark:text-gray-300 my-auto">
                     Board size:
                     <span className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}>
                       {`width ${boardSize.width} x height ${boardSize.height}`}
@@ -538,12 +539,14 @@ function PaperCanvas() {
 
         <div className="w-full my-4 mx-auto">
           <div>
-            <button
-              className="btn btn-success btn-lg mx-2 text-white"
+            <Button
+              radius="full"
+              className="bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg"
+              size="lg"
               onClick={() => clickGenerateButton()}
             >
               Generate
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -592,7 +595,7 @@ function PaperCanvas() {
           .ldr
         </button>
       </div>
-      <div className="w-full flex flex-row justify-between">
+      <div className="w-full flex flex-row justify-center">
         <div>
           {colors.length !== 0 && isGenerated && (
             <Statistics size={boardSize}>

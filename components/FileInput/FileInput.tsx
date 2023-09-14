@@ -8,7 +8,7 @@ const FileInput = ({ onClick, error, file }) => {
       <label
         className={clsx(
           'text-left font-medium text-gray-600 dark:text-gray-300 my-1 range-accent',
-          error && 'text-red-700'
+          error && 'text-yellow-500 font-medium'
         )}
       >
         Select image:

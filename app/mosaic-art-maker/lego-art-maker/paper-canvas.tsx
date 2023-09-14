@@ -27,7 +27,7 @@ function PaperCanvas() {
   const maxBoardSizes = [10, 64]
   const textColor = '#94a3b8'
 
-  const mosaicRef = useRef()
+  const imgRef = useRef()
   const canvasRef = useRef()
 
   const [notification, setNotification] = useState(null)
@@ -112,7 +112,7 @@ function PaperCanvas() {
 
   function generateMosaic() {
     Paper.setup('paperCanvas')
-    const raster = new Paper.Raster('mosaic')
+    const raster = new Paper.Raster('image')
     raster.visible = false
     raster.position = Paper.view.center
     raster.size = new Paper.Size([boardSize.width, boardSize.height])
@@ -333,10 +333,7 @@ function PaperCanvas() {
           {/* Image and size selection  */}
           {/* Select an image  */}
           <div className="flex flex-row xs:flex-wrap justify-start">
-            <FileInput
-              onClick={(e) => setFile(e.target.files[0])}
-              error={hasFileNotUploadedError}
-            />
+            <FileInput onClick={setFile} file={file} error={hasFileNotUploadedError} />
 
             {/* Adjust board by slider or custom selector  */}
             <div className="flex flex-col w-full mx-4">
@@ -532,11 +529,11 @@ function PaperCanvas() {
       </div>
 
       <img
+        id="image"
         src={file}
+        ref={imgRef}
         alt="Generated mosaic LEGO Image"
         crossOrigin="*"
-        ref={mosaicRef}
-        id="mosaic"
         hidden
       />
       <div className="w-full mb-5 ">

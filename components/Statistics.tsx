@@ -46,7 +46,7 @@ const Statistics = ({ size, children }: StatisticsInterface) => {
   return (
     <div className="my-5 stats bg-primary text-primary flex lg:flex-row flex-col">
       <div className="stat lg:px-20">
-        <div className="stat-title">Colors</div>
+        <div className="stat-title">Colors used</div>
         <div className="stat-value">{children.length}</div>
         <div className="stat-actions flex flex-row flex-wrap">{children}</div>
       </div>

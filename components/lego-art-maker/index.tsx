@@ -18,11 +18,10 @@ const LegoArtMaker = () => {
         <div className="hero-content mb-4">
           <div className="max-w-md">
             <div className="indicator">
-              <span className="indicator-item indicator-bottom badge badge-secondary -right-5">
+              <span className="indicator-item indicator-bottom badge badge-secondary lg:-right-5 lg:top-5 -top-5">
                 v. 2.0
               </span>
-              {/* <div className="grid w-32 h-32 bg-base-300 place-items-center">content</div> */}
-              <h1 className="text-5xl font-bold">Mosaic Art Maker</h1>
+              <h1 className="lg:text-5xl text-2xl font-bold lg:px-1">Mosaic Art Maker</h1>
             </div>
             <p className="py-6">Make your favourite LEGO mosaic even better.</p>
           </div>

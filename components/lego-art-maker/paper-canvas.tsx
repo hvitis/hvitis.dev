@@ -18,8 +18,9 @@ import Toast from '@/components/Toast'
 import Helper from '@/components/Helper'
 import ColorInterface from 'interfaces/ColorInterface'
 import FileInput from '@/components/FileInput/FileInput'
+import PulsatingButton from '@/components/PulsatingButton/PulsatingButton'
 import Badge from '@/components/Badge'
-import { Button } from '@nextui-org/react'
+
 import SelectMultiply from '@/components/Selectors/SelectMultiply'
 import { trackMosaicClick } from '@/utils/gtag'
 
@@ -157,6 +158,7 @@ function PaperCanvas() {
 
         filteredColour = filteredColour[0]
         let path
+        let text
         let transparent
 
         if (!raster.isRound) {
@@ -170,7 +172,7 @@ function PaperCanvas() {
           let light = drawCircle(x * spacing + 8, y * spacing + 8, 6)
           light.fillColor = pickedColor.value
 
-          if (raster.hasNumbers) writeText(raster, x, y, filteredColour.bl_id)
+          if (raster.hasNumbers) text = writeText(raster, x, y, filteredColour.bl_id)
 
           transparent = drawRectangle(x * spacing, y * spacing, 18)
           transparent.fillColor = pickedColor.value
@@ -179,11 +181,14 @@ function PaperCanvas() {
           transparent.path = path
           transparent.light = light
           transparent.pathDarker = pathDarker
+          if (text) transparent.text = text
         }
         if (raster.isRound) {
           path = drawCircle(x * spacing, y * spacing, spacing / 2)
           path.fillColor = pickedColor.value
-          if (raster.hasNumbers) writeText(raster, x, y, filteredColour.bl_id)
+          if (raster.hasNumbers) {
+            path.text = writeText(raster, x, y, filteredColour.bl_id)
+          }
         }
 
         if (!raster.isRound) {
@@ -192,12 +197,14 @@ function PaperCanvas() {
             this.path.fillColor = window.editColor.hex_code
             this.light.fillColor = window.editColor.hex_code
             this.pathDarker.fillColor = tinycolor(window.editColor.hex_code).darken().toString()
+            if (this.text) this.text.content = window.editColor.bl_id
           }
         }
         if (raster.isRound) {
           path.onClick = function () {
             if (!window.editColor) return
             this.fillColor = window.editColor.hex_code
+            if (this.text) this.text.content = window.editColor.bl_id
           }
         }
 
@@ -369,14 +376,14 @@ function PaperCanvas() {
         <div className="flex flex-col flex-wrap gap-2 w-full">
           {/* Image and size selection  */}
           {/* Select an image  */}
-          <div className="flex flex-row xs:flex-wrap justify-start">
+          <div className="flex flex-row flex-wrap md:flex-nowrap justify-start">
             <FileInput onClick={setFile} file={file} error={hasFileNotUploadedError} />
 
             {/* Adjust board by slider or custom selector  */}
-            <div className="flex flex-col w-full mx-4">
+            <div className="flex flex-col w-full lg:mx-4">
               <div className="flex flex-row">
-                <div className="flex flex-col w-full">
-                  <label className="flex text-left font-medium text-gray-600 dark:text-gray-300 my-auto">
+                <div className="flex flex-col lg:w-full">
+                  <label className="flex text-sm text-left font-medium text-gray-600 dark:text-gray-300 my-auto">
                     Board size:
                     <span className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}>
                       {`width ${boardSize.width} x height ${boardSize.height}`}
@@ -388,7 +395,7 @@ function PaperCanvas() {
                       />
                     )}
                   </label>
-                  <div className="w-full mt-2.5 flex flex-col mx-2">
+                  <div className="w-full flex flex-col lg:mx-2 lg:my-0 my-5">
                     <input
                       value={boardSize.width}
                       onChange={(e) => handleSliderChange(e.target.value)}
@@ -406,7 +413,7 @@ function PaperCanvas() {
                     </div>
                   </div>
                 </div>
-                <div className="w-28 ml-6 mr-2 my-auto">
+                <div className="w-28 ml-6 mr-2 my-auto lg:block hidden">
                   <label className="input-group input-group-vertical">
                     <span className={clsx(isCustomSize() && 'bg-info text-white')}>Custom</span>
                     <input
@@ -422,9 +429,9 @@ function PaperCanvas() {
             </div>
           </div>
 
-          <div className="flex flex-row xs:flex-wrap justify-between my-3">
+          <div className="flex flex-row flex-wrap md:flex-nowrap justify-between my-3">
             {/* Colors selector */}
-            <div className="flex flex-col w-full lg:w-1/3 mx-4">
+            <div className="flex flex-col w-full lg:w-1/3 lg:mx-4">
               <SelectMultiply
                 options={loadedColors}
                 onSelect={handleMultipleSelect}
@@ -432,13 +439,13 @@ function PaperCanvas() {
             </div>
 
             {/* Settings button group */}
-            <div className="flex flex-col lg:ml-auto mx-6">
-              <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
+            <div className="flex flex-col lg:ml-auto lg:mx-6 lg:my-0 my-5">
+              <label className="text-sm text-left font-medium text-gray-600 dark:text-gray-300 my-1">
                 Settings:
               </label>
               <div className="btn-group rounded-r-lg">
                 <button
-                  className="btn btn-info text-white my-auto"
+                  className="btn btn-info btn-sm md:btn-md text-white"
                   onClick={() => {
                     setIsRound(!isRound)
                   }}
@@ -457,31 +464,21 @@ function PaperCanvas() {
                   )}
                 </button>
                 <button
-                  className="btn btn-info text-white"
+                  className="btn btn-info btn-sm md:btn-md text-white lg:block hidden"
                   onClick={() => {
                     handleDrawNumbers()
                   }}
                 >
-                  Numbered
-                  {hasNumbers ? (
-                    <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
-                  ) : (
-                    <Circle className="h-5 w-5 text-white"></Circle>
-                  )}
+                  {hasNumbers ? 'Numbered' : 'Blanks'}
                 </button>
 
                 <button
-                  className="btn btn-info text-white"
+                  className="btn btn-info btn-sm md:btn-md text-white"
                   onClick={() => {
                     setCanSelectCustomColors(!customMode)
                   }}
                 >
-                  Custom mode:
-                  {customMode ? (
-                    <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
-                  ) : (
-                    <Circle className="h-5 w-5 text-white"></Circle>
-                  )}
+                  {customMode ? 'Custom Colors' : 'Set Colors'}
                 </button>
 
                 <div
@@ -490,7 +487,10 @@ function PaperCanvas() {
                   }}
                   className="hidden lg:block"
                 >
-                  <button className="btn btn-info text-white rounded-l-none" disabled>
+                  <button
+                    className="btn btn-info btn-sm md:btn-md text-white rounded-l-none"
+                    disabled
+                  >
                     Edit mode
                     <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
                   </button>
@@ -544,14 +544,9 @@ function PaperCanvas() {
 
         <div className="w-full my-4 mx-auto">
           <div>
-            <Button
-              radius="full"
-              className="bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg"
-              size="lg"
-              onClick={() => clickGenerateButton()}
-            >
+            <PulsatingButton isActive={!isGenerated && file} onClick={clickGenerateButton}>
               Generate
-            </Button>
+            </PulsatingButton>
           </div>
         </div>
       </div>

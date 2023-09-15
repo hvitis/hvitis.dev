@@ -12,7 +12,6 @@ import Paper from 'paper'
 import tinycolor from 'tinycolor2'
 import loadedColors from 'utils/colors'
 import { clsx } from 'clsx'
-import humanize from '@/utils/humanize'
 import Statistics from '@/components/Statistics'
 import { CheckCircle, CheckSquare, Circle } from 'lucide-react'
 import Toast from '@/components/Toast'
@@ -50,10 +49,9 @@ function PaperCanvas() {
   })
 
   const [selectedCustomColors, setSelectedCustomColors] = useState([])
-  const [isCustomColorSelection, setCanSelectCustomColors] = useState(false)
+  const [customMode, setCanSelectCustomColors] = useState(false)
 
-  const [colorsNameset, setColorsNameset] = useState('COLORS_ALL')
-  const [selectedColorset, setSelectedColorset] = useState(loadedColors['COLORS_ALL'])
+  const [selectedColors, setSelectedColors] = useState(loadedColors[0].colors)
 
   const [isRound, setIsRound] = useState(true)
   const [file, setFile] = useState(null)
@@ -127,7 +125,7 @@ function PaperCanvas() {
     // Hide the Raster:
     raster.visible = false
 
-    let chosenColors = isCustomColorSelection ? selectedCustomColors : selectedColorset
+    let chosenColors = customMode ? selectedCustomColors : selectedColors
 
     const compareColors = generateComparableColors(chosenColors)
     const nearestColor = require('nearest-color').from(compareColors)
@@ -242,7 +240,7 @@ function PaperCanvas() {
       setNotification({ msg: 'You must add an image to generate mosaic.' })
       return
     }
-    if (isCustomColorSelection && selectedCustomColors.length === 0) {
+    if (customMode && selectedCustomColors.length === 0) {
       setNotification({ msg: 'Select colors first or switch to normal mode.' })
       return
     }
@@ -316,10 +314,12 @@ function PaperCanvas() {
     setBoardSize({ width: val, height: val })
   }
 
-  function handleSelectColorSet(val) {
-    setCanSelectCustomColors(false)
-    setColorsNameset(val)
-    setSelectedColorset(loadedColors[val])
+  function handleMultipleSelect(val) {
+    let selectedColorSets = [...loadedColors].filter((set) => val.has(`${set.id}`))
+    let selectedColors = selectedColorSets.map((set) => set.colors).flat(1)
+    const key = 'lego_id'
+    const uniqueColors = [...new Map(selectedColors.map((item) => [item[key], item])).values()]
+    setSelectedColors(uniqueColors)
   }
 
   function isCorrectBoardSize() {
@@ -335,6 +335,11 @@ function PaperCanvas() {
 
   function isCustomSize() {
     return boardSize.width !== boardSize.height
+  }
+
+  function removeColor(color) {
+    const filteredNumbers = selectedCustomColors.filter((clr) => clr.hex_code !== color.hex_code)
+    setSelectedCustomColors([...filteredNumbers])
   }
 
   return (
@@ -399,32 +404,10 @@ function PaperCanvas() {
           <div className="flex flex-row xs:flex-wrap justify-between my-3">
             {/* Colors selector */}
             <div className="flex flex-col w-full lg:w-1/3 mx-4">
-              <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
-                Colors set:
-              </label>
-              <SelectMultiply options={loadedColors}></SelectMultiply>
-              {/* <select
-                className="select select-info"
-                required
-                type="text"
-                as="select"
-                size="lg"
-                onChange={(e) => {
-                  handleSelectColorSet(e.target.value)
-                }}
-                name="selectedToBucket"
-                value={colorsNameset}
-              >
-                {Object.keys(loadedColors)
-                  .map((set, index) => {
-                    return { id: index, name: humanize(set.slice(6, 30)), value: set }
-                  })
-                  .map((colorSet) => (
-                    <option key={colorSet.id} value={colorSet.value}>
-                      {colorSet.name}
-                    </option>
-                  ))}
-              </select> */}
+              <SelectMultiply
+                options={loadedColors}
+                onSelect={handleMultipleSelect}
+              ></SelectMultiply>
             </div>
 
             {/* Settings button group */}
@@ -469,11 +452,11 @@ function PaperCanvas() {
                 <button
                   className="btn btn-info text-white"
                   onClick={() => {
-                    setCanSelectCustomColors(!isCustomColorSelection)
+                    setCanSelectCustomColors(!customMode)
                   }}
                 >
                   Custom mode:
-                  {isCustomColorSelection ? (
+                  {customMode ? (
                     <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
                   ) : (
                     <Circle className="h-5 w-5 text-white"></Circle>
@@ -498,38 +481,37 @@ function PaperCanvas() {
             <>
               <div className="text-left mx-4">
                 <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
-                  Custom colors:
+                  {!customMode && 'Colors to use:'}
+                  <div className="flex flex-wrap my-2">
+                    {selectedColors.map((color) => (
+                      <BadgeColor
+                        key={color.hex_code}
+                        onClick={addCustomColor}
+                        color={color}
+                        editColor={editColor}
+                      />
+                    ))}
+                  </div>
                 </label>
-                <div className="flex flex-wrap my-2">
-                  {selectedColorset.map((color, index) => (
-                    <BadgeColor
-                      key={index}
-                      onClick={addCustomColor}
-                      color={color}
-                      editColor={editColor}
-                      custom
-                    />
-                  ))}
-                </div>
               </div>
-              {isCustomColorSelection && (
+              {customMode && (
                 <div className="text-left mx-4">
                   <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
-                    Select from above:
+                    Colors to use (select from above):
+                    {selectedCustomColors.length !== 0 && (
+                      <div className="flex flex-wrap my-2">
+                        {selectedCustomColors.map((color) => (
+                          <BadgeColor
+                            key={color.hex_code}
+                            color={color}
+                            editColor={editColor}
+                            onClick={removeColor}
+                            remove
+                          />
+                        ))}
+                      </div>
+                    )}
                   </label>
-                  {selectedCustomColors.length !== 0 && (
-                    <div className="flex flex-wrap my-2">
-                      {selectedCustomColors.map((color, index) => (
-                        <BadgeColor
-                          key={index}
-                          onClick={addCustomColor}
-                          color={color}
-                          editColor={editColor}
-                          custom
-                        />
-                      ))}
-                    </div>
-                  )}
                   <div className="flex flex-wrap my-2">
                     {selectedCustomColors.length === 0 && <Badge>No colors selected yet.</Badge>}
                   </div>
@@ -601,9 +583,9 @@ function PaperCanvas() {
         <div>
           {colors.length !== 0 && isGenerated && (
             <Statistics size={boardSize}>
-              {colors.map((color, index) => (
+              {colors.map((color) => (
                 <BadgeColor
-                  key={index}
+                  key={color.hex_code}
                   onClick={pickEditColor}
                   color={color}
                   editColor={editColor}

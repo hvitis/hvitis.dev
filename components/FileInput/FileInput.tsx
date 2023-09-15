@@ -3,6 +3,10 @@ import clsx from 'clsx'
 import styles from './FileInput.module.css'
 
 const FileInput = ({ onClick, error, file }) => {
+  const handleFileInput = (e) => {
+    if (!e.target.files) return
+    onClick(URL.createObjectURL(e.target.files[0]))
+  }
   return (
     <div className={clsx('flex flex-col w-1/2 mx-4')}>
       <label
@@ -18,7 +22,7 @@ const FileInput = ({ onClick, error, file }) => {
             'file-input file-input-bordered file-input-info w-full max-w-xs',
             !file && styles.pulse
           )}
-          onChange={(e) => onClick(URL.createObjectURL(e.target.files[0]))}
+          onChange={(e) => handleFileInput(e)}
         />
       </label>
     </div>

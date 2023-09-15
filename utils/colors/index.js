@@ -21,7 +21,7 @@ const loadedColors = [
     colors: COLORS_ALL,
     nr: '',
     image: '/webp/sets/80x80-lego.webp',
-    pcs: 100000,
+    pcs: 0,
   },
   {
     id: 2,

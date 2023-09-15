@@ -12,7 +12,7 @@ import { ThemeProviders } from './theme-providers'
 import { Metadata } from 'next'
 import { Providers } from './providers'
 import Head from './head'
-import GoogleAnalytics from '@/components/GoogleAnalytics'
+import GoogleAnalytics from './GoogleAnalytics'
 
 const space_grotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -69,8 +69,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <Head />
-      <GoogleAnalytics />
       <body className="bg-white text-black antialiased dark:bg-gray-950 dark:text-white">
+        <GoogleAnalytics />
         <Providers>
           <ThemeProviders>
             <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />

@@ -1,3 +1,5 @@
+'use client'
+
 import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { memo, useEffect } from 'react'

@@ -59,7 +59,7 @@ function PaperCanvas() {
   const [colors, setColors] = useState([])
   const [hasFileNotUploadedError, setHasFileNotUploadedError] = useState(false)
   const [LDrawMatrix, setLDrawMatrix] = useState([])
-  const [editColor, setEditColor] = useState({ hex_color: '#ffffff' })
+  const [editColor, setEditColor] = useState(null)
   const [isGenerated, setIsGenerated] = useState(false)
   const [reInitialiseCanvas, setReInitialiseCanvas] = useState(false)
   const [hasNumbers, setHasNumbers] = useState(false)
@@ -141,8 +141,9 @@ function PaperCanvas() {
     const colorCodes = []
     const colorCodesVerify = []
 
+    const LDrawMatrix = []
     for (let x = 0; x < raster.width; x++) {
-      for (let y = raster.height - 1; y >= 0; y--) {
+      for (let y = 0; y < raster.height; y++) {
         // Get the color of the pixel:
         const singleColor = {}
         const color = raster.getPixel(x, y)
@@ -187,6 +188,7 @@ function PaperCanvas() {
 
         if (!raster.isRound) {
           transparent.onClick = function () {
+            if (!window.editColor) return
             this.path.fillColor = window.editColor.hex_code
             this.light.fillColor = window.editColor.hex_code
             this.pathDarker.fillColor = tinycolor(window.editColor.hex_code).darken().toString()
@@ -194,10 +196,12 @@ function PaperCanvas() {
         }
         if (raster.isRound) {
           path.onClick = function () {
+            if (!window.editColor) return
             this.fillColor = window.editColor.hex_code
           }
         }
 
+        // TODO: Verify this functionality if it´s not redundant
         if (!colorCodesVerify.includes(pickedColor.value)) {
           /* colors contains already the color we're iterating */
           colorCodesVerify.push(pickedColor.value)
@@ -211,6 +215,7 @@ function PaperCanvas() {
           let newFilteredColour = colorCodes.filter((color) => color.hex_code === pickedColor.value)
           newFilteredColour[0]['amount'] += 1
         }
+        LDrawMatrix.push({ x, y, z: -10, ldraw_id: filteredColour.ldraw_id })
       }
     }
     Paper.project.activeLayer.position = Paper.view.center
@@ -218,6 +223,7 @@ function PaperCanvas() {
     // Returning colors array to create buttons with information and
     setColors(colorCodes)
     setIsGenerated(true)
+    setLDrawMatrix(LDrawMatrix)
   }
 
   function generateComparableColors(colorsSet) {
@@ -257,7 +263,6 @@ function PaperCanvas() {
     // Order here colours by amount of them in the picture
     colors.sort((a, b) => (a.amount > b.amount ? 1 : b.amount > a.amount ? -1 : 0))
     setColors(colors)
-    setLDrawMatrix(LDrawMatrix)
   }
 
   function handleCanvasSave() {
@@ -352,6 +357,10 @@ function PaperCanvas() {
   function removeColor(color) {
     const filteredNumbers = selectedCustomColors.filter((clr) => clr.hex_code !== color.hex_code)
     setSelectedCustomColors([...filteredNumbers])
+  }
+
+  function onCanvasClick() {
+    if (!window.editColor) setNotification({ msg: 'Pick a color from the list to edit studs' })
   }
 
   return (
@@ -567,6 +576,9 @@ function PaperCanvas() {
             width={canvasSize.width}
             height={canvasSize.height}
             hidden={!isGenerated}
+            onClick={() => {
+              onCanvasClick()
+            }}
           ></canvas>
         )}
       </div>

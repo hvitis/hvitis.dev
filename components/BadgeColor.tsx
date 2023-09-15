@@ -38,7 +38,10 @@ const BadgeColor: React.FunctionComponent<BadgeProps> = ({ color, onClick, editC
   }
 
   return (
-    <div className="tooltip" data-tip={editColor.hex_code === color.hex_code ? hint : tooltip}>
+    <div
+      className="tooltip"
+      data-tip={editColor && editColor.hex_code === color.hex_code ? hint : tooltip}
+    >
       <button
         onClick={(e) => handleClick(e)}
         key={color.hex}

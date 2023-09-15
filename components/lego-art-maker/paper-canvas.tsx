@@ -21,6 +21,7 @@ import FileInput from '@/components/FileInput/FileInput'
 import Badge from '@/components/Badge'
 import { Button } from '@nextui-org/react'
 import SelectMultiply from '@/components/Selectors/SelectMultiply'
+import { trackMosaicClick } from '@/utils/gtag'
 
 function PaperCanvas() {
   const radius = 9
@@ -249,6 +250,7 @@ function PaperCanvas() {
 
     updateColors()
     generateMosaic()
+    trackMosaicClick('generate', `${boardSize.width}x${boardSize.height}`)
   }
 
   function updateColors() {

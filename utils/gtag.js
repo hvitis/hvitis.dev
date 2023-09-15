@@ -13,3 +13,9 @@ export const event = ({ action, category, label, value }) => {
     value: value,
   })
 }
+
+export const trackMosaicClick = (actionName, value = null) => {
+  let trackObj = { action: 'Click', category: 'Mosaic', label: actionName }
+  if (value) trackObj.value = value
+  event(trackObj)
+}

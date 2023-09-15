@@ -5169,6 +5169,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/gtag.js@npm:^0.0.13":
+  version: 0.0.13
+  resolution: "@types/gtag.js@npm:0.0.13"
+  checksum: 9c56c961579cc7c0b5bb4d8b01ba59baffe91a47893ed9d0be8161c6d74e04cebdcee4bc5762704ba72be0c40cb9d5fc88844df52b990545d6982cf9f8a6d6a7
+  languageName: node
+  linkType: hard
+
 "@types/hast@npm:^2.0.0":
   version: 2.3.5
   resolution: "@types/hast@npm:2.3.5"
@@ -13397,6 +13404,7 @@ daisyui@latest:
     "@svgr/webpack": ^8.0.1
     "@tailwindcss/forms": ^0.5.4
     "@tailwindcss/typography": ^0.5.9
+    "@types/gtag.js": ^0.0.13
     "@types/mdx": ^2.0.5
     "@types/react": ^18.2.14
     "@typescript-eslint/eslint-plugin": ^6.1.0

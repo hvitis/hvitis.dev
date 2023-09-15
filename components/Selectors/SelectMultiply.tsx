@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Select, SelectItem, Avatar, Chip, SelectedItems } from '@nextui-org/react'
 
 type LegoSet = {
@@ -36,10 +36,9 @@ export default function SelectMultiply({ options, onSelect }) {
       renderValue={(items: SelectedItems<LegoSet>) => {
         return (
           <div className="flex flex-wrap gap-2">
-            {items.map((item) => (
-              <Chip onMouseEnter={(e) => console.log(e.target)} key={item.id}>
-                {item.data.name}
-              </Chip>
+            {items.map((item, index) => (
+              // @ts-ignore
+              <Chip key={index}>{item.data.name}</Chip>
             ))}
           </div>
         )

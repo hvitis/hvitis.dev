@@ -2,13 +2,15 @@
 import currencies from '@/data/currencies'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import Helper from './Helper'
 
 interface StatisticsInterface {
   size: { width: string; height: string }
+  studsAvailable: number
   children: React.ReactNode
 }
 
-const Statistics = ({ size, children }: StatisticsInterface) => {
+const Statistics = ({ size, studsAvailable, children }: StatisticsInterface) => {
   const [currency, setCurrency] = useState(currencies['EUR'])
   const [rates, setRates] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -76,7 +78,15 @@ const Statistics = ({ size, children }: StatisticsInterface) => {
       </div>
       <div className="stat">
         <div className="stat-title">Studs</div>
-        <div className="stat-value">{size.height * size.height}</div>
+        <div className="stat-value flex justify-center">
+          {size.height * size.height}
+          {studsAvailable != 0 && studsAvailable < size.height * size.height && (
+            <Helper
+              title="Studs count high"
+              text={`Selected set has ${studsAvailable} studs. You might not have enough to finish this setup.`}
+            />
+          )}
+        </div>
         <div className="stat-actions">
           <Link
             href={'https://www.bricklink.com/v2/catalog/catalogitem.page?P=4073#T=C'}

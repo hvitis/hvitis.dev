@@ -7,7 +7,7 @@ interface BadgeProps {}
 const BadgeColor: React.FunctionComponent<BadgeProps> = ({ color, onClick, editColor, remove }) => {
   const [isClicked, setIsClicked] = useState(false)
 
-  const tooltip = `${color.bl_name}`
+  const tooltip = `${color.bl_name ? color.bl_name : 'Click on mosaic to edit it.'}`
   const hint = remove ? 'Click to remove from the list' : 'Click on generated image to edit it.'
 
   const handleClick = (e) => {

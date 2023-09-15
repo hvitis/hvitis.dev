@@ -63,6 +63,7 @@ function PaperCanvas() {
   const [reInitialiseCanvas, setReInitialiseCanvas] = useState(false)
   const [hasNumbers, setHasNumbers] = useState(false)
   const [shift, setShift] = useState(0)
+  const [studsAvailable, setStudsAvailable] = useState(0)
 
   useEffect(() => {
     setReInitialiseCanvas(false)
@@ -316,6 +317,15 @@ function PaperCanvas() {
 
   function handleMultipleSelect(val) {
     let selectedColorSets = [...loadedColors].filter((set) => val.has(`${set.id}`))
+    // Count pieces for sets other than 'All'
+    if (!val.has('1'))
+      setStudsAvailable(
+        selectedColorSets.reduce(function (acc, obj) {
+          return acc + obj.pcs
+        }, 0)
+      )
+    if (val.has('1')) setStudsAvailable(0)
+
     let selectedColors = selectedColorSets.map((set) => set.colors).flat(1)
     const key = 'lego_id'
     const uniqueColors = [...new Map(selectedColors.map((item) => [item[key], item])).values()]
@@ -582,7 +592,7 @@ function PaperCanvas() {
       <div className="w-full flex flex-row justify-center">
         <div>
           {colors.length !== 0 && isGenerated && (
-            <Statistics size={boardSize}>
+            <Statistics size={boardSize} studsAvailable={studsAvailable}>
               {colors.map((color) => (
                 <BadgeColor
                   key={color.hex_code}

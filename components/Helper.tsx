@@ -13,7 +13,7 @@ const Helper = ({ title, text, color = 'warning', children }: Props) => {
   return (
     <>
       <Popover key={title} placement="top" color={color}>
-        <PopoverTrigger className="my-auto">
+        <PopoverTrigger className="my-auto mx-2">
           {children ? children : <InfoIcon className="w-4 h-4 text-yellow-500" />}
         </PopoverTrigger>
         <PopoverContent>

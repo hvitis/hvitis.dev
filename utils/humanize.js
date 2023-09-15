@@ -12,5 +12,5 @@ export default function humanize(phrase) {
   }
 
   // Join the words back together with a space.
-  return words.join(' ')
+  return words.join(' ').trim()
 }

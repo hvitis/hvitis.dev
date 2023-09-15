@@ -4,13 +4,11 @@ import tinycolor from 'tinycolor2'
 
 interface BadgeProps {}
 
-const BadgeColor: React.FunctionComponent<BadgeProps> = ({ color, onClick, editColor, custom }) => {
+const BadgeColor: React.FunctionComponent<BadgeProps> = ({ color, onClick, editColor, remove }) => {
   const [isClicked, setIsClicked] = useState(false)
 
-  const tooltip = color.amount
-    ? `${color.amount} ${color.name} pieces on board.`
-    : 'Click to use this color'
-  const hint = 'Click on generated image and edit it using this color.'
+  const tooltip = `${color.bl_name}`
+  const hint = remove ? 'Click to remove from the list' : 'Click on generated image to edit it.'
 
   const handleClick = (e) => {
     setIsClicked(!isClicked)
@@ -31,23 +29,22 @@ const BadgeColor: React.FunctionComponent<BadgeProps> = ({ color, onClick, editC
       .darken(30)
       .toString()} 25%)`,
     backgroundPosition: '10px 0, 10px 0, 0 0, 0 0',
-    backgroundSize: '10px 10px',
+    backgroundSize: '20px 20px',
     backgroundRepeat: 'repeat',
   }
 
   const defaultBackground = {
     backgroundColor: color.hex_code,
   }
+
   return (
-    <div className="tooltip" data-tip={editColor === color.hex_code ? hint : tooltip}>
+    <div className="tooltip" data-tip={editColor.hex_code === color.hex_code ? hint : tooltip}>
       <button
         onClick={(e) => handleClick(e)}
         key={color.hex}
         className="badge badge-lg w-4"
         style={isClicked ? styledBackground : defaultBackground}
-      >
-        {editColor === color.hex_code && !custom && `Color nr ${color.bl_id}`}
-      </button>
+      />
     </div>
   )
 }

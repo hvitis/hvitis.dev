@@ -1,24 +1,28 @@
 import { InfoIcon } from 'lucide-react'
+import { Popover, PopoverTrigger, PopoverContent, Button } from '@nextui-org/react'
+import { ReactNode } from 'react'
 
 interface Props {
   title: string
   text: string
+  color?: 'warning'
+  children?: ReactNode
 }
 
-const Helper = ({ title, text }: Props) => {
+const Helper = ({ title, text, color = 'warning', children }: Props) => {
   return (
     <>
-      <div className="dropdown dropdown-end my-auto">
-        <button tabIndex={0} className="btn btn-circle btn-ghost btn-xs text-info my-auto">
-          <InfoIcon className="stroke-info shrink-0 w-5 h-5" />
-        </button>
-        <div className="card compact dropdown-content z-[1] shadow bg-base-100 rounded-box w-64">
-          <div className="card-body">
-            <h2 className="card-title">{title}</h2>
-            <p>{text}</p>
+      <Popover key={title} placement="top" color={color}>
+        <PopoverTrigger className="my-auto">
+          {children ? children : <InfoIcon className="w-4 h-4 text-yellow-500" />}
+        </PopoverTrigger>
+        <PopoverContent>
+          <div className="px-1 py-2">
+            <div className="text-small font-bold">{title}</div>
+            <div className="text-tiny">{text}</div>
           </div>
-        </div>
-      </div>
+        </PopoverContent>
+      </Popover>
     </>
   )
 }

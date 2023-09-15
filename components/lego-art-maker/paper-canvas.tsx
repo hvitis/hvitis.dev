@@ -255,8 +255,8 @@ function PaperCanvas() {
       setNotification({ msg: 'You must add an image to generate mosaic.' })
       return
     }
-    if (customMode && selectedCustomColors.length === 0) {
-      setNotification({ msg: 'Select colors first or switch to normal mode.' })
+    if ((customMode && selectedCustomColors.length === 0) || selectedColors.length === 0) {
+      setNotification({ msg: 'You must select colors first' })
       return
     }
     if (isGenerated) clearCanvas()

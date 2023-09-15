@@ -4,19 +4,19 @@ const siteMetadata = {
   author: 'Adam Piskorek',
   headerTitle: 'Hvitis.dev',
   description:
-    'Different views on Software Development Cycle - coding and testing. Tutorials that help you and ideas that confuse you - in a good way.',
+    'Different views on software - coding and testing. Tutorials that help you and ideas that confuse you - in a good way.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://hvitis.dev',
   siteRepo: 'https://github.com/hvitis/hvitis.dev',
   siteLogo: '/static/images/assets/logo.png',
   socialBanner: '/static/images/assets/twitter-card.jpg',
-  mastodon: 'https://mastodon.social/@mastodonuser',
-  email: 'hello@youtalky.com',
+  mastodon: '',
+  email: '',
   github: 'https://github.com/hvitis',
   twitter: 'https://twitter.com/hvitis_',
-  facebook: 'https://facebook.com/hvitis',
-  youtube: 'https://youtube.com/',
+  facebook: '',
+  youtube: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
   linkedin: 'https://www.linkedin.com/in/adampi',
   locale: 'en-US',
   analytics: {
@@ -34,14 +34,14 @@ const siteMetadata = {
     // posthogAnalytics: {
     //   posthogProjectApiKey: '', // e.g. 123e4567-e89b-12d3-a456-426614174000
     // },
-    googleAnalytics: {
-      googleAnalyticsId: '385591623', // e.g. G-XXXXXXX
-    },
+    // googleAnalytics: {
+    //   googleAnalyticsId: '', // e.g. G-XXXXXXX
+    // },
   },
   newsletter: {
     // supports mailchimp, buttondown, convertkit, klaviyo, revue, emailoctopus
     // Please add your .env file and modify it according to your selection
-    provider: 'buttondown',
+    provider: 'convertkit',
   },
   comments: {
     // If you want to use an analytics provider you have to add it to the

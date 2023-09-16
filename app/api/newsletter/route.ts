@@ -25,5 +25,5 @@ export async function POST(request: Request) {
   const convertio_data = await convertio.json()
   console.log(convertio_data)
 
-  return NextResponse.json({ message: 'Jupi1' })
+  return NextResponse.json({ message: 'Jupi!' })
 }

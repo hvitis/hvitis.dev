@@ -29,7 +29,7 @@ const LegoArtMaker = () => {
         <Notification
           title={'New version has arrived!'}
           msg={'Learn what is new and what I am working on for the next version 3.0'}
-          href={'blog/'}
+          href={'/blog/new-version-of-pixel-mosaic-generator'}
           className="mb-20 w-5/6 mx-auto"
         ></Notification>
         <div className="mb-20">

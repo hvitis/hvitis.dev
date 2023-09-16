@@ -321,7 +321,6 @@ function PaperCanvas() {
     if (height === '') height = 10
     if (width === '') width = 10
 
-    console.log(`Setting w: ${width} h: ${height}`)
     return setBoardSize({ width, height })
   }
 

@@ -7,11 +7,11 @@ export default function PulsatingButton({ title = 'Click', isActive, onClick, ch
   return (
     <>
       <Button
-        radius="full"
+        radius="md"
         size="lg"
         onClick={() => onClick()}
         className={clsx(
-          'bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg',
+          'bg-gradient-to-r from-teal-500 from-10% via-sktealtealy-300 via-30% to-emerald-500 to-90% text-white shadow-lg',
           isActive && styles.pulse
         )}
       >

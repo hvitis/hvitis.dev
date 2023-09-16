@@ -1,5 +1,5 @@
 .pulse {
-  box-shadow: 0 0 0 #EC9D3C;
+  box-shadow: 0 0 0 #74dfa2;
   animation: pulse 2s infinite;
 }
 
@@ -9,7 +9,7 @@
 
 @-webkit-keyframes pulse {
   0% {
-    -webkit-box-shadow: 0 0 0 0 #EC9D3C;
+    -webkit-box-shadow: 0 0 0 0 #74dfa2;
   }
 
   70% {
@@ -23,8 +23,8 @@
 
 @keyframes pulse {
   0% {
-    -moz-box-shadow: 0 0 0 0 #EC9D3C;
-    box-shadow: 0 0 0 0 #EC9D3C;
+    -moz-box-shadow: 0 0 0 0 #74dfa2;
+    box-shadow: 0 0 0 0 #74dfa2;
   }
 
   70% {

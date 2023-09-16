@@ -83,7 +83,7 @@ export default function Home({ posts }) {
       )}
       {siteMetadata.newsletter?.provider && (
         <div className="flex items-center justify-center pt-4">
-          <NewsletterForm title="Subscribe for news" apiUrl="/api/newsletter" />
+          <NewsletterForm title="Subscribe" apiUrl="/api/newsletter" />
         </div>
       )}
     </>

@@ -1,6 +1,9 @@
 import * as React from 'react'
+import dynamic from 'next/dynamic'
 
-import LegoArtMaker from './lego-art-maker'
+const LegoArtMaker = dynamic(() => import('@/components/lego-art-maker'), {
+  ssr: false,
+})
 
 const LEGOArt: React.FunctionComponent = ({ ...props }) => {
   return (

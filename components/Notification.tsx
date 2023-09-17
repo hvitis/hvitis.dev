@@ -14,7 +14,7 @@ interface NotificationInterface {
   href?: string
   className?: string
 }
-const Notification = ({ title, msg, href, className }: NotificationInterface) => {
+const Notification = ({ title, msg, btn, href, className }: NotificationInterface) => {
   const [isVisible, setVisible] = useLocalStorage(`isNotificationVisible-${slugify(title)}`, true)
 
   return (
@@ -29,7 +29,7 @@ const Notification = ({ title, msg, href, className }: NotificationInterface) =>
           <div className="flex flex-row">
             {href && (
               <Link href={href} className="btn btn-sm text-blue-600">
-                Read more
+                {btn || 'Read more'}
               </Link>
             )}
             <div className="tooltip" data-tip={"Don't show again"}>

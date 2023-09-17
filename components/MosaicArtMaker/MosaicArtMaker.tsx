@@ -26,53 +26,9 @@ import SelectMultiply from '@/components/Selectors/SelectMultiply'
 import { trackMosaicClick } from '@/utils/gtag'
 import Notification from '../Notification'
 import { useReadLocalStorage } from 'usehooks-ts'
+import dictionary from 'locales/mosaic'
 
 const url = '/blog/new-version-of-pixel-mosaic-generator'
-
-const dictionary = {
-  pl: {
-    generate: 'Generuj',
-    boardSize: {
-      title: 'Rozmiar',
-      width: 'szerokość',
-      height: 'wysokość',
-      custom: 'Ustaw',
-    },
-    settings: {
-      title: 'Ustawienia',
-      round: 'Okrągłe',
-      square: 'Kwadratowe',
-      blanks: 'Czyste',
-      numbered: 'Ponumerowane',
-      set_colors: 'Kolory z zestawów',
-      custom_colors: 'Własne kolory',
-    },
-    fileInput: {
-      title: 'Select image',
-    },
-  },
-  en: {
-    generate: 'Generate',
-    boardSize: {
-      title: 'Board size',
-      width: 'width',
-      height: 'height',
-      custom: 'Custom',
-    },
-    settings: {
-      title: 'Settings',
-      round: 'Round',
-      square: 'Square',
-      blanks: 'Blanks',
-      numbered: 'Numbered',
-      set_colors: 'Set colors',
-      custom_colors: 'Custom colors',
-    },
-    fileInput: {
-      title: 'Wybierz zdjęcie',
-    },
-  },
-}
 
 function MosaicArtMaker() {
   const radius = 9
@@ -87,7 +43,7 @@ function MosaicArtMaker() {
   const [notification, setNotification] = useState(null)
   const [boardSize, setBoardSize] = useState({ width: defBoardSize, height: defBoardSize })
 
-  const locale = useReadLocalStorage('locale')
+  const locale = useReadLocalStorage('locale') || 'en'
 
   const calcCanvas = (sideSize) => {
     return sideSize * (radius * 2 + (spacing - radius * 2)) + 2 * radius
@@ -105,7 +61,7 @@ function MosaicArtMaker() {
   const [selectedCustomColors, setSelectedCustomColors] = useState([])
   const [customMode, setCanSelectCustomColors] = useState(false)
 
-  const [selectedColors, setSelectedColors] = useState(loadedColors[0].colors)
+  const [selectedColors, setSelectedColors] = useState(loadedColors['en'][0].colors)
 
   const [isRound, setIsRound] = useState(true)
   const [file, setFile] = useState(null)
@@ -301,16 +257,16 @@ function MosaicArtMaker() {
 
   function clickGenerateButton() {
     if (!isCorrectBoardSize()) {
-      setNotification({ msg: 'Incorrect board size.' })
+      setNotification({ msg: dictionary[locale].notification.incorrect_size })
       return
     }
     if (!file) {
       setHasFileNotUploadedError(true)
-      setNotification({ msg: 'You must add an image to generate mosaic.' })
+      setNotification({ msg: dictionary[locale].notification.add_image })
       return
     }
     if ((customMode && selectedCustomColors.length === 0) || selectedColors.length === 0) {
-      setNotification({ msg: 'You must select colors first' })
+      setNotification({ msg: dictionary[locale].notification.select_colors })
       return
     }
     if (isGenerated) clearCanvas()
@@ -338,12 +294,6 @@ function MosaicArtMaker() {
     setHasNumbers(!hasNumbers)
   }
 
-  function handleEditMode() {
-    setNotification({
-      msg: 'Edit mode is now always ON. Allows you to edit colors by clicking on studs. Button will be removed in next version.',
-    })
-  }
-
   function pickEditColor(color: ColorInterface) {
     setEditColor(color)
     window.editColor = color
@@ -364,7 +314,7 @@ function MosaicArtMaker() {
 
   function handleCustomBoard(val) {
     if (val.match(/[^xX0-9]/)) {
-      setNotification({ msg: 'Only numbers and character "x" are allowed ( E.g. 12x18 )' })
+      setNotification({ msg: dictionary[locale].notification.board_requirements })
       return
     }
     if (!val || !val.includes('x'))
@@ -382,8 +332,12 @@ function MosaicArtMaker() {
     setBoardSize({ width: val, height: val })
   }
 
+  const isEnglish = () => {
+    return locale === 'en'
+  }
+
   function handleMultipleSelect(val) {
-    const selectedColorSets = [...loadedColors].filter((set) => val.has(`${set.id}`))
+    const selectedColorSets = [...loadedColors[locale]].filter((set) => val.has(`${set.id}`))
     // Count pieces for sets other than 'All'
     if (!val.has('1'))
       setStudsAvailable(
@@ -420,14 +374,15 @@ function MosaicArtMaker() {
   }
 
   function onCanvasClick() {
-    if (!window.editColor) setNotification({ msg: 'Pick a color from the list to edit studs' })
+    if (!window.editColor) setNotification({ msg: dictionary[locale].notification.pick_color })
   }
 
   return (
     <>
       <Notification
-        title={'New version has arrived!'}
-        msg={'Learn what is new and what I am working on for the next version 3.0'}
+        title={dictionary[locale].notification.banner.title}
+        msg={dictionary[locale].notification.banner.msg}
+        btn={dictionary[locale].notification.banner.button}
         href={url}
         className="mb-20 w-5/6 mx-auto"
       />
@@ -451,9 +406,9 @@ function MosaicArtMaker() {
                     <label className="flex text-sm text-left font-medium text-gray-600 dark:text-gray-300 my-auto">
                       {dictionary[locale].boardSize.title}
                       <span className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}>
-                        {`width ${boardSize.width} x height ${boardSize.height}`}
+                        {`${dictionary[locale].boardSize.width} ${boardSize.width} x ${dictionary[locale].boardSize.height} ${boardSize.height}`}
                       </span>
-                      {!isCorrectBoardSize() && (
+                      {!isCorrectBoardSize() && isEnglish() && (
                         <Helper
                           title="Board sizes"
                           text="Each board side must be minimum 10 and maximum 64 studs."
@@ -501,7 +456,8 @@ function MosaicArtMaker() {
               {/* Colors selector */}
               <div className="flex flex-col w-full lg:w-1/3 lg:mx-4">
                 <SelectMultiply
-                  options={loadedColors}
+                  label={dictionary[locale].selector.title}
+                  options={loadedColors[locale]}
                   onSelect={handleMultipleSelect}
                 ></SelectMultiply>
               </div>
@@ -554,8 +510,8 @@ function MosaicArtMaker() {
                       }}
                     >
                       {customMode
-                        ? `${dictionary[locale].settings.set_colors}`
-                        : `${dictionary[locale].settings.custom_colors}`}
+                        ? `${dictionary[locale].settings.custom_colors}`
+                        : `${dictionary[locale].settings.set_colors}`}
                     </button>
                   </div>
                 </label>
@@ -573,6 +529,7 @@ function MosaicArtMaker() {
                           onClick={addCustomColor}
                           color={color}
                           editColor={editColor}
+                          isRound={isRound}
                         />
                       ))}
                     </div>
@@ -581,7 +538,7 @@ function MosaicArtMaker() {
                 {customMode && (
                   <div className="text-left mx-4">
                     <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
-                      Colors to use (select from above):
+                      {dictionary[locale].colors_to_use}:
                       {selectedCustomColors.length !== 0 && (
                         <div className="flex flex-wrap my-2">
                           {selectedCustomColors.map((color) => (
@@ -590,6 +547,7 @@ function MosaicArtMaker() {
                               color={color}
                               editColor={editColor}
                               onClick={removeColor}
+                              isRound={isRound}
                               remove
                             />
                           ))}
@@ -597,7 +555,9 @@ function MosaicArtMaker() {
                       )}
                     </label>
                     <div className="flex flex-wrap my-2">
-                      {selectedCustomColors.length === 0 && <Badge>No colors selected yet.</Badge>}
+                      {selectedCustomColors.length === 0 && (
+                        <Badge>{dictionary[locale].no_colors_selected}.</Badge>
+                      )}
                     </div>
                   </div>
                 )}
@@ -650,7 +610,7 @@ function MosaicArtMaker() {
             data-umami-event="Download PNG"
             onClick={() => handleCanvasSave()}
           >
-            Download
+            {dictionary[locale].download}
           </button>
           <button
             className="btn lg:btn btn-sm"
@@ -684,13 +644,18 @@ function MosaicArtMaker() {
         <div className="w-full flex flex-row justify-center">
           <div>
             {colors.length !== 0 && isGenerated && (
-              <Statistics size={boardSize} studsAvailable={studsAvailable}>
+              <Statistics
+                size={boardSize}
+                studsAvailable={studsAvailable}
+                text={dictionary[locale].statistics}
+              >
                 {colors.map((color) => (
                   <BadgeColor
                     key={color.hex_code}
                     onClick={pickEditColor}
                     color={color}
                     editColor={editColor}
+                    isRound={isRound}
                   />
                 ))}
               </Statistics>

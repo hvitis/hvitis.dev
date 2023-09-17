@@ -11,7 +11,7 @@ interface StatisticsInterface {
   children: React.ReactNode
 }
 
-const Statistics = ({ size, studsAvailable, children }: StatisticsInterface) => {
+const Statistics = ({ size, studsAvailable, children, text }: StatisticsInterface) => {
   const [currency, setCurrency] = useState(currencies['EUR'])
   const [rates, setRates] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -49,12 +49,12 @@ const Statistics = ({ size, studsAvailable, children }: StatisticsInterface) => 
   return (
     <div className="my-5 stats bg-primary text-primary flex lg:flex-row flex-col">
       <div className="stat lg:px-20">
-        <div className="stat-title">Colors used</div>
+        <div className="stat-title">{text.colors_used}</div>
         <div className="stat-value">{children.length}</div>
         <div className="stat-actions flex flex-row flex-wrap">{children}</div>
       </div>
       <div className="stat">
-        <div className="stat-title">Max price</div>
+        <div className="stat-title">{text.max_price}</div>
         <div className="stat-value">
           {!isLoading && (
             <span className="flex justify-center">
@@ -83,7 +83,7 @@ const Statistics = ({ size, studsAvailable, children }: StatisticsInterface) => 
         </div>
       </div>
       <div className="stat">
-        <div className="stat-title">Studs</div>
+        <div className="stat-title">{text.studs}</div>
         <div className="stat-value flex justify-center">
           {size.height * size.height}
           {studsAvailable != 0 && studsAvailable < size.height * size.height && (
@@ -95,7 +95,7 @@ const Statistics = ({ size, studsAvailable, children }: StatisticsInterface) => 
         </div>
         <div className="stat-actions mt-max">
           <Link href={BRICK_LINK_URL} target="_blank" className="btn btn-sm btn-success">
-            Buy studs
+            {text.buy}
           </Link>
         </div>
       </div>

@@ -1,10 +1,17 @@
 // @ts-nocheck
+import clsx from 'clsx'
 import React, { useState } from 'react'
 import tinycolor from 'tinycolor2'
 
 interface BadgeProps {}
 
-const BadgeColor: React.FunctionComponent<BadgeProps> = ({ color, onClick, editColor, remove }) => {
+const BadgeColor: React.FunctionComponent<BadgeProps> = ({
+  color,
+  onClick,
+  editColor,
+  remove,
+  isRound,
+}) => {
   const [isClicked, setIsClicked] = useState(false)
 
   const tooltip = `${color.bl_name ? color.bl_name : 'Click on mosaic to edit it.'}`
@@ -45,7 +52,7 @@ const BadgeColor: React.FunctionComponent<BadgeProps> = ({ color, onClick, editC
       <button
         onClick={(e) => handleClick(e)}
         key={color.hex}
-        className="badge badge-lg w-4"
+        className={clsx('w-4', isRound && 'badge badge-lg w-4', !isRound && 'w-5 h-5 mr-1 mt-1')}
         style={isClicked ? styledBackground : defaultBackground}
       />
     </div>

@@ -11,7 +11,7 @@ type LegoSet = {
   pcs: number
 }
 
-export default function SelectMultiply({ options, onSelect }) {
+export default function SelectMultiply({ options, onSelect, label }) {
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const values = new Set(e.target.value.split(','))
     onSelect(values)
@@ -23,7 +23,7 @@ export default function SelectMultiply({ options, onSelect }) {
       variant="bordered"
       isMultiline={true}
       selectionMode="multiple"
-      label="LEGO Art sets"
+      label={label}
       placeholder="Select a color set"
       color={'primary'}
       labelPlacement="outside"

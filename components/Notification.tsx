@@ -1,4 +1,6 @@
 // @ts-nocheck
+'use client'
+
 import slugify from '@/utils/slugify'
 import clsx from 'clsx'
 import { InfoIcon, XCircleIcon } from 'lucide-react'

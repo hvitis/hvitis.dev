@@ -2,7 +2,7 @@
 import clsx from 'clsx'
 import styles from './FileInput.module.css'
 
-const FileInput = ({ onClick, error, file }) => {
+const FileInput = ({ onClick, error, file, title }) => {
   const handleFileInput = (e) => {
     if (!e.target.files) return
     onClick(URL.createObjectURL(e.target.files[0]))
@@ -15,7 +15,7 @@ const FileInput = ({ onClick, error, file }) => {
           error && 'text-yellow-500 font-medium'
         )}
       >
-        Select image:
+        {title}:
         <input
           type="file"
           className={clsx(

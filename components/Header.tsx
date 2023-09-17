@@ -1,3 +1,5 @@
+'use client'
+
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
 import Logo from '@/data/logo.svg'
@@ -5,9 +7,13 @@ import Link from './Link'
 import MobileNav from './MobileNav'
 import ThemeSwitch from './ThemeSwitch'
 import SearchButton from './SearchButton'
-import LanguageSwitcher from './ChangeLanguage'
+import LanguageSwitch from './LanguageSwitch'
+import { usePathname } from 'next/navigation'
 
 const Header = () => {
+  const pathname = usePathname()
+
+  console.log(pathname)
   return (
     <header className="flex items-center justify-between py-10">
       <div>
@@ -38,9 +44,9 @@ const Header = () => {
               {link.title}
             </Link>
           ))}
+        {pathname.includes('mosaic-art-maker') && <LanguageSwitch />}
         <SearchButton />
         <ThemeSwitch />
-        <LanguageSwitcher></LanguageSwitcher>
         <MobileNav />
       </div>
     </header>

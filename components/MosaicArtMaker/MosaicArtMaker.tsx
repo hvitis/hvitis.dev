@@ -1,7 +1,5 @@
-import NotificationSimple from '@/components/NotificationSimple'
-import Notification from '@/components/Notification'
-import { isMobile } from 'react-device-detect'
-import Link from 'next/link'
+// @ts-nocheck
+'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
 
@@ -26,9 +24,55 @@ import Badge from '@/components/Badge'
 
 import SelectMultiply from '@/components/Selectors/SelectMultiply'
 import { trackMosaicClick } from '@/utils/gtag'
-import Image from 'next/image'
+import Notification from '../Notification'
+import { useReadLocalStorage } from 'usehooks-ts'
 
-const WHAT_IS_NEW_POST = '/blog/new-version-of-pixel-mosaic-generator'
+const url = '/blog/new-version-of-pixel-mosaic-generator'
+
+const dictionary = {
+  pl: {
+    generate: 'Generuj',
+    boardSize: {
+      title: 'Rozmiar',
+      width: 'szerokość',
+      height: 'wysokość',
+      custom: 'Ustaw',
+    },
+    settings: {
+      title: 'Ustawienia',
+      round: 'Okrągłe',
+      square: 'Kwadratowe',
+      blanks: 'Czyste',
+      numbered: 'Ponumerowane',
+      set_colors: 'Kolory z zestawów',
+      custom_colors: 'Własne kolory',
+    },
+    fileInput: {
+      title: 'Select image',
+    },
+  },
+  en: {
+    generate: 'Generate',
+    boardSize: {
+      title: 'Board size',
+      width: 'width',
+      height: 'height',
+      custom: 'Custom',
+    },
+    settings: {
+      title: 'Settings',
+      round: 'Round',
+      square: 'Square',
+      blanks: 'Blanks',
+      numbered: 'Numbered',
+      set_colors: 'Set colors',
+      custom_colors: 'Custom colors',
+    },
+    fileInput: {
+      title: 'Wybierz zdjęcie',
+    },
+  },
+}
 
 function MosaicArtMaker() {
   const radius = 9
@@ -42,6 +86,8 @@ function MosaicArtMaker() {
 
   const [notification, setNotification] = useState(null)
   const [boardSize, setBoardSize] = useState({ width: defBoardSize, height: defBoardSize })
+
+  const locale = useReadLocalStorage('locale')
 
   const calcCanvas = (sideSize) => {
     return sideSize * (radius * 2 + (spacing - radius * 2)) + 2 * radius
@@ -379,300 +425,279 @@ function MosaicArtMaker() {
 
   return (
     <>
-      <div className="w-full mx-auto text-center ">
-        {isMobile && (
-          <NotificationSimple
-            msg={' For the best experience open this page on your macOS or PC.'}
-          />
-        )}
-        <div className="hero-content mb-4">
-          <div className="max-w-md">
-            <div className="indicator">
-              <Link
-                href={WHAT_IS_NEW_POST}
-                className="indicator-item indicator-bottom badge badge-secondary lg:-right-5 lg:top-5 -top-5"
-              >
-                v. 2.0
-              </Link>
-              <h1 className="lg:text-5xl text-2xl font-bold lg:px-1">Mosaic Art Maker</h1>
-            </div>
-            <p className="py-6">Make your favourite LEGO mosaic even better.</p>
-          </div>
-        </div>
-        <Notification
-          title={'New version has arrived!'}
-          msg={'Learn what is new and what I am working on for the next version 3.0'}
-          href={WHAT_IS_NEW_POST}
-          className="mb-20 w-5/6 mx-auto"
-        ></Notification>
-        <div className="mb-20">
-          <div className="w-full">
-            <div className="flex flex-col flex-wrap gap-2 w-full">
-              {/* Image and size selection  */}
-              {/* Select an image  */}
-              <div className="flex flex-row flex-wrap md:flex-nowrap justify-start">
-                <FileInput onClick={setFile} file={file} error={hasFileNotUploadedError} />
+      <Notification
+        title={'New version has arrived!'}
+        msg={'Learn what is new and what I am working on for the next version 3.0'}
+        href={url}
+        className="mb-20 w-5/6 mx-auto"
+      />
+      <div className="mb-20">
+        <div className="w-full">
+          <div className="flex flex-col flex-wrap gap-2 w-full">
+            {/* Image and size selection  */}
+            {/* Select an image  */}
+            <div className="flex flex-row flex-wrap md:flex-nowrap justify-start">
+              <FileInput
+                title={dictionary[locale].fileInput.title}
+                onClick={setFile}
+                file={file}
+                error={hasFileNotUploadedError}
+              />
 
-                {/* Adjust board by slider or custom selector  */}
-                <div className="flex flex-col w-full lg:mx-4">
-                  <div className="flex flex-row">
-                    <div className="flex flex-col lg:w-full">
-                      <label className="flex text-sm text-left font-medium text-gray-600 dark:text-gray-300 my-auto">
-                        Board size:
-                        <span className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}>
-                          {`width ${boardSize.width} x height ${boardSize.height}`}
-                        </span>
-                        {!isCorrectBoardSize() && (
-                          <Helper
-                            title="Board sizes"
-                            text="Each board side must be minimum 10 and maximum 64 studs."
-                          />
-                        )}
-                      </label>
-                      <div className="w-full flex flex-col lg:mx-2 lg:my-0 my-5">
-                        <input
-                          value={boardSize.width}
-                          data-umami-event="Select File"
-                          onChange={(e) => handleSliderChange(e.target.value)}
-                          type="range"
-                          min={10}
-                          max="64"
-                          className={clsx('range', !isCustomSize() && 'range-info')}
+              {/* Adjust board by slider or custom selector  */}
+              <div className="flex flex-col w-full lg:mx-4">
+                <div className="flex flex-row">
+                  <div className="flex flex-col lg:w-full">
+                    <label className="flex text-sm text-left font-medium text-gray-600 dark:text-gray-300 my-auto">
+                      {dictionary[locale].boardSize.title}
+                      <span className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}>
+                        {`width ${boardSize.width} x height ${boardSize.height}`}
+                      </span>
+                      {!isCorrectBoardSize() && (
+                        <Helper
+                          title="Board sizes"
+                          text="Each board side must be minimum 10 and maximum 64 studs."
                         />
-                        <div className="w-full flex justify-between text-xs px-2 my-auto">
-                          <span>min {maxBoardSizes[0]}</span>
-                          <span className="relative lg:-left-5 xl:-left-10 hidden lg:block">
-                            {maxBoardSizes[[maxBoardSizes.length - 1]] / 2}
-                          </span>
-                          <span>max {maxBoardSizes[[maxBoardSizes.length - 1]]}</span>
-                        </div>
+                      )}
+                    </label>
+                    <div className="w-full flex flex-col lg:mx-2 lg:my-0 my-5">
+                      <input
+                        value={boardSize.width}
+                        data-umami-event="Select File"
+                        onChange={(e) => handleSliderChange(e.target.value)}
+                        type="range"
+                        min={10}
+                        max="64"
+                        className={clsx('range', !isCustomSize() && 'range-info')}
+                      />
+                      <div className="w-full flex justify-between text-xs px-2 my-auto">
+                        <span>min {maxBoardSizes[0]}</span>
+                        <span className="relative lg:-left-5 xl:-left-10 hidden lg:block">
+                          {maxBoardSizes[[maxBoardSizes.length - 1]] / 2}
+                        </span>
+                        <span>max {maxBoardSizes[[maxBoardSizes.length - 1]]}</span>
                       </div>
                     </div>
-                    <div className="w-28 ml-6 mr-2 my-auto lg:block hidden">
-                      <label className="input-group input-group-vertical">
-                        <span className={clsx(isCustomSize() && 'bg-info text-white')}>Custom</span>
-                        <input
-                          type="text"
-                          value={`${boardSize.width}x${boardSize.height}`}
-                          onChange={(e) => handleCustomBoard(e.target.value)}
-                          placeholder="e.g. 10x16"
-                          className="input input-bordered"
-                        />
-                      </label>
-                    </div>
+                  </div>
+                  <div className="w-28 ml-6 mr-2 my-auto lg:block hidden">
+                    <label className="input-group input-group-vertical">
+                      <span className={clsx(isCustomSize() && 'bg-info text-white')}>
+                        {dictionary[locale].boardSize.custom}
+                      </span>
+                      <input
+                        type="text"
+                        value={`${boardSize.width}x${boardSize.height}`}
+                        onChange={(e) => handleCustomBoard(e.target.value)}
+                        placeholder="e.g. 10x16"
+                        className="input input-bordered"
+                      />
+                    </label>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="flex flex-row flex-wrap md:flex-nowrap justify-between my-3">
-                {/* Colors selector */}
-                <div className="flex flex-col w-full lg:w-1/3 lg:mx-4">
-                  <SelectMultiply
-                    options={loadedColors}
-                    onSelect={handleMultipleSelect}
-                  ></SelectMultiply>
-                </div>
+            <div className="flex flex-row flex-wrap md:flex-nowrap justify-between my-3">
+              {/* Colors selector */}
+              <div className="flex flex-col w-full lg:w-1/3 lg:mx-4">
+                <SelectMultiply
+                  options={loadedColors}
+                  onSelect={handleMultipleSelect}
+                ></SelectMultiply>
+              </div>
 
-                {/* Settings button group */}
-                <div className="flex flex-col lg:ml-auto lg:mx-6 lg:my-0 my-5">
-                  <label
-                    htmlFor="settings"
-                    className="text-sm text-left font-medium text-gray-600 dark:text-gray-300 my-1"
-                  >
-                    Settings:
-                    <div id="settings" className="btn-group rounded-r-lg">
-                      <button
-                        data-umami-event="Set Roundness"
-                        className="btn btn-info btn-sm md:btn-md text-white"
-                        onClick={() => {
-                          setIsRound(!isRound)
-                        }}
-                      >
-                        {isRound && (
-                          <>
-                            Round
-                            <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
-                          </>
-                        )}
-                        {!isRound && (
-                          <>
-                            Square
-                            <CheckSquare className="h-5 w-5 text-white"></CheckSquare>
-                          </>
-                        )}
-                      </button>
-                      <button
-                        data-umami-event="Set Draw Numbers"
-                        className="btn btn-info text-white"
-                        onClick={() => {
-                          handleDrawNumbers()
-                        }}
-                      >
-                        {hasNumbers ? 'Numbered' : 'Blanks'}
-                      </button>
+              {/* Settings button group */}
+              <div className=" lg:ml-auto lg:mx-6 lg:my-0 my-5">
+                <label
+                  htmlFor="settings"
+                  className="flex flex-col text-sm text-left font-medium text-gray-600 dark:text-gray-300 my-1"
+                >
+                  <span>{dictionary[locale].settings.title}</span>
+                  <div id="settings" className="btn-group rounded-r-lg">
+                    <button
+                      data-umami-event="Set Roundness"
+                      className="btn btn-info btn-sm md:btn-md text-white"
+                      onClick={() => {
+                        setIsRound(!isRound)
+                      }}
+                    >
+                      {isRound && (
+                        <>
+                          {dictionary[locale].settings.round}
+                          <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
+                        </>
+                      )}
+                      {!isRound && (
+                        <>
+                          {dictionary[locale].settings.square}
+                          <CheckSquare className="h-5 w-5 text-white"></CheckSquare>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      data-umami-event="Set Draw Numbers"
+                      className="btn btn-info text-white"
+                      onClick={() => {
+                        handleDrawNumbers()
+                      }}
+                    >
+                      {hasNumbers
+                        ? `${dictionary[locale].settings.numbered}`
+                        : `${dictionary[locale].settings.blanks}`}
+                    </button>
 
-                      <button
-                        className="btn btn-info text-white"
-                        data-umami-event="Set Custom Mode"
-                        onClick={() => {
-                          setCanSelectCustomColors(!customMode)
-                        }}
-                      >
-                        {customMode ? 'Custom Colors' : 'Set Colors'}
-                      </button>
+                    <button
+                      className="btn btn-info text-white"
+                      data-umami-event="Set Custom Mode"
+                      onClick={() => {
+                        setCanSelectCustomColors(!customMode)
+                      }}
+                    >
+                      {customMode
+                        ? `${dictionary[locale].settings.set_colors}`
+                        : `${dictionary[locale].settings.custom_colors}`}
+                    </button>
+                  </div>
+                </label>
+              </div>
+            </div>
+            {
+              <>
+                <div className="text-left mx-4">
+                  <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
+                    {!customMode && 'Colors to use:'}
+                    <div className="flex flex-wrap my-2">
+                      {selectedColors.map((color) => (
+                        <BadgeColor
+                          key={color.hex_code}
+                          onClick={addCustomColor}
+                          color={color}
+                          editColor={editColor}
+                        />
+                      ))}
                     </div>
                   </label>
                 </div>
-              </div>
-              {
-                <>
+                {customMode && (
                   <div className="text-left mx-4">
                     <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
-                      {!customMode && 'Colors to use:'}
-                      <div className="flex flex-wrap my-2">
-                        {selectedColors.map((color) => (
-                          <BadgeColor
-                            key={color.hex_code}
-                            onClick={addCustomColor}
-                            color={color}
-                            editColor={editColor}
-                          />
-                        ))}
-                      </div>
+                      Colors to use (select from above):
+                      {selectedCustomColors.length !== 0 && (
+                        <div className="flex flex-wrap my-2">
+                          {selectedCustomColors.map((color) => (
+                            <BadgeColor
+                              key={color.hex_code}
+                              color={color}
+                              editColor={editColor}
+                              onClick={removeColor}
+                              remove
+                            />
+                          ))}
+                        </div>
+                      )}
                     </label>
-                  </div>
-                  {customMode && (
-                    <div className="text-left mx-4">
-                      <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
-                        Colors to use (select from above):
-                        {selectedCustomColors.length !== 0 && (
-                          <div className="flex flex-wrap my-2">
-                            {selectedCustomColors.map((color) => (
-                              <BadgeColor
-                                key={color.hex_code}
-                                color={color}
-                                editColor={editColor}
-                                onClick={removeColor}
-                                remove
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </label>
-                      <div className="flex flex-wrap my-2">
-                        {selectedCustomColors.length === 0 && (
-                          <Badge>No colors selected yet.</Badge>
-                        )}
-                      </div>
+                    <div className="flex flex-wrap my-2">
+                      {selectedCustomColors.length === 0 && <Badge>No colors selected yet.</Badge>}
                     </div>
-                  )}
-                </>
-              }
-            </div>
-
-            <div className="w-full my-4 mx-auto">
-              <div>
-                <PulsatingButton isActive={!isGenerated && file} onClick={clickGenerateButton}>
-                  Generate
-                </PulsatingButton>
-              </div>
-            </div>
+                  </div>
+                )}
+              </>
+            }
           </div>
 
-          <Image
-            id="image"
-            src={file}
-            ref={imgRef}
-            alt="Generated mosaic LEGO Image"
-            crossOrigin="*"
-            hidden
-          />
-          <div className="w-full mb-5 ">
-            {/* Re init canvas to change it´s size in hard mode. data-paper-resize could
+          <div className="w-full my-4 mx-auto">
+            <div>
+              <PulsatingButton isActive={!isGenerated && file} onClick={clickGenerateButton}>
+                {dictionary[locale].generate}
+              </PulsatingButton>
+            </div>
+          </div>
+        </div>
+
+        <img
+          id="image"
+          src={file}
+          ref={imgRef}
+          alt="Generated mosaic LEGO Image"
+          crossOrigin="*"
+          hidden
+        />
+        <div className="w-full mb-5 ">
+          {/* Re init canvas to change it´s size in hard mode. data-paper-resize could
         be another option if it was not shifting path's onClick events. */}
-            {!reInitialiseCanvas && (
-              <canvas
-                id="paperCanvas"
-                ref={canvasRef}
-                style={{ left: boardSize.width > 58 ? `-${shift}px` : '' }}
-                className={clsx('mx-auto', boardSize.width > 50 ? `w-max relative` : '')}
-                width={canvasSize.width}
-                height={canvasSize.height}
-                hidden={!isGenerated}
-                onClick={() => {
-                  onCanvasClick()
-                }}
-              ></canvas>
+          {!reInitialiseCanvas && (
+            <canvas
+              id="paperCanvas"
+              ref={canvasRef}
+              style={{ left: boardSize.width > 58 ? `-${shift}px` : '' }}
+              className={clsx('mx-auto', boardSize.width > 50 ? `w-max relative` : '')}
+              width={canvasSize.width}
+              height={canvasSize.height}
+              hidden={!isGenerated}
+              onClick={() => {
+                onCanvasClick()
+              }}
+            ></canvas>
+          )}
+        </div>
+
+        <div
+          className="btn-group lg:mx-10 mx-auto"
+          style={{ display: isGenerated ? 'inherit' : 'none' }}
+        >
+          <button
+            className="btn lg:btn btn-sm btn-info"
+            data-umami-event="Download PNG"
+            onClick={() => handleCanvasSave()}
+          >
+            Download
+          </button>
+          <button
+            className="btn lg:btn btn-sm"
+            data-umami-event="Download PNG"
+            onClick={() => handleCanvasSave()}
+          >
+            .Png
+          </button>
+          <button
+            data-umami-event="Download BSX"
+            className="btn lg:btn btn-sm"
+            onClick={() => formatAndDownloadBsxFile(colors)}
+          >
+            .bsx
+          </button>
+          <button
+            data-umami-event="Download XML"
+            className="btn lg:btn btn-sm"
+            onClick={() => formatAndDownloadXmlFile(colors)}
+          >
+            .xml
+          </button>
+          <button
+            data-umami-event="Download LDR"
+            className="btn lg:btn btn-sm"
+            onClick={() => formatAndDownloadLdrFile(LDrawMatrix)}
+          >
+            .ldr
+          </button>
+        </div>
+        <div className="w-full flex flex-row justify-center">
+          <div>
+            {colors.length !== 0 && isGenerated && (
+              <Statistics size={boardSize} studsAvailable={studsAvailable}>
+                {colors.map((color) => (
+                  <BadgeColor
+                    key={color.hex_code}
+                    onClick={pickEditColor}
+                    color={color}
+                    editColor={editColor}
+                  />
+                ))}
+              </Statistics>
             )}
           </div>
-
-          <div
-            className="btn-group lg:mx-10 mx-auto"
-            style={{ display: isGenerated ? 'inherit' : 'none' }}
-          >
-            <button
-              className="btn lg:btn btn-sm btn-info"
-              data-umami-event="Download PNG"
-              onClick={() => handleCanvasSave()}
-            >
-              Download
-            </button>
-            <button
-              className="btn lg:btn btn-sm"
-              data-umami-event="Download PNG"
-              onClick={() => handleCanvasSave()}
-            >
-              .Png
-            </button>
-            <button
-              data-umami-event="Download BSX"
-              className="btn lg:btn btn-sm"
-              onClick={() => formatAndDownloadBsxFile(colors)}
-            >
-              .bsx
-            </button>
-            <button
-              data-umami-event="Download XML"
-              className="btn lg:btn btn-sm"
-              onClick={() => formatAndDownloadXmlFile(colors)}
-            >
-              .xml
-            </button>
-            <button
-              data-umami-event="Download LDR"
-              className="btn lg:btn btn-sm"
-              onClick={() => formatAndDownloadLdrFile(LDrawMatrix)}
-            >
-              .ldr
-            </button>
-          </div>
-          <div className="w-full flex flex-row justify-center">
-            <div>
-              {colors.length !== 0 && isGenerated && (
-                <Statistics size={boardSize} studsAvailable={studsAvailable}>
-                  {colors.map((color) => (
-                    <BadgeColor
-                      key={color.hex_code}
-                      onClick={pickEditColor}
-                      color={color}
-                      editColor={editColor}
-                    />
-                  ))}
-                </Statistics>
-              )}
-            </div>
-          </div>
-          {notification && <Toast text={notification.msg}></Toast>}
         </div>
-        <div>
-          <div className="divider"></div>
-
-          <p className="text-xs font-thin">
-            LEGO and the LEGO logo are trademarks and/or copyrights of the LEGO Group. This project
-            is not at all affiliated with The LEGO Group, and was simply a project of mine using the
-            LEGO name as a proprietary eponym
-          </p>
-        </div>
+        {notification && <Toast text={notification.msg}></Toast>}
       </div>
     </>
   )

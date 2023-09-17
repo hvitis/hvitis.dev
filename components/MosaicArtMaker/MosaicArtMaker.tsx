@@ -28,8 +28,6 @@ import Notification from '../Notification'
 import { useReadLocalStorage } from 'usehooks-ts'
 import dictionary from 'locales/mosaic'
 
-const url = '/blog/new-version-of-pixel-mosaic-generator'
-
 function MosaicArtMaker() {
   const radius = 9
   const spacing = 19
@@ -383,7 +381,7 @@ function MosaicArtMaker() {
         title={dictionary[locale].notification.banner.title}
         msg={dictionary[locale].notification.banner.msg}
         btn={dictionary[locale].notification.banner.button}
-        href={url}
+        href={dictionary[locale].notification.banner.url}
         className="mb-20 w-5/6 mx-auto"
       />
       <div className="mb-20">

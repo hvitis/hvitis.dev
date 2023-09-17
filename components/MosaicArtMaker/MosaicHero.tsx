@@ -1,12 +1,14 @@
 'use client'
+
 import { useReadLocalStorage } from 'usehooks-ts'
 import { isMobile } from 'react-device-detect'
 import NotificationSimple from '@/components/NotificationSimple'
 import Link from 'next/link'
+import dictionary from 'locales/mosaic'
 
 export default function Hero() {
-  const url = '/blog/new-version-of-pixel-mosaic-generator'
-  const locale = useReadLocalStorage('locale')
+  const locale = useReadLocalStorage('locale') || 'en'
+
   return (
     <>
       {isMobile && (
@@ -16,19 +18,14 @@ export default function Hero() {
         <div className="max-w-md">
           <div className="indicator">
             <Link
-              href={url}
+              href={dictionary[locale].notification.banner.url}
               className="indicator-item indicator-bottom badge badge-secondary lg:-right-5 lg:top-5 -top-5"
             >
               v. 2.0
             </Link>
             <h1 className="lg:text-5xl text-2xl font-bold lg:px-1">Mosaic Art Maker</h1>
           </div>
-          <p className="py-6">
-            {locale === 'pl'
-              ? 'Zamień swoje klocki w nową mozaikę.'
-              : 'Make your favourite LEGO mosaic even better.'}
-          </p>
-          <p>{}</p>
+          <p className="py-6">{dictionary[locale].subtitle}</p>
         </div>
       </div>
     </>

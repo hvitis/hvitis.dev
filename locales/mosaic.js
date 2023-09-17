@@ -1,5 +1,6 @@
 const dictionary = {
   pl: {
+    subtitle: 'Zamień swoje klocki w nową mozaikę.',
     generate: 'Generuj',
     download: 'Pobierz',
     boardSize: {
@@ -36,6 +37,7 @@ const dictionary = {
         title: 'Nowa wersja jest dostępna!',
         msg: 'Po angielsku dostępny jest artykuł na temat ostatnich ulepszeń.',
         button: 'Przeczytaj',
+        url: '/blog/new-version-of-pixel-mosaic-generator',
       },
       incorrect_size: 'Niewłaściwy rozmiar mozaiki',
       size_requirements: 'Incorrect board size.',
@@ -46,6 +48,7 @@ const dictionary = {
     },
   },
   en: {
+    subtitle: 'Make your favourite LEGO mosaic even better.',
     generate: 'Generate',
     download: 'Download',
     boardSize: {
@@ -82,6 +85,7 @@ const dictionary = {
         title: 'New version has arrived!',
         msg: 'Learn what is new and what I am working on for the next version 3.0',
         button: 'Read more',
+        url: '/blog/new-version-of-pixel-mosaic-generator',
       },
       incorrect_size: 'Incorrect board size.',
       size_requirements: 'Incorrect board size.',

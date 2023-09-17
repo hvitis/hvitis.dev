@@ -36,8 +36,8 @@ const LanguageSwitch = () => {
         variant="faded"
         aria-label="Change the language"
       >
-        <LanguagesIcon className="w-4 h-4"></LanguagesIcon>
-        {/* <span>{locale}</span> */}
+        {/* <LanguagesIcon className="w-4 h-4"></LanguagesIcon> */}
+        <span className="uppercase">{locale === 'pl' ? '🇺🇸' : '🇵🇱'}</span>
       </Button>
     </>
   )

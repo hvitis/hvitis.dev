@@ -380,6 +380,7 @@ function PaperCanvas() {
                   <div className="w-full mt-2.5 flex flex-col mx-2">
                     <input
                       value={boardSize.width}
+                      data-umami-event="Select File"
                       onChange={(e) => handleSliderChange(e.target.value)}
                       type="range"
                       min={10}
@@ -427,6 +428,7 @@ function PaperCanvas() {
               </label>
               <div className="btn-group rounded-r-lg">
                 <button
+                  data-umami-event="Set Roundness"
                   className="btn btn-info text-white my-auto"
                   onClick={() => {
                     setIsRound(!isRound)
@@ -446,6 +448,7 @@ function PaperCanvas() {
                   )}
                 </button>
                 <button
+                  data-umami-event="Set Draw Numbers"
                   className="btn btn-info text-white"
                   onClick={() => {
                     handleDrawNumbers()
@@ -461,6 +464,7 @@ function PaperCanvas() {
 
                 <button
                   className="btn btn-info text-white"
+                  data-umami-event="Set Custom Mode"
                   onClick={() => {
                     setCanSelectCustomColors(!customMode)
                   }}
@@ -474,6 +478,7 @@ function PaperCanvas() {
                 </button>
 
                 <div
+                  data-umami-event="Set EDit Mode"
                   onClick={() => {
                     handleEditMode()
                   }}
@@ -537,6 +542,7 @@ function PaperCanvas() {
               radius="full"
               className="bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg"
               size="lg"
+              data-umami-event="Generate Mosaic"
               onClick={() => clickGenerateButton()}
             >
               Generate
@@ -573,19 +579,39 @@ function PaperCanvas() {
         className="btn-group lg:mx-10 mx-auto"
         style={{ display: isGenerated ? 'inherit' : 'none' }}
       >
-        <button className="btn lg:btn btn-sm btn-info" onClick={() => handleCanvasSave()}>
+        <button
+          className="btn lg:btn btn-sm btn-info"
+          data-umami-event="Download PNG"
+          onClick={() => handleCanvasSave()}
+        >
           Download
         </button>
-        <button className="btn lg:btn btn-sm" onClick={() => handleCanvasSave()}>
+        <button
+          className="btn lg:btn btn-sm"
+          data-umami-event="Download PNG"
+          onClick={() => handleCanvasSave()}
+        >
           .Png
         </button>
-        <button className="btn lg:btn btn-sm" onClick={() => formatAndDownloadBsxFile(colors)}>
+        <button
+          data-umami-event="Download BSX"
+          className="btn lg:btn btn-sm"
+          onClick={() => formatAndDownloadBsxFile(colors)}
+        >
           .bsx
         </button>
-        <button className="btn lg:btn btn-sm" onClick={() => formatAndDownloadXmlFile(colors)}>
+        <button
+          data-umami-event="Download XML"
+          className="btn lg:btn btn-sm"
+          onClick={() => formatAndDownloadXmlFile(colors)}
+        >
           .xml
         </button>
-        <button className="btn lg:btn btn-sm" onClick={() => formatAndDownloadLdrFile(LDrawMatrix)}>
+        <button
+          data-umami-event="Download LDR"
+          className="btn lg:btn btn-sm"
+          onClick={() => formatAndDownloadLdrFile(LDrawMatrix)}
+        >
           .ldr
         </button>
       </div>

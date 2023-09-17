@@ -1,15 +1,17 @@
+'use client'
+
 import * as React from 'react'
 import dynamic from 'next/dynamic'
 
-const LegoArtMaker = dynamic(() => import('@/components/lego-art-maker'), {
+const MosaicArtMaker = dynamic(() => import('@/components/MosaicArtMaker/MosaicArtMaker'), {
   ssr: false,
 })
 
 const LEGOArt: React.FunctionComponent = ({ ...props }) => {
   return (
-    <div {...props}>
-      <LegoArtMaker />
-    </div>
+    <>
+      <MosaicArtMaker></MosaicArtMaker>
+    </>
   )
 }
 

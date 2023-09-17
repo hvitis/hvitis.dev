@@ -23,6 +23,7 @@
     "esbuild": "0.18.11",
     "file-saver": "^2.0.5",
     "framer-motion": "^10.16.4",
+    "get-user-locale": "^2.3.0",
     "github-slugger": "^1.4.0",
     "gray-matter": "^4.0.2",
     "image-size": "1.0.0",

@@ -415,6 +415,7 @@ function MosaicArtMaker() {
                     </label>
                     <div className="w-full flex flex-col lg:mx-2 lg:my-0 my-5">
                       <input
+                        id="select-file"
                         value={boardSize.width}
                         data-umami-event="Select File"
                         onChange={(e) => handleSliderChange(e.target.value)}
@@ -469,6 +470,7 @@ function MosaicArtMaker() {
                   <span>{dictionary[locale].settings.title}</span>
                   <div id="settings" className="btn-group rounded-r-lg">
                     <button
+                      if="set-roundness"
                       data-umami-event="Set Roundness"
                       className="btn btn-info btn-sm md:btn-md text-white"
                       onClick={() => {
@@ -489,6 +491,7 @@ function MosaicArtMaker() {
                       )}
                     </button>
                     <button
+                      id="set-draw-numbers"
                       data-umami-event="Set Draw Numbers"
                       className="btn btn-info text-white"
                       onClick={() => {
@@ -501,6 +504,7 @@ function MosaicArtMaker() {
                     </button>
 
                     <button
+                      id="set-custom-mode"
                       className="btn btn-info text-white"
                       data-umami-event="Set Custom Mode"
                       onClick={() => {
@@ -604,6 +608,7 @@ function MosaicArtMaker() {
           style={{ display: isGenerated ? 'inherit' : 'none' }}
         >
           <button
+            id="download-png"
             className="btn lg:btn btn-sm btn-info"
             data-umami-event="Download PNG"
             onClick={() => handleCanvasSave()}
@@ -611,6 +616,7 @@ function MosaicArtMaker() {
             {dictionary[locale].download}
           </button>
           <button
+            id="download-png-2"
             className="btn lg:btn btn-sm"
             data-umami-event="Download PNG"
             onClick={() => handleCanvasSave()}
@@ -618,6 +624,7 @@ function MosaicArtMaker() {
             .Png
           </button>
           <button
+            id="download-bsx"
             data-umami-event="Download BSX"
             className="btn lg:btn btn-sm"
             onClick={() => formatAndDownloadBsxFile(colors)}
@@ -625,6 +632,7 @@ function MosaicArtMaker() {
             .bsx
           </button>
           <button
+            id="download-xml"
             data-umami-event="Download XML"
             className="btn lg:btn btn-sm"
             onClick={() => formatAndDownloadXmlFile(colors)}
@@ -632,6 +640,7 @@ function MosaicArtMaker() {
             .xml
           </button>
           <button
+            id="download-ldr"
             data-umami-event="Download LDR"
             className="btn lg:btn btn-sm"
             onClick={() => formatAndDownloadLdrFile(LDrawMatrix)}

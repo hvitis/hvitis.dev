@@ -7,6 +7,8 @@ export default function PulsatingButton({ title = 'Click', isActive, onClick, ch
   return (
     <>
       <Button
+        id="generate-mosaic"
+        data-umami-event="Generate Mosaic"
         radius="md"
         size="lg"
         onClick={() => onClick()}

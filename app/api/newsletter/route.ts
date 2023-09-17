@@ -23,7 +23,5 @@ export async function POST(request: Request) {
     body: JSON.stringify({ email, api_key }), // body data type must match "Content-Type" header
   })
   const convertio_data = await convertio.json()
-  console.log(convertio_data)
-
-  return NextResponse.json({ message: 'Jupi!' })
+  return NextResponse.json({ convertio_data })
 }

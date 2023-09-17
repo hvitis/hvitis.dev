@@ -18,8 +18,6 @@ const LanguageSwitch = () => {
   }, [])
 
   const handleLanguageSwitch = () => {
-    console.log(userLocales)
-    console.log(userLocale)
     if (locale === 'pl') {
       setLocale('en')
     } else {

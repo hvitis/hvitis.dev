@@ -18,9 +18,11 @@ import Toast from '@/components/Toast'
 import Helper from '@/components/Helper'
 import ColorInterface from 'interfaces/ColorInterface'
 import FileInput from '@/components/FileInput/FileInput'
+import PulsatingButton from '@/components/PulsatingButton/PulsatingButton'
 import Badge from '@/components/Badge'
-import { Button } from '@nextui-org/react'
+
 import SelectMultiply from '@/components/Selectors/SelectMultiply'
+import { trackMosaicClick } from '@/utils/gtag'
 
 function PaperCanvas() {
   const radius = 9
@@ -58,7 +60,7 @@ function PaperCanvas() {
   const [colors, setColors] = useState([])
   const [hasFileNotUploadedError, setHasFileNotUploadedError] = useState(false)
   const [LDrawMatrix, setLDrawMatrix] = useState([])
-  const [editColor, setEditColor] = useState({ hex_color: '#ffffff' })
+  const [editColor, setEditColor] = useState(null)
   const [isGenerated, setIsGenerated] = useState(false)
   const [reInitialiseCanvas, setReInitialiseCanvas] = useState(false)
   const [hasNumbers, setHasNumbers] = useState(false)
@@ -140,8 +142,9 @@ function PaperCanvas() {
     const colorCodes = []
     const colorCodesVerify = []
 
+    const LDrawMatrix = []
     for (let x = 0; x < raster.width; x++) {
-      for (let y = raster.height - 1; y >= 0; y--) {
+      for (let y = 0; y < raster.height; y++) {
         // Get the color of the pixel:
         const singleColor = {}
         const color = raster.getPixel(x, y)
@@ -155,6 +158,7 @@ function PaperCanvas() {
 
         filteredColour = filteredColour[0]
         let path
+        let text
         let transparent
 
         if (!raster.isRound) {
@@ -168,7 +172,7 @@ function PaperCanvas() {
           let light = drawCircle(x * spacing + 8, y * spacing + 8, 6)
           light.fillColor = pickedColor.value
 
-          if (raster.hasNumbers) writeText(raster, x, y, filteredColour.bl_id)
+          if (raster.hasNumbers) text = writeText(raster, x, y, filteredColour.bl_id)
 
           transparent = drawRectangle(x * spacing, y * spacing, 18)
           transparent.fillColor = pickedColor.value
@@ -177,26 +181,34 @@ function PaperCanvas() {
           transparent.path = path
           transparent.light = light
           transparent.pathDarker = pathDarker
+          if (text) transparent.text = text
         }
         if (raster.isRound) {
           path = drawCircle(x * spacing, y * spacing, spacing / 2)
           path.fillColor = pickedColor.value
-          if (raster.hasNumbers) writeText(raster, x, y, filteredColour.bl_id)
+          if (raster.hasNumbers) {
+            path.text = writeText(raster, x, y, filteredColour.bl_id)
+          }
         }
 
         if (!raster.isRound) {
           transparent.onClick = function () {
+            if (!window.editColor) return
             this.path.fillColor = window.editColor.hex_code
             this.light.fillColor = window.editColor.hex_code
             this.pathDarker.fillColor = tinycolor(window.editColor.hex_code).darken().toString()
+            if (this.text) this.text.content = window.editColor.bl_id
           }
         }
         if (raster.isRound) {
           path.onClick = function () {
+            if (!window.editColor) return
             this.fillColor = window.editColor.hex_code
+            if (this.text) this.text.content = window.editColor.bl_id
           }
         }
 
+        // TODO: Verify this functionality if it´s not redundant
         if (!colorCodesVerify.includes(pickedColor.value)) {
           /* colors contains already the color we're iterating */
           colorCodesVerify.push(pickedColor.value)
@@ -210,6 +222,7 @@ function PaperCanvas() {
           let newFilteredColour = colorCodes.filter((color) => color.hex_code === pickedColor.value)
           newFilteredColour[0]['amount'] += 1
         }
+        LDrawMatrix.push({ x, y, z: -10, ldraw_id: filteredColour.ldraw_id })
       }
     }
     Paper.project.activeLayer.position = Paper.view.center
@@ -217,6 +230,7 @@ function PaperCanvas() {
     // Returning colors array to create buttons with information and
     setColors(colorCodes)
     setIsGenerated(true)
+    setLDrawMatrix(LDrawMatrix)
   }
 
   function generateComparableColors(colorsSet) {
@@ -241,21 +255,21 @@ function PaperCanvas() {
       setNotification({ msg: 'You must add an image to generate mosaic.' })
       return
     }
-    if (customMode && selectedCustomColors.length === 0) {
-      setNotification({ msg: 'Select colors first or switch to normal mode.' })
+    if ((customMode && selectedCustomColors.length === 0) || selectedColors.length === 0) {
+      setNotification({ msg: 'You must select colors first' })
       return
     }
     if (isGenerated) clearCanvas()
 
     updateColors()
     generateMosaic()
+    trackMosaicClick('generate', `${boardSize.width}x${boardSize.height}`)
   }
 
   function updateColors() {
     // Order here colours by amount of them in the picture
     colors.sort((a, b) => (a.amount > b.amount ? 1 : b.amount > a.amount ? -1 : 0))
     setColors(colors)
-    setLDrawMatrix(LDrawMatrix)
   }
 
   function handleCanvasSave() {
@@ -307,7 +321,6 @@ function PaperCanvas() {
     if (height === '') height = 10
     if (width === '') width = 10
 
-    console.log(`Setting w: ${width} h: ${height}`)
     return setBoardSize({ width, height })
   }
 
@@ -352,20 +365,24 @@ function PaperCanvas() {
     setSelectedCustomColors([...filteredNumbers])
   }
 
+  function onCanvasClick() {
+    if (!window.editColor) setNotification({ msg: 'Pick a color from the list to edit studs' })
+  }
+
   return (
     <>
       <div className="w-full">
         <div className="flex flex-col flex-wrap gap-2 w-full">
           {/* Image and size selection  */}
           {/* Select an image  */}
-          <div className="flex flex-row xs:flex-wrap justify-start">
+          <div className="flex flex-row flex-wrap md:flex-nowrap justify-start">
             <FileInput onClick={setFile} file={file} error={hasFileNotUploadedError} />
 
             {/* Adjust board by slider or custom selector  */}
-            <div className="flex flex-col w-full mx-4">
+            <div className="flex flex-col w-full lg:mx-4">
               <div className="flex flex-row">
-                <div className="flex flex-col w-full">
-                  <label className="flex text-left font-medium text-gray-600 dark:text-gray-300 my-auto">
+                <div className="flex flex-col lg:w-full">
+                  <label className="flex text-sm text-left font-medium text-gray-600 dark:text-gray-300 my-auto">
                     Board size:
                     <span className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}>
                       {`width ${boardSize.width} x height ${boardSize.height}`}
@@ -377,7 +394,7 @@ function PaperCanvas() {
                       />
                     )}
                   </label>
-                  <div className="w-full mt-2.5 flex flex-col mx-2">
+                  <div className="w-full flex flex-col lg:mx-2 lg:my-0 my-5">
                     <input
                       value={boardSize.width}
                       data-umami-event="Select File"
@@ -396,7 +413,7 @@ function PaperCanvas() {
                     </div>
                   </div>
                 </div>
-                <div className="w-28 ml-6 mr-2 my-auto">
+                <div className="w-28 ml-6 mr-2 my-auto lg:block hidden">
                   <label className="input-group input-group-vertical">
                     <span className={clsx(isCustomSize() && 'bg-info text-white')}>Custom</span>
                     <input
@@ -412,9 +429,9 @@ function PaperCanvas() {
             </div>
           </div>
 
-          <div className="flex flex-row xs:flex-wrap justify-between my-3">
+          <div className="flex flex-row flex-wrap md:flex-nowrap justify-between my-3">
             {/* Colors selector */}
-            <div className="flex flex-col w-full lg:w-1/3 mx-4">
+            <div className="flex flex-col w-full lg:w-1/3 lg:mx-4">
               <SelectMultiply
                 options={loadedColors}
                 onSelect={handleMultipleSelect}
@@ -422,14 +439,14 @@ function PaperCanvas() {
             </div>
 
             {/* Settings button group */}
-            <div className="flex flex-col lg:ml-auto mx-6">
-              <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
+            <div className="flex flex-col lg:ml-auto lg:mx-6 lg:my-0 my-5">
+              <label className="text-sm text-left font-medium text-gray-600 dark:text-gray-300 my-1">
                 Settings:
               </label>
               <div className="btn-group rounded-r-lg">
                 <button
                   data-umami-event="Set Roundness"
-                  className="btn btn-info text-white my-auto"
+                  className="btn btn-info btn-sm md:btn-md text-white"
                   onClick={() => {
                     setIsRound(!isRound)
                   }}
@@ -454,12 +471,7 @@ function PaperCanvas() {
                     handleDrawNumbers()
                   }}
                 >
-                  Numbered
-                  {hasNumbers ? (
-                    <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
-                  ) : (
-                    <Circle className="h-5 w-5 text-white"></Circle>
-                  )}
+                  {hasNumbers ? 'Numbered' : 'Blanks'}
                 </button>
 
                 <button
@@ -469,12 +481,7 @@ function PaperCanvas() {
                     setCanSelectCustomColors(!customMode)
                   }}
                 >
-                  Custom mode:
-                  {customMode ? (
-                    <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
-                  ) : (
-                    <Circle className="h-5 w-5 text-white"></Circle>
-                  )}
+                  {customMode ? 'Custom Colors' : 'Set Colors'}
                 </button>
 
                 <div
@@ -484,7 +491,10 @@ function PaperCanvas() {
                   }}
                   className="hidden lg:block"
                 >
-                  <button className="btn btn-info text-white rounded-l-none" disabled>
+                  <button
+                    className="btn btn-info btn-sm md:btn-md text-white rounded-l-none"
+                    disabled
+                  >
                     Edit mode
                     <CheckCircle className="h-5 w-5 text-white"></CheckCircle>
                   </button>
@@ -538,15 +548,9 @@ function PaperCanvas() {
 
         <div className="w-full my-4 mx-auto">
           <div>
-            <Button
-              radius="full"
-              className="bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg"
-              size="lg"
-              data-umami-event="Generate Mosaic"
-              onClick={() => clickGenerateButton()}
-            >
+            <PulsatingButton isActive={!isGenerated && file} onClick={clickGenerateButton}>
               Generate
-            </Button>
+            </PulsatingButton>
           </div>
         </div>
       </div>
@@ -571,6 +575,9 @@ function PaperCanvas() {
             width={canvasSize.width}
             height={canvasSize.height}
             hidden={!isGenerated}
+            onClick={() => {
+              onCanvasClick()
+            }}
           ></canvas>
         )}
       </div>

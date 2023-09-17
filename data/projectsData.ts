@@ -1,19 +1,15 @@
 const projectsData = [
   {
-    title: 'Book cataloguing system',
-    description: `What if you could look up any information in the world? Webpages, images, videos
-    and more. Google has many features to help you find exactly what you're looking
-    for.`,
-    imgSrc: '/static/images/assets/youtalky.png',
-    href: 'https://www.youtalky.com',
-  },
-  {
     title: 'Mosaic Art Maker',
-    description: `Imagine being able to travel back in time or to the future. Simple turn the knob
-    to the desired date and press "Go". No more worrying about lost keys or
-    forgotten headphones with this simple yet affordable solution.`,
+    description: `Change images to LEGO mosaics. Reuse old LEGO sets that you have and get order and building instructions. Get tiles lists for other programs.`,
     imgSrc: '/static/images/assets/mosaic-art-maker.png',
     href: '/mosaic-art-maker',
+  },
+  {
+    title: 'Book cataloguing system',
+    description: `Catalogue your paper book collection with printed QR codes. Search other bookshelves and become a librarian in your own neighbourhood.`,
+    imgSrc: '/static/images/assets/youtalky.png',
+    href: 'https://www.youtalky.com',
   },
 ]
 

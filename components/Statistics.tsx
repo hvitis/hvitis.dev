@@ -4,6 +4,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import Helper from './Helper'
 
+const BRICK_LINK_URL = 'https://www.bricklink.com/v2/catalog/catalogitem.page?P=98138#T=C'
 interface StatisticsInterface {
   size: { width: string; height: string }
   studsAvailable: number
@@ -53,11 +54,16 @@ const Statistics = ({ size, studsAvailable, children }: StatisticsInterface) => 
         <div className="stat-actions flex flex-row flex-wrap">{children}</div>
       </div>
       <div className="stat">
-        <div className="stat-title">Approximated price</div>
+        <div className="stat-title">Max price</div>
         <div className="stat-value">
           {!isLoading && (
-            <span>
+            <span className="flex justify-center">
               {roundUp(priceInCurrency || price)} {currency.sign}
+              <Helper
+                title="Price estimation"
+                text="That is maximum cost of studs if bought separately."
+                color="alert"
+              ></Helper>
             </span>
           )}
           {isLoading && <span className="loading loading-dots loading-lg"></span>}
@@ -87,12 +93,8 @@ const Statistics = ({ size, studsAvailable, children }: StatisticsInterface) => 
             />
           )}
         </div>
-        <div className="stat-actions">
-          <Link
-            href={'https://www.bricklink.com/v2/catalog/catalogitem.page?P=4073#T=C'}
-            target="_blank"
-            className="btn btn-sm btn-success"
-          >
+        <div className="stat-actions mt-max">
+          <Link href={BRICK_LINK_URL} target="_blank" className="btn btn-sm btn-success">
             Buy studs
           </Link>
         </div>

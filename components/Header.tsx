@@ -12,8 +12,6 @@ import { usePathname } from 'next/navigation'
 
 const Header = () => {
   const pathname = usePathname()
-
-  console.log(pathname)
   return (
     <header className="flex items-center justify-between py-10">
       <div>

@@ -576,7 +576,7 @@ function MosaicArtMaker() {
           id="image"
           src={file}
           ref={imgRef}
-          alt="Generated mosaic LEGO Image"
+          alt="Generated mosaic LEGO"
           crossOrigin="*"
           hidden
         />

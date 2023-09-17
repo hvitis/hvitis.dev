@@ -56,23 +56,19 @@ export function formatAndDownloadLdrFile(matrix) {
 }
 
 function getStringLdrFromAllItems(matrix) {
-  let edgeSize = matrix.length
-  let numOfBricks = edgeSize * edgeSize
-  let ldrFile = `0 Lego Art \n0 Name:  ${edgeSize}x${edgeSize} \n0 Author:  \n0 CustomBrick \n0 NumOfBricks:  ${numOfBricks} \n`
+  let edgeSize = Math.sqrt(matrix.length)
+  let ldrFile = `0 Lego Art \n0 Name:  ${edgeSize}x${edgeSize} \n0 Author:  \n0 CustomBrick \n0 NumOfBricks:  ${matrix.length} \n`
 
   for (let index = 0; index < matrix.length; index++) {
-    const verticalLineMatrix = matrix[index]
-    for (let index = 0; index < verticalLineMatrix.length; index++) {
-      const obj = verticalLineMatrix[index]
-      ldrFile = ldrFile.concat(getSingleLine(obj))
-    }
+    let obj = matrix[index]
+    ldrFile = ldrFile.concat(getSingleLine(obj))
   }
   return ldrFile
 }
 
-function getSingleLine(obj) {
-  return `1 ${obj.color} ${parseNumber(obj.x)} ${parseNumber(obj.y)} ${parseNumber(
-    obj.z
+function getSingleLine({ x, y, ldraw_id }) {
+  return `1 ${ldraw_id} ${parseNumber(x * 20)} -10 ${parseNumber(
+    y * 20
   )} 1.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 1.000000 98138.dat \n`
 }
 

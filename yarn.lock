@@ -5169,6 +5169,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/gtag.js@npm:^0.0.13":
+  version: 0.0.13
+  resolution: "@types/gtag.js@npm:0.0.13"
+  checksum: 9c56c961579cc7c0b5bb4d8b01ba59baffe91a47893ed9d0be8161c6d74e04cebdcee4bc5762704ba72be0c40cb9d5fc88844df52b990545d6982cf9f8a6d6a7
+  languageName: node
+  linkType: hard
+
 "@types/hast@npm:^2.0.0":
   version: 2.3.5
   resolution: "@types/hast@npm:2.3.5"
@@ -5239,6 +5246,15 @@ __metadata:
   dependencies:
     "@types/lodash": "*"
   checksum: 7988545a645bf177f75b8a7ff4e136773dc5a3a62eb599142089b11e8251a5724236a4fe22d666c84a200ca6fba688a1e24ded227382e5df8b782a5da0f92df9
+  languageName: node
+  linkType: hard
+
+"@types/lodash.memoize@npm:^4.1.7":
+  version: 4.1.7
+  resolution: "@types/lodash.memoize@npm:4.1.7"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 85f128b6606ab0545c11194208cf844536f981859221dff0032b1043dd4e02ee5aa1b96020d1e02a24db31be7493f2e9ff45836d2e3c35cf973fc6488f129eed
   languageName: node
   linkType: hard
 
@@ -8090,6 +8106,16 @@ daisyui@latest:
   languageName: node
   linkType: hard
 
+"get-user-locale@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "get-user-locale@npm:2.3.0"
+  dependencies:
+    "@types/lodash.memoize": ^4.1.7
+    lodash.memoize: ^4.1.1
+  checksum: 8a815e7528d1a75d85b25573ecd66890b126cdc6759f06354dd0b59371d88618aad5a4955ccab5c1267a9ca6a6e46b9362e9bad2639ad5949d3e90542a480791
+  languageName: node
+  linkType: hard
+
 "giscus@npm:^1.3.0":
   version: 1.3.0
   resolution: "giscus@npm:1.3.0"
@@ -9709,6 +9735,13 @@ daisyui@latest:
   version: 4.6.0
   resolution: "lodash.mapkeys@npm:4.6.0"
   checksum: d433d377b3944c39366741f94ca4be4fb591a6df483fd9e3458da46904d94e2b2471fd7e2d42345e05deb1dc188614ce05cd5b2979a74a7a0f3fbc2cb367c3ca
+  languageName: node
+  linkType: hard
+
+"lodash.memoize@npm:^4.1.1":
+  version: 4.1.2
+  resolution: "lodash.memoize@npm:4.1.2"
+  checksum: 9ff3942feeccffa4f1fafa88d32f0d24fdc62fd15ded5a74a5f950ff5f0c6f61916157246744c620173dddf38d37095a92327d5fd3861e2063e736a5c207d089
   languageName: node
   linkType: hard
 
@@ -13397,6 +13430,7 @@ daisyui@latest:
     "@svgr/webpack": ^8.0.1
     "@tailwindcss/forms": ^0.5.4
     "@tailwindcss/typography": ^0.5.9
+    "@types/gtag.js": ^0.0.13
     "@types/mdx": ^2.0.5
     "@types/react": ^18.2.14
     "@typescript-eslint/eslint-plugin": ^6.1.0
@@ -13413,6 +13447,7 @@ daisyui@latest:
     eslint-plugin-prettier: ^5.0.0
     file-saver: ^2.0.5
     framer-motion: ^10.16.4
+    get-user-locale: ^2.3.0
     github-slugger: ^1.4.0
     gray-matter: ^4.0.2
     husky: ^8.0.0

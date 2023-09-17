@@ -1,20 +1,29 @@
 import { InfoIcon } from 'lucide-react'
-import { Popover, PopoverTrigger, PopoverContent, Button } from '@nextui-org/react'
+import { Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
 import { ReactNode } from 'react'
+import clsx from 'clsx'
 
 interface Props {
   title: string
   text: string
-  color?: 'warning'
+  color?:
+    | 'default'
+    | 'warning'
+    | 'foreground'
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'danger'
+    | undefined
   children?: ReactNode
 }
 
-const Helper = ({ title, text, color = 'warning', children }: Props) => {
+const Helper = ({ title, text, children, color = 'warning' }: Props) => {
   return (
     <>
       <Popover key={title} placement="top" color={color}>
         <PopoverTrigger className="my-auto mx-2">
-          {children ? children : <InfoIcon className="w-4 h-4 text-yellow-500" />}
+          {children ? children : <InfoIcon className={clsx('w-4 h-4 ', `text-${color}`)} />}
         </PopoverTrigger>
         <PopoverContent>
           <div className="px-1 py-2">

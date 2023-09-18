@@ -23,6 +23,7 @@ const FileInput = ({ onClick, error, file, title }) => {
             !file && styles.pulse
           )}
           onChange={(e) => handleFileInput(e)}
+          accept="image/*"
         />
       </label>
     </div>

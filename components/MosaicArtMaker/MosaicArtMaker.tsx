@@ -27,6 +27,7 @@ import { trackMosaicClick } from '@/utils/gtag'
 import Notification from '../Notification'
 import { useReadLocalStorage } from 'usehooks-ts'
 import dictionary from 'locales/mosaic'
+import Loader from '../Loader'
 
 function MosaicArtMaker() {
   const radius = 9
@@ -68,6 +69,7 @@ function MosaicArtMaker() {
   const [LDrawMatrix, setLDrawMatrix] = useState([])
   const [editColor, setEditColor] = useState(null)
   const [isGenerated, setIsGenerated] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
   const [reInitialiseCanvas, setReInitialiseCanvas] = useState(false)
   const [hasNumbers, setHasNumbers] = useState(false)
   const [shift, setShift] = useState(0)
@@ -237,8 +239,8 @@ function MosaicArtMaker() {
 
     // Returning colors array to create buttons with information and
     setColors(colorCodes)
-    setIsGenerated(true)
     setLDrawMatrix(LDrawMatrix)
+    setIsGenerated(true)
   }
 
   function generateComparableColors(colorsSet) {
@@ -267,11 +269,14 @@ function MosaicArtMaker() {
       setNotification({ msg: dictionary[locale].notification.select_colors })
       return
     }
+    setIsGenerating(true)
+
     if (isGenerated) clearCanvas()
 
     updateColors()
     generateMosaic()
     trackMosaicClick('generate', `${boardSize.width}x${boardSize.height}`)
+    setIsGenerating(false)
   }
 
   function updateColors() {
@@ -575,7 +580,6 @@ function MosaicArtMaker() {
             </div>
           </div>
         </div>
-
         <img
           id="image"
           src={file}
@@ -601,6 +605,7 @@ function MosaicArtMaker() {
               }}
             ></canvas>
           )}
+          {isGenerating && <Loader />}
         </div>
 
         <div

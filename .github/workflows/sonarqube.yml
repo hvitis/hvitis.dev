@@ -1,4 +1,4 @@
-name: Official SonarQube Scan
+name: Main Workflow
 uses: SonarSource/sonarqube-scan-action@v2.0.1
 
 on:
@@ -12,7 +12,6 @@ on:
   pull_request:
       types: [opened, synchronize, reopened]
 
-name: Main Workflow
 jobs:
   sonarqube:
     runs-on: ubuntu-latest

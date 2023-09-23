@@ -1,0 +1,101 @@
+[
+  {
+    "lego_id": "26",
+    "ldraw_name": "Black",
+    "bo_name": "Black",
+    "hex_code": "#1b2a34",
+    "rgb": "0,0,0",
+    "ldraw_id": "0",
+    "bl_id": "11",
+    "lego_name": "Black",
+    "bl_name": "Black"
+  },
+  {
+    "lego_id": "27",
+    "ldraw_name": "Dark_Gray",
+    "bo_name": "Dark Gray",
+    "hex_code": "#545955",
+    "rgb": "84,89,85",
+    "ldraw_id": "8",
+    "bl_id": "10",
+    "lego_name": "Dark Grey",
+    "bl_name": "Dark Gray"
+  },
+  {
+    "lego_id": "131",
+    "ldraw_name": "Pearl_Light_Gray",
+    "bo_name": "Pearl Light Gray",
+    "hex_code": "#a0a0a0",
+    "rgb": "160,160,160",
+    "ldraw_id": "135",
+    "bl_id": "66",
+    "lego_name": "Silver",
+    "bl_name": "Pearl Light Gray"
+  },
+  {
+    "lego_id": "196",
+    "ldraw_name": "Dark_Blue_Violet",
+    "bo_name": "Dark Royal Blue",
+    "hex_code": "#0e3e9a",
+    "rgb": "14,62,154",
+    "ldraw_id": "23",
+    "bl_id": "109",
+    "lego_name": "Dark Royal Blue",
+    "bl_name": "Dark Blue-Violet"
+  },
+  {
+    "lego_id": "1",
+    "ldraw_name": "White",
+    "bo_name": "White",
+    "hex_code": "#f4f4f4",
+    "rgb": "244,244,244",
+    "ldraw_id": "15",
+    "bl_id": "1",
+    "lego_name": "White",
+    "bl_name": "White"
+  },
+  {
+    "lego_id": "310",
+    "ldraw_name": "Chrome_Gold",
+    "bo_name": "Chrome Gold",
+    "hex_code": "#dfc176",
+    "rgb": "223,193,118",
+    "ldraw_id": "334",
+    "bl_id": "21",
+    "lego_name": "Metalized Gold",
+    "bl_name": "Chrome Gold"
+  },
+  {
+    "lego_id": "21",
+    "ldraw_name": "Red",
+    "bo_name": "Red",
+    "hex_code": "#b40000",
+    "rgb": "180,0,0",
+    "ldraw_id": "4",
+    "bl_id": "5",
+    "lego_name": "Bright Red",
+    "bl_name": "Red"
+  },
+  {
+    "lego_id": "154",
+    "ldraw_name": "Dark_Red",
+    "bo_name": "Dark Red",
+    "hex_code": "#720012",
+    "rgb": "114,0,18",
+    "ldraw_id": "320",
+    "bl_id": "59",
+    "lego_name": "(New) Dark Red",
+    "bl_name": "Dark Red"
+  },
+  {
+    "lego_id": "308",
+    "ldraw_name": "Dark_Brown",
+    "bo_name": "Dark Brown",
+    "hex_code": "#372100",
+    "rgb": "53,33,0",
+    "ldraw_id": "308",
+    "bl_id": "120",
+    "lego_name": "Dark Brown",
+    "bl_name": "Dark Brown"
+  }
+]

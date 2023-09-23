@@ -1,0 +1,134 @@
+[
+  {
+    "lego_id": "26",
+    "ldraw_name": "Black",
+    "bo_name": "Black",
+    "hex_code": "#1b2a34",
+    "rgb": "0,0,0",
+    "ldraw_id": "0",
+    "bl_id": "11",
+    "lego_name": "Black",
+    "bl_name": "Black"
+  },
+  {
+    "lego_id": "27",
+    "ldraw_name": "Dark_Gray",
+    "bo_name": "Dark Gray",
+    "hex_code": "#545955",
+    "rgb": "84,89,85",
+    "ldraw_id": "8",
+    "bl_id": "10",
+    "lego_name": "Dark Grey",
+    "bl_name": "Dark Gray"
+  },
+  {
+    "lego_id": "2",
+    "ldraw_name": "Light_Gray",
+    "bo_name": "Light Gray",
+    "hex_code": "#8a928d",
+    "rgb": "138,146,141",
+    "ldraw_id": "7",
+    "bl_id": "9",
+    "lego_name": "Grey",
+    "bl_name": "Light Gray"
+  },
+  {
+    "lego_id": "39",
+    "ldraw_name": "Light_Violet",
+    "bo_name": "Light Violet",
+    "hex_code": "#afbed6",
+    "rgb": "175,190,214",
+    "ldraw_id": "20",
+    "bl_id": "44",
+    "lego_name": "Light Bluish Violet",
+    "bl_name": "Light Violet"
+  },
+  {
+    "lego_id": "321",
+    "ldraw_name": "Dark_Azure",
+    "bo_name": "Dark Azure",
+    "hex_code": "#469bc3",
+    "rgb": "70,155,195",
+    "ldraw_id": "321",
+    "bl_id": "153",
+    "lego_name": "Dark Azur",
+    "bl_name": "Dark Azure"
+  },
+  {
+    "lego_id": "110",
+    "ldraw_name": "Violet",
+    "bo_name": "Violet",
+    "hex_code": "#26469a",
+    "rgb": "38,70,154",
+    "ldraw_id": "110",
+    "bl_id": "43",
+    "lego_name": "Bright Bluish Violet",
+    "bl_name": "Violet"
+  },
+  {
+    "lego_id": "1",
+    "ldraw_name": "White",
+    "bo_name": "White",
+    "hex_code": "#f4f4f4",
+    "rgb": "244,244,244",
+    "ldraw_id": "15",
+    "bl_id": "1",
+    "lego_name": "White",
+    "bl_name": "White"
+  },
+  {
+    "lego_id": "226",
+    "ldraw_name": "Bright_Light_Yellow",
+    "bo_name": "Bright Light Yellow",
+    "hex_code": "#ffec6c",
+    "rgb": "255,236,108",
+    "ldraw_id": "226",
+    "bl_id": "103",
+    "lego_name": "Cool Yellow",
+    "bl_name": "Bright Light Yellow"
+  },
+  {
+    "lego_id": "191",
+    "ldraw_name": "Bright_Light_Orange",
+    "bo_name": "Bright Light Orange",
+    "hex_code": "#fcac00",
+    "rgb": "252,172,0",
+    "ldraw_id": "191",
+    "bl_id": "110",
+    "lego_name": "Flame Yellowish Orange",
+    "bl_name": "Bright Light Orange"
+  },
+  {
+    "lego_id": "21",
+    "ldraw_name": "Red",
+    "bo_name": "Red",
+    "hex_code": "#b40000",
+    "rgb": "180,0,0",
+    "ldraw_id": "4",
+    "bl_id": "5",
+    "lego_name": "Bright Red",
+    "bl_name": "Red"
+  },
+  {
+    "lego_id": "154",
+    "ldraw_name": "Dark_Red",
+    "bo_name": "Dark Red",
+    "hex_code": "#720012",
+    "rgb": "114,0,18",
+    "ldraw_id": "320",
+    "bl_id": "59",
+    "lego_name": "(New) Dark Red",
+    "bl_name": "Dark Red"
+  },
+  {
+    "lego_id": "308",
+    "ldraw_name": "Dark_Brown",
+    "bo_name": "Dark Brown",
+    "hex_code": "#372100",
+    "rgb": "53,33,0",
+    "ldraw_id": "308",
+    "bl_id": "120",
+    "lego_name": "Dark Brown",
+    "bl_name": "Dark Brown"
+  }
+]

@@ -1,0 +1,112 @@
+[
+    {
+        "lego_id": "226",
+        "ldraw_name": "Bright_Light_Yellow",
+        "bo_name": "Bright Light Yellow",
+        "hex_code": "#ffec6c",
+        "rgb": "255,236,108",
+        "ldraw_id": "226",
+        "bl_id": "103",
+        "lego_name": "Cool Yellow",
+        "bl_name": "Bright Light Yellow"
+    },
+    {
+        "lego_id": "3",
+        "ldraw_name": "Light_Yellow",
+        "bo_name": "Light Yellow",
+        "hex_code": "#ffd67f",
+        "rgb": "255,214,141",
+        "ldraw_id": "18",
+        "bl_id": "33",
+        "lego_name": "Light Yellow",
+        "bl_name": "Light Yellow"
+    },
+    {
+        "lego_id": "107",
+        "ldraw_name": "Dark_Turquoise",
+        "bo_name": "Dark Turquoise",
+        "hex_code": "#069d9f",
+        "rgb": "6,157,159",
+        "ldraw_id": "3",
+        "bl_id": "39",
+        "lego_name": "Bright Bluish Green",
+        "bl_name": "Dark Turquoise"
+    },
+    {
+        "lego_id": "116",
+        "ldraw_name": "Light_Turquoise",
+        "bo_name": "Light Turquoise",
+        "hex_code": "#00aaa4",
+        "rgb": "0,170,164",
+        "ldraw_id": "11",
+        "bl_id": "40",
+        "lego_name": "Medium Bluish Green",
+        "bl_name": "Light Turquoise"
+    },
+    {
+        "lego_id": "196",
+        "ldraw_name": "Dark_Blue_Violet",
+        "bo_name": "Dark Royal Blue",
+        "hex_code": "#0e3e9a",
+        "rgb": "14,62,154",
+        "ldraw_id": "23",
+        "bl_id": "109",
+        "lego_name": "Dark Royal Blue",
+        "bl_name": "Dark Blue-Violet"
+    },
+    {
+        "lego_id": "1",
+        "ldraw_name": "White",
+        "bo_name": "White",
+        "hex_code": "#f4f4f4",
+        "rgb": "244,244,244",
+        "ldraw_id": "15",
+        "bl_id": "1",
+        "lego_name": "White",
+        "bl_name": "White"
+    },
+    {
+        "lego_id": "21",
+        "ldraw_name": "Red",
+        "bo_name": "Red",
+        "hex_code": "#b40000",
+        "rgb": "180,0,0",
+        "ldraw_id": "4",
+        "bl_id": "5",
+        "lego_name": "Bright Red",
+        "bl_name": "Red"
+    },
+    {
+        "lego_id": "115",
+        "ldraw_name": "Medium_Lime",
+        "bo_name": "Medium Lime",
+        "hex_code": "#b7d425",
+        "rgb": "183,212,37",
+        "ldraw_id": "115",
+        "bl_id": "76",
+        "lego_name": "Medium Yellowish Green",
+        "bl_name": "Medium Lime"
+    },
+    {
+        "lego_id": "9",
+        "ldraw_name": "Pink",
+        "bo_name": "Pink",
+        "hex_code": "#f6a9bb",
+        "rgb": "246,169,187",
+        "ldraw_id": "13",
+        "bl_id": "23",
+        "lego_name": "Light Reddish Violet",
+        "bl_name": "Pink"
+    },
+    {
+        "lego_id": "26",
+        "ldraw_name": "Black",
+        "bo_name": "Black",
+        "hex_code": "#1b2a34",
+        "rgb": "0,0,0",
+        "ldraw_id": "0",
+        "bl_id": "11",
+        "lego_name": "Black",
+        "bl_name": "Black"
+    },
+]

@@ -281,8 +281,10 @@ function MosaicArtMaker() {
 
   function updateColors() {
     // Order here colours by amount of them in the picture
-    colors.sort((a, b) => (a.amount > b.amount ? 1 : b.amount > a.amount ? -1 : 0))
-    setColors(colors)
+    const sortedColors = colors.sort((a, b) =>
+      a.amount > b.amount ? 1 : b.amount > a.amount ? -1 : 0
+    )
+    setColors(sortedColors)
   }
 
   function handleCanvasSave() {

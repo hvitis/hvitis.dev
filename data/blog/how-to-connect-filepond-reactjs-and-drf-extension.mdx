@@ -1,0 +1,83 @@
+---
+title: Django Rest Framework & Filepond ReactJS
+date: '2020-10-20'
+summary: Upload files with ReactJS Filepond component directly vie prepared REST endpoints.
+tags: ['ReactJS', 'DRF', 'Django']
+images: ['/static/images/blog/how-to-connect-filepond-reactjs-and-drf-extension/django-drf-react-filepond-js-integration-tutorial.png']
+draft: false
+---
+
+## Integrating DRF with Filepond ReactJS
+
+Why? Because it is amazing out-of-the-box solution for Pythonists. Just have a quick look:
+
+![FilepondDjango](https://raw.githubusercontent.com/pqina/filepond-github-assets/master/filepond-animation-01.gif 'How to upload pictures via front end app to django rest backend')
+
+There is a Django REST Framework plugin for uploading pictures via Filepond components. It works amazing! Filepond has everything you might need for uploading pictures. Everything neatly works together and I am really happy after using it. Works on different browsers, integrates with Amazin S3 and has powerful options.
+
+[Here][8] you can check it live in action. (_It's on heroku so you need to wait a lot to boot it up (and refresh the page if you get timedout)._)
+
+Django is known to be cumbersome when uploading pictures. Thank god we have a ready to use solution that neatly integrates with Filepond. There has been some issues when understanding the _docs_ in my case that is why I decided to make a tutorial.
+
+> Goal: Integrate django-drf-filepond with react-filepond
+
+**What we need to do:**
+
+In the previous [tutorial on Filepond VueJS][3] I wrote more on how to use DRF extension. Here I want to show you a piece of front-end code and give you [boilerplate on github][5] that you can discover on your own.
+
+You can also deploy it directly to heroku by clicking on the button.
+
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/hvitis/django-rest-filepond-react-js)
+
+( for more useful repos ready to deploy check out [post on heroku buttons][7] )
+
+## React component settings
+
+Generally it is pretty straight-forward. You can follow the official **docs** at [the official repo][1]. The most important part that is omitted there is that when installing and placing the VueJS component on your front-end remember to change **name** to **filepond**. In ReactJS case it is important also to change **server** to our DRF endpoints _fp/process/_ to POST an upload.
+
+```js
+<FilePond
+  ref={(ref) => (this.pond = ref)}
+  files={this.state.files}
+  allowMultiple={true}
+  allowReorder={true}
+  maxFiles={3}
+  server="http://127.0.0.1:8000/fp/process/"
+  name="filepond"
+  oninit={() => this.handleInit()}
+  onupdatefiles={(fileItems) => {
+    // Set currently active file objects to this.state
+    this.setState({
+      files: fileItems.map((fileItem) => fileItem.file),
+    })
+  }}
+/>
+```
+
+Handling all the class, functions and setState you can check out [in the repo's file][6] if you are having problems. 💁🏻
+
+This is how it looks like when using on deployed heroku version:
+
+![FilepondReactJSExample](/static/images/blog/how-to-connect-filepond-reactjs-and-drf-extension/filepond-reactjs-django-example.png 'Uploadinf pictures to front end spa app')
+
+Let me know if that was helpful or if you want me to explain it better / more.
+
+---
+
+_Did you make any mistakes when using Filepond or you've seen one here? Tell me about your insights. Leave a comment with You are most welcome to see more posts of this type just go to [home page][100]_
+
+[100]: https://hvitis.dev
+
+
+
+[0]: https://github.com/ImperialCollegeLondon/django-drf-filepond
+[1]: https://github.com/pqina/react-filepond
+[2]: https://gist.github.com/hvitis/65d928dc1a68126b8098e2d52ff66154
+[3]: https://hvitis.dev/how-to-upload-files-with-filepond-and-drf-extension
+[4]: https://github.com/ImperialCollegeLondon/django-drf-filepond/issues/44
+[5]: https://github.com/hvitis/django-rest-filepond-react-js/tree/main
+[6]: https://github.com/hvitis/django-rest-filepond-react-js/blob/main/src/containers/Uploader.js
+[7]: let-anybody-deploy-your-code-deploy-to-heroku-button
+[8]: https://django-rest-filepond-react-js.herokuapp.com/
+
+

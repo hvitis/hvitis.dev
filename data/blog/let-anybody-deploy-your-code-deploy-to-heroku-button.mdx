@@ -1,0 +1,118 @@
+---
+title: Let anybody deploy your code in seconds - Or deploy theirs for free.
+date: '2020-04-13'
+summary: Need an online shop? Blog? Team Chat or geolocation app? It all exist already! A guide on 'Deploy-to-Heroku' button,
+tags: ['Linux']
+images: ['/static/images/blog/let-anybody-deploy-your-code-deploy-to-heroku-button/let-anybody-deploy-your-code-deploy-to-heroku-button.png']
+draft: false
+---
+
+## What's the magic method and why it's so useful?
+
+_TLDR:_ [My list of free, interesting software](#best-instant-apps-ready-to-be-deployed).
+
+You may find yourself in one of 2 situations:
+
+- You've just finished your project and want others to see it / use it.
+- You don't want to build ( or pay ) another commonly used app.
+
+Both of those can be solved in seconds or minutes with Deploy Buttons. There is many, many hosting providers that offer quick deploy solutions. On DigitalOcean you can find [many different solutions][1] (from [Security][0], Analytics to eCommerce, Chats, Forums) that you can host immediately on a 'droplet' but it will cost you at [least 5\$ / month][2]. There is [Azure solution][3] of instant deploys but it also has it's price.
+
+The reson I want to explain [Heroku solution][7] is because it can be both simple and [free][5]. You can expand tiers, complexity etc later and pay for it but in case you don't like the solution or the app you're trying - you can just delete it and forget it. Without paying a dime (even if the deploy requires [paid add-ons][4]).
+
+## What's Deploy-to-Heroku button and how does it work?
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/PodcasterDJ/Podcaster)
+
+By clicking this button you will start deploying [my open-source project][6] to your account (assuming you have one). Your database, your env variables, your app! You can choose [one of hundreds][7] applications ready to be deployed. Scroll down to see [the most interesting](#best-instant-apps-ready-to-be-deployed) apps ( in my opinion ) ready to be deployed. Stick around if you want to see the full potential and create your own.
+
+### What can the button do and how?
+
+In order for the button to work you have to host the code on GitHub - that's the only requirement. The button calls heroku and let's it scan the repo for **app.json** file.
+
+This file has every piece of information needed to perform the deploy. The list of commands is [very long][9] but out of [basic settings][10] thatere is **none** that is essential. Yes, you _don't even need app.json file_. You just need the button in a README on your GitHub repository.
+
+```html
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+```
+
+If you want a better introduction, check the [voice log][11] on the button that explains in details the idea. This is how easy it is.
+
+Worth mentioning is the fact that the button works on **private and public repositories**. That means that you can use the button also in your organisation. GitHub has just changes it's [pricing tiers][12] and you can run your organisation with private repositories. As long as you don't need [more features][12] you will pay 0 \$. Thank you Microsoft!
+
+## Best instant apps ready to be deployed.
+
+Now that you know how to make your own button, let's see what other people made for you! This is a subjective, not influenced list of apps I've found cool to be deployed instantly for free.
+
+[**Ghost**][12] - You may have heard about [version 1.X][20] that was very popular. I'm here to tell you that there was a fork and that newest [version 3.X is here][21]. Best blogging platform. [Amazing templates][22], styling, SEO, everything, just what you need if you are looking just for blogging.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/snathjr/ghost-on-heroku)
+
+---
+
+[**Saleor**][13] - [eCommerce platform][23], 100%, highly customizable, made with great technologies: Python & React & GraphQL. If you need a shop you can have it in just a moment. I made a shop this way for a friend in a moment.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/mirumee/saleor)
+
+---
+
+[**Stripe API**][15] - You can see how it works to learn more about Stripe integrations. You can choose your preffered language: Go, Java, Node, PHP, Python, Ruby.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/stripe/stripe-payments-demo)
+
+---
+
+[**Django Forum**][16] - In case you need a forum. Here you are out of the pocket.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/MicroPyramid/django-simple-forum)
+
+---
+
+[**URL Shortener**][17] - You want privacy and you want to keep your shortened URLs? Or you want to shorten then to a specific way? That's [repo][24] for you.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/smtchahal/url-shortener)
+
+---
+
+[**Let's Chat**][18] - Your own, proffessional chat. You're sick of pandemia making [Teams go down][25]? Start your own.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/sdelements/lets-chat)
+
+---
+
+---
+
+_Did you make any mistakes when using HEROKU or you've seen one here? Tell me about your insights. Leave a comment with You are most welcome to see more posts of this type just go to [home page][100]_
+
+[100]: https://hvitis.dev
+
+### What's your favourite instant-deployed app ❔
+
+👍🏻 Support me by subscribing to more tech news 👇🏻
+
+[0]: https://marketplace.digitalocean.com/category/security
+[1]: https://marketplace.digitalocean.com/category/all
+[2]: https://www.digitalocean.com/pricing/
+[3]: https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-to-azure-button
+[4]: https://elements.heroku.com/addons
+[5]: https://stackoverflow.com/questions/4536326/heroku-free-account-limited
+[6]: https://hvitis.dev/project-free-podcasts-blog-template-based-on-django
+[7]: https://elements.heroku.com/buttons
+[8]: https://www.heroku.com/elements/buttons
+[9]: https://devcenter.heroku.com/articles/app-json-schema
+[10]: https://blog.heroku.com/introducing_the_app_json_application_manifest
+[11]: https://blog.heroku.com/introducing_the_app_json_application_manifest
+[12]: https://elements.heroku.com/buttons/cobyism/ghost-on-heroku
+[13]: https://elements.heroku.com/buttons/mirumee/saleor
+[14]: https://https://github.com/PodcasterDJ/Podcaster
+[15]: https://elements.heroku.com/buttons/stripe/stripe-payments-demo
+[16]: https://elements.heroku.com/buttons/micropyramid/django-simple-forum
+[17]: https://elements.heroku.com/buttons/smtchahal/url-shortener
+[18]: https://elements.heroku.com/buttons/sdelements/lets-chat
+[19]: https://elements.heroku.com/buttons/ionic-team/ionic-heroku-button
+[20]: https://github.com/cobyism/ghost-on-heroku
+[21]: https://github.com/snathjr/ghost-on-heroku
+[22]: https://ghost.org/marketplace/
+[23]: https://saleor.io/
+[24]: https://github.com/smtchahal/url-shortener
+[25]: https://techcrunch.com/2020/03/16/microsoft-teams-down/

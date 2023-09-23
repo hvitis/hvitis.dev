@@ -1,0 +1,99 @@
+---
+title: Use Python to translate text from images to any language
+date: '2021-05-27'
+summary: Tutorial on how can you translate your favorite book, paper, text in a matter of seconds or minutes from and to any language.
+tags: ['Python']
+images: ['/static/images/blog/how-to-translate-books-for-free-to-any-language-with-python/thought-catalog-of-books-awaiting-to-be-translated.jpg']
+draft: false
+---
+
+## Who is it for?
+
+Have you ever found yourself looking for one of those [bilingual books][0] but none of them caught your interest? Maybe you thought that they re too expensive, after all - most of them are already on a public domain.
+
+Or maybe you were abroad, went to a book store and found a really interesting book available only in the local language?
+
+Scientific papers? That fits too!
+
+This post explains how to translate photos, pictures that have text within them so that consists photos, screenshots, images, etc.
+
+In order to initialize the project you will need a Google API key from Google Console which can take a bit to generate especially if you have never done it before. If you want to translate small batches or just a couple of images you may try to use other tools.
+
+**I love languages**
+
+In the following example you will see that we are going translate Siddhartha by Herman Hesse which is on public domain. The book we translate is in German and you can pick up just about any language google offers (one of 64). _That is something that could really ease a language learning!_
+
+## Copyrights
+
+How does copyright work arrive in public domain and can be used freely?
+
+Most of works people create is protected with Copyrights. In most of the countries they last a lifetime of an author plus 25-100 years. Depending on the country you may find books of foreign authors sooner - verify [detailed world map][3] to see exact timings.
+
+You may wonder how to ask permission to translate a book, on public domain it is not required anymore (although if you are still wondering then just writing to Authors with a polite request will do). So can you translate public domain books? Yes, you can!
+
+Once the Copyrights expire, works are becoming publicly available, they become part of a [public domain][6]. This is where we are going to get the book to translate - [Siddhartha by Herman Hesse][4]. On Archive.org we can see _usage_ category which states: **Usage Public Domain Mark 1.0**
+
+In order to show the full process I printed a few pages:
+
+![siddhartha-scanning-book](/static/images/blog/how-to-translate-books-for-free-to-any-language-with-python/siddhartha-scanning-book.jpg 'siddhartha-scanning-book')
+
+## Let's start
+
+We need to first scan those pages. We will use mobile app called Microsoft Lens:
+
+<a href="https://play.google.com/store/apps/details?id=com.microsoft.office.officelens&hl=en_US&gl=US">
+<img src="./microsoft-office-lens-app.png" alt="microsoft-office-lens-app" title="microsoft-office-lens-app" width="100" />
+</a>
+
+Once you download it, try scanning the pages. It has nice option of making the scanned documents flat and readable.
+
+<img src="./microsoft-office-lens-scanning-book-2.jpg" alt="microsoft-office-lens-scanning-book" title="microsoft-office-lens-scanning-book" width="200" />
+
+Once you finish scanning all the pages, select a black and white sharpening filter and sve those files.
+
+Example scanned document should look like this:
+
+![Herman-Hesse](/static/images/blog/how-to-translate-books-for-free-to-any-language-with-python/Herman-Hesse-Siddhartha.jpg 'Herman-Hesse')
+
+Now put all those scanned photos into one folder on your computer and let´s go to the code.
+
+## The intro
+
+[The script I wrote][1] utilizes python packages for OCR scanning, translating and saving into docx file. It´s sort of a free document translation software and although it´s just a few python lines it can perform a full book translation and later you can generate pdf out of this docx.
+
+Even if you have just pdf it can be tweaked and used as ebook translator. You can just use free [pdf to png converter][10] to obtain photos and run [the script][1]. This translation will only run if you´re online. The Python translate logic does not work offline because we are querying Google Translate API.
+
+Maybe you´ve heard about other services like reverso, bing translator or deepl translator. Using this script you can have unlimited, ad free experience that you can tweak to your needs and make your own book translation app.
+
+(If you do not want to use Google Services you may check [apertium][5] that also let´s you translate documents).
+
+# The code
+
+Code is available [here][7] under GNU licence.
+You may want to check the [usage and instalation steps][8].
+
+The result is two files generated with original and translated text:
+
+![translation result](/static/images/blog/032-how-to-translate-a-book-for-free/translation-result.png 'translation_result')
+
+Let me know what do you think and feel free to [reach out][9] if you need help.
+
+---
+
+_Tell me about your insights and leave a comment - you are most welcome to see more posts of this type just go to [home page][100]. Cover:_
+Photo by <a href="https://unsplash.com/@beatriz_perez?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Beatriz Pérez Moya</a> on <a href="https://unsplash.com/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+
+[100]: https://hvitis.dev
+
+
+[0]: https://clasicosbilingues.com/site/
+[1]: https://github.com/hvitis/translate-anything-with-python
+[2]: https://en.wikipedia.org/wiki/Public_domain_in_the_United_States
+[3]: https://en.wikipedia.org/wiki/List_of_countries%27_copyright_lengths
+[4]: https://archive.org/details/bub_gb_x-7OAAAAMAAJ
+[5]: https://www.apertium.org/index.eng.html#?dir=eng-epo&q=
+[6]: http://www.publicdomainsherpa.com/public-domain-books.html
+[7]: https://github.com/hvitis/translate-anything-with-python/blob/main/main.py
+[8]: https://github.com/hvitis/translate-anything-with-python#instruction
+[9]: https://hvitis.dev/contact
+[10]: https://pdf2png.com

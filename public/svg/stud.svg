@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" viewBox="0 0 1422 800" width="1422" height="800"><defs><pattern id="mmmotif-pattern" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="translate(-1 0) scale(1.2) rotate(22) skewX(-2) skewY(0)">
+    <circle r="7.34831" transform="matrix(0.866044 -0.499967 0.866044 0.499967 20.0004 23.5002)" fill="#0059c1"></circle>
+    <circle r="7.34831" transform="matrix(0.866044 -0.499967 0.866044 0.499967 20.0004 20.5002)" fill="#70b4ff"></circle>
+    <circle r="7.34831" transform="matrix(0.866044 -0.499967 0.866044 0.499967 19.9999 16.4998)" fill="hsl(212, 91%, 55%)"></circle>
+</pattern></defs><rect width="1422" height="800" fill="url(#mmmotif-pattern)"></rect></svg>

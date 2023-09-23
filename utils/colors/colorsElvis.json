@@ -1,0 +1,178 @@
+[
+    {
+        "lego_id": "26",
+        "ldraw_name": "Black",
+        "bo_name": "Black",
+        "hex_code": "#1b2a34",
+        "rgb": "0,0,0",
+        "ldraw_id": "0",
+        "bl_id": "11",
+        "lego_name": "Black",
+        "bl_name": "Black"
+    },
+    {
+        "lego_id": "195",
+        "ldraw_name": "Blue_Violet",
+        "bo_name": "Royal Blue",
+        "hex_code": "#1c58a7",
+        "rgb": "28,88,167",
+        "ldraw_id": "89",
+        "bl_id": "97",
+        "lego_name": "Royal Blue",
+        "bl_name": "Blue-Violet"
+    },
+    {
+        "lego_id": "322",
+        "ldraw_name": "Medium_Azure",
+        "bo_name": "Medium Azure",
+        "hex_code": "#68c3e2",
+        "rgb": "104,195,226",
+        "ldraw_id": "322",
+        "bl_id": "156",
+        "lego_name": "Medium Azur",
+        "bl_name": "Medium Azure"
+    },
+    {
+        "lego_id": "102",
+        "ldraw_name": "Medium_Blue",
+        "bo_name": "Medium Blue",
+        "hex_code": "#7396c8",
+        "rgb": "115,150,200",
+        "ldraw_id": "73",
+        "bl_id": "42",
+        "lego_name": "Medium Blue",
+        "bl_name": "Medium Blue"
+    },
+    {
+        "lego_id": "100",
+        "ldraw_name": "Light_Salmon",
+        "bo_name": "Light Salmon",
+        "hex_code": "#f9b7a5",
+        "rgb": "249,183,165",
+        "ldraw_id": "100",
+        "bl_id": "26",
+        "lego_name": "Light Red",
+        "bl_name": "Light Salmon"
+    },
+    {
+        "lego_id": "27",
+        "ldraw_name": "Dark_Gray",
+        "bo_name": "Dark Gray",
+        "hex_code": "#545955",
+        "rgb": "84,89,85",
+        "ldraw_id": "8",
+        "bl_id": "10",
+        "lego_name": "Dark Grey",
+        "bl_name": "Dark Gray"
+    },
+    {
+        "lego_id": "2",
+        "ldraw_name": "Light_Gray",
+        "bo_name": "Light Gray",
+        "hex_code": "#8a928d",
+        "rgb": "138,146,141",
+        "ldraw_id": "7",
+        "bl_id": "9",
+        "lego_name": "Grey",
+        "bl_name": "Light Gray"
+    },
+    {
+        "lego_id": "103",
+        "ldraw_name": "Very_Light_Gray",
+        "bo_name": "Very Light Gray",
+        "hex_code": "#bcb4a5",
+        "rgb": "188,180,165",
+        "ldraw_id": "503",
+        "bl_id": "49",
+        "lego_name": "Light Grey",
+        "bl_name": "Very Light Gray"
+    },
+    {
+        "lego_id": "5",
+        "ldraw_name": "Tan",
+        "bo_name": "Tan",
+        "hex_code": "#b0a06f",
+        "rgb": "204,185,141",
+        "ldraw_id": "19",
+        "bl_id": "2",
+        "lego_name": "Brick Yellow",
+        "bl_name": "Tan"
+    },
+    {
+        "lego_id": "283",
+        "ldraw_name": "Light_Flesh",
+        "bo_name": "Light Flesh",
+        "hex_code": "#ffc995",
+        "rgb": "255,201,149",
+        "ldraw_id": "78",
+        "bl_id": "90",
+        "lego_name": "Light Nougat",
+        "bl_name": "Light Nougat"
+    },
+    {
+        "lego_id": "12",
+        "ldraw_name": "Earth_Orange",
+        "bo_name": "Earth Orange",
+        "hex_code": "#d86d2c",
+        "rgb": "216,109,44",
+        "ldraw_id": "366",
+        "bl_id": "29",
+        "lego_name": "Light Orange Brown",
+        "bl_name": "Earth Orange"
+    },
+    {
+        "lego_id": "38",
+        "ldraw_name": "Dark_Orange",
+        "bo_name": "Dark Orange",
+        "hex_code": "#91501c",
+        "rgb": "145,80,28",
+        "ldraw_id": "484",
+        "bl_id": "68",
+        "lego_name": "Dark Orange",
+        "bl_name": "Dark Orange"
+    },
+    {
+        "lego_id": "192",
+        "ldraw_name": "Reddish_Brown",
+        "bo_name": "Reddish Brown",
+        "hex_code": "#5f3109",
+        "rgb": "95,49,9",
+        "ldraw_id": "70",
+        "bl_id": "88",
+        "lego_name": "Reddish Brown",
+        "bl_name": "Reddish Brown"
+    },
+    {
+        "lego_id": "25",
+        "ldraw_name": "Brown",
+        "bo_name": "Brown",
+        "hex_code": "#543324",
+        "rgb": "84,51,36",
+        "ldraw_id": "6",
+        "bl_id": "8",
+        "lego_name": "Earth Orange",
+        "bl_name": "Brown"
+    },
+    {
+        "lego_id": "154",
+        "ldraw_name": "Dark_Red",
+        "bo_name": "Dark Red",
+        "hex_code": "#720012",
+        "rgb": "114,0,18",
+        "ldraw_id": "320",
+        "bl_id": "59",
+        "lego_name": "(New) Dark Red",
+        "bl_name": "Dark Red"
+    },
+    {
+        "lego_id": "21",
+        "ldraw_name": "Red",
+        "bo_name": "Red",
+        "hex_code": "#b40000",
+        "rgb": "180,0,0",
+        "ldraw_id": "4",
+        "bl_id": "5",
+        "lego_name": "Bright Red",
+        "bl_name": "Red"
+    }
+]

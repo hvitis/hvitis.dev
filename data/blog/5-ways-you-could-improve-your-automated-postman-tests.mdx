@@ -1,0 +1,197 @@
+---
+title: 5 ways to improve your automated POSTMAN tests.
+date: '2020-05-23'
+summary: Really powerful methods that will make your tests sets impeccable!
+tags: ['POSTMAN', 'QA']
+images: ['/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/postman-automated-tests-tips.png']
+draft: false
+---
+
+## Improve your POSTMAN tests.
+
+The methods I am sharing in this article allow me to prepare more robust tests. Some example use cases would be:
+
+- Wondering how to create random number or random name for a variable? Need to use some jQuery for parsing HTML? [Try using 3rd party libraries in POSTMAN sandbox](#using-3rd-party-libraries-in-pre-scripts).
+
+- Executing POST with body that needs to be changed? No problem! Try to make some [changable body conent](#passing-prerequest-to-body) by preparing it in pre-requests.
+
+- Your requests just return a rendered page HTML? Try [parsing it and scrapping](#parsing-data-from-HTMLs-forms) for the data you need (**tokens** for example ).
+
+- Your request response makes the next request redundant? You want to execute previous request? [Queue execution of specific request](#setNextRequest).
+
+- You are recieving big objects of important data? Verify just its format by [validating with schema](#validating-schema).
+
+---
+
+## <a name="using-3rd-party-libraries-in-pre-scripts"></a>Using 3rd party libraries in pre scripts
+
+You want to create random numbers? use lodash library? jQuery? Chai assertions?Maybe you need some high level time operations for your scripts? MomentJS? No problem.
+
+- Passing, parsing URLs
+- Validating Schemas
+- Decoding, encoding keys, tokens with SHA256 (atob, btoa)
+
+No problem.
+POSTMAN allows you to use [3rd party libraries][11] in its sandbox. Next tips will be tightly connected with this information, so have as look before proceeding!
+
+## <a name="passing-prerequest-to-body"></a>Passing prerequest to body
+
+Let's say SWAGGER tells you that in body you need to pass string as title:
+
+![swagger_postman](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-swagger-postman-docs.PNG 'Swagger Endpoint Mapping')
+
+You can programaticaly change your body content in pre-request scripts so that e.g. each time you make a request you have different Job title.
+
+First open your pre-request scripts tab, prepare your body and **stringify it**.
+
+![postman-pre-script](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-postman-prerequest-trick-script-add-on-extension.PNG 'Sending request with prerequest scripts')
+
+(code version in case you need to copy)
+
+```
+const title = "Boss' Assistant nr " + _.random(0, 10)
+
+const preparedBody = {
+    "title" : title
+}
+
+pm.environment.set("job_object", JSON.stringify(preparedBody))
+```
+
+You have to set this body object as an environment, global or collection variable. Once you do it, before executing the script you just need to use it in body like that:
+
+![postman-pre-script-use](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-postman-body-request.PNG 'Sending request with prerequest scripts')
+
+Now each time you execute this request you will get new Job title:
+
+```
+"title": "Boss' Assistant nr 5"
+...
+"title": "Boss' Assistant nr 2"
+...
+"title": "Boss' Assistant nr 6"
+```
+
+## <a name="parsing-data-from-HTMLs-forms"></a>Parsing data from HTMLs forms
+
+General use case: There is some visible or hidden data within the HTML tags on the rendered page that you need to pass / verify / check.
+
+Specific use cases: You have a page that has a login fields with generated token that you need for next request.
+
+Let's say that you make a request to some API and it redirects you to a page with input fields that have tokens assigned. That's a common use case with SAML and SSO. You can practice [here][0] on a real use case. This login field has a token.
+
+![input-token](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-input-field-token.PNG 'Sending request with prerequest scripts')
+
+On requesting the URL of this page we will get just normal HTML:
+
+![postman-html-request](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-make-html-request-postman.PNG 'HTML body in POSTMAN request')
+
+As you've read in a previous tip, we can use libraries provided in POSTMAN SandBox. jQuery is [replaced by CheerioJS][1] which emulates jQuery core API.
+
+Let's load the library and see if it's working:
+
+```js
+const $ = cheerio.load(pm.response.text())
+console.log('Title of the page: ', $('title').text())
+```
+
+Now you just need to use your selectors magic knowledge. Let's query for the TOKEN we need:
+
+```js
+console.log($('input[name=authenticity_token]').attr('value'))
+```
+
+( **TIP 1:** If you are not good with selectors, click right mouse button on element you are looking for and then **copy selector** )
+
+( **TIP 2:** If you need other information from HTML elements, check the [Cheerio documentation][3] for more. )
+
+And finally let's write the test and export the TOKEN:
+
+```js
+pm.test('input field it should have a token', () => {
+  let TOKEN = $('input[name=authenticity_token]').attr('value')
+  pm.expect(TOKEN).to.not.be.empty
+  pm.environment.set('TOKEN', TOKEN)
+})
+```
+
+Now you can use the TOKEN in other requests.
+
+## <a name="setNextRequest"></a>SetNextRequest
+
+I'm assuming you know what is a postman collection. It's a set of requests or folders with requests, depending how you order your work. The basic workflow that POSTMAN uses is checking request one after the other. It goes from the top to bottom basically. Most of this is well [described already][4] but I will just mention that with
+
+```js
+postman.setNextRequest('REQUEST_NAME_HERE')
+```
+
+You can go back to **previous requests** or **skip some requests** or **loop through requests**[7]. It's IMPORTANT to remember that naming convention in your requests that follows e.g. CamelCase and has consistent information **helps tremendously** because it makes your code cleaner.
+
+Instead of using default naming:
+
+![postman-request-naming](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-naming-postman-requests.PNG 'Naming POSTMAN request')
+
+Try naming your request in a way that will be easier to write them in the scripts when passing their names into your **setNextRequest()** e.g. using request method and no spaces:
+
+![good-postman-request-namingt](/static/images/blog/5-ways-you-could-improve-your-automated-postman-tests/ss-naming-postman-requests-good.PNG 'Naming POSTMAN request good')
+
+## <a name="validating-schema"></a>Validating schema
+
+Imagine you make a test for checking if your API returns a Bank Account number.
+
+```js
+const jsonData = pm.response.json()
+pm.test('returns IBAN as a number', () => {
+  const IBAN = jsonData.IBAN
+  pm.expect(IBAN).to.be.an('number').that.does.not.include('ES')
+})
+```
+
+You [assert][5] that it should be a number and it works fine but what if you would need to be sure as per data types of an entire response of object with 50 keys? [Using assertions][6] would be cumbersome.
+
+That's a use case for [schema validation][8]. POSTMAN allows us to use
+
+- tv4 - Tiny Validator (for v4 JSON Schema)
+  and / or
+- Ajv - Another JSON Schema Validator
+
+The [documentation][9] for both libraries shows all the API you could use. I will just show you the basic idea behind it:
+
+```js
+// We create a schema for our response
+var schema = {
+  IBAN: {
+    type: 'number',
+  },
+}
+```
+
+and write a test for it:
+
+```js
+const jsonData = pm.response.json()
+pm.test('Schema is valid', () => {
+  pm.expect(tv4.validate(jsonData, schema)).to.be.true
+})
+```
+
+We could verify properties, whether field is required, nested objects, referencing and many more. Always remember to [**read documentation**][10] before starting to know the full potential of your tools!
+
+---
+
+---
+
+_Did you make any mistakes when using POSTMAN or you've seen one here? Tell me about your insights. Leave a comment with You are most welcome to see more posts of this type just go to [home page][100]_
+
+[100]: https://hvitis.dev
+[0]: https://app.onelogin.com/login
+[1]: https://blog.postman.com/jquery-replaced-by-cheeriojs-in-postman-sandbox/
+[3]: https://github.com/cheeriojs/cheerio
+[4]: https://learning.postman.com/docs/postman/collection-runs/building-workflows/#getting-started
+[5]: https://www.chaijs.com/api/bdd/
+[6]: https://postman-quick-reference-guide.readthedocs.io/en/latest/assertions.html
+[7]: https://learning.postman.com/docs/postman/scripts/branching-and-looping/
+[8]: https://json-schema.org/understanding-json-schema/about.html
+[9]: https://geraintluff.github.io/tv4/
+[10]: https://www.npmjs.com/package/ajv
+[11]: https://learning.postman.com/docs/postman/scripts/postman-sandbox-api-reference/

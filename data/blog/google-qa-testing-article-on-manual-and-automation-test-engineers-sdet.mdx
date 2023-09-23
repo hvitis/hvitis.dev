@@ -1,0 +1,160 @@
+---
+title: Software Development Engineer in Test || How Google tests software?
+date: '2021-03-14'
+summary: Who is SDET and why Google does not hire manual testers. Read all advices we get from Google on testing.
+tags: ['QA',]
+images: ['/static/images/blog/google-qa-testing-article-on-manual-and-automation-test-engineers-sdet/testing-software-at-google-books.png']
+draft: false
+---
+
+I wanted to know if at Google they do testing manually, if they have manual testers. If you want **TLDR** answer, here is the answer ( 2 quotes taken from the books ):
+
+> In 2005 most of the testing was done manually if it was done at all.
+
+Currently:
+
+> Attempting to assess product quality by asking humans to manually interact with every feature just doesn't scale. When it comes to testing, there is one clean answer: automation.
+
+If you want to read more on **how they test their software**, keep on reading!
+
+I will be quoting the books from the picture _a lot_ here.
+
+## Why is Google's software so good?
+
+Google engineers their products.
+
+> Software Engineering differs from programming in dimensionality programming is about producing code. Software engineering extends that to include the maintenance of that code for its useful life span.
+
+In order to engineer software properly a pipeline of continuos delivery of new features, changes and improvements has to be set up. This pipeline has to stream tested and approved changes to a user in order to avoid expensive fixes (**shifting left concept**) and lose of trust.
+
+In order to have well-working pipeline a few steps have to be taken.
+
+- Clear documentation and specification that allows for .
+- Process of testing that is mostly automated which allows scaling.
+- Reusability of code: components, dependencies, etc.
+
+Let's break down those 2 points and analyse them
+
+## Documentation - Holy Grail that takes time to shine
+
+The development should be about development. Engineers should focus on investigating the code, implementing, developing features, testing. The _should not waste time on figuring out what they have to develop in the first place_. They should have clean documentation both for new projects:
+
+> Project teams are more focused when their design goals and team objectives are clearly stated.
+
+and for legacy code:
+
+> Quality documentation has tremendous benefits for an engineering organization. Code and APIs become more comprehensive and reduce mistakes.
+
+Writing documentation, maintaining it and spending time on it can have a very big feedback loop when it comes to profits.
+
+> Benefits aren't immediate.
+
+It may be difficult to see immediate gains but in a long term they will be visible. They are necessary. On the beginning Google had no troubles with documentation but as the codebase grows, the need for it becomes more and more visible. That is why, in case wqhen a company wants to grow and scale their products, it is necessary to have a good documentation from the beginning. Google's history gives a little bit of insight:
+
+> New users discovering bad documents either couldn't confirm that the documents were wrong or didn't have an easy way to report errors. [...] The way to improve the situation was to move important documentation under same sort of source control that was being used to track code changes.
+
+Even if scaling is not taken into consideration, normal development can also hugely benefit from writing documentation. Developers need to know that **writing documentation is not much different than writing the code**.
+
+## Testing - why should we do it?
+
+**Shifting left concept.**
+
+What is it?
+
+> If you can catch it before the original developer commits the flaw to version control, it's even cheaper.
+
+If we have User Story development on the left side of the graph, then on the right side of it we have delivery to production. The X axis is time.
+
+The closer to the left side of the graph we catch bugs, the cheaper it will cost us.
+
+Catching bugs on production is **very costly**: revising legacy code, changing integrations, losing customer's confidence in our products. All that affects the turnover. That is also why documentation plays an important part. It helps to shift towards left side. Helps to **avoid introducing bugs**.
+
+There will always be bugs. No matter how good the developers and documentation. The most important part of shifting left is implementing testing process.
+
+## Testing - Google's good standards for everyone
+
+There is a few places where we can automate testing. At Google there is a culture that says:
+
+> Treat your tests like production code.
+
+This means that a lot of testing is being done by the developers. They are responsible for writing tests. They can't test everything. That is why there is a separate job position that for some scopes of testing.
+
+> The engineers who build systems today, play an active and integral role in writing and running automated tests for their own code.
+
+Test scopes that are at Google are as follows:
+
+- Narrow scope - unit tests (80% of tests)
+- Mediums scope - integration tests (15% of tests)
+- Large scope - end to end tests (5% of tests)
+
+The 5% that is left - exploratory, beta, smoke testing.
+
+Test suite antipatterns are basically processes that have significantly different amounts of tests by percentage in a code base.
+
+e.g an **ice cream antipattern** is the revers of the top example:
+
+- Unit tests (20% of tests)
+- Integration tests (55% of tests)
+- End to end tests (25% of tests)
+
+Antipatterns should be avoided. Remember, this is the Google's view of products so deviating from those rules could be possible. We need to remember that the goal of Google is to **deliver quickly**, **well tested product**.
+
+If your company's structure or process is not similar to Google's - there are chances that the goal is. Everybody should have structure that allows for quick deliveries and high quality.
+
+> Even in companies where QA is a prominent organization, developer-written tests are commonplace. At the speed and scale that today's systems are being developed, the only way to keep up is by sharing the development of tests around the entire engineering staff.
+
+## Testing - Automate where possible
+
+You should be able to automate every test that you make. In case of failure or bug, a new test to cover the case should be created. This requires a very well structures architecture of the software product and according chose of tools.
+
+It is important to remember that testing should always be done in order to increase quality assurance. You have to be able to trust your tests. That means that **tests have to be good**.
+
+> A bad test suite can be worse than no test suite at all.
+
+Treating tests in this way, _fixing and adjusting them immediately_ maintains (or increases) our level or certainty regarding test results.
+
+> Allowing failed tests to pile up quickly defeats any value they were providing, so it is imperative not to let that happen.
+
+Google's take on broken tests is simple:
+
+> Teams that prioritize fixing a broken test within minutes of a failure are able to keep confidence high and failure isolation fast, and therefore derive more value out of their tests.
+
+Not adjusting and fixing test causes test flakiness. This can have negative impact on the team and quality.
+
+> If test flakiness continues to grow, you will experience something much worse than lost productivity; a loss of confidence in the tests. [...] After that happens, engineers will stop reacting to test failures, eliminating any value tha test suite provided.
+
+At Google % of failed tests is limited to 0.15%.
+
+## Testing - Bunch of advices for SDET
+
+**SDET** - Among of other responsibilities that they have, **Software Developer Engineer in Tests** is a person that guards quality by automating testing procedures. They are usually responsible for implementing medium and larger tests where SDEs (**Software Developer Engineers**) develop smaller tests.
+
+At Google they differentiate tests to 3 sets:
+
+- Small - No sleeping, no awaits, no blocking calls, they run as fast as possible.
+
+- Medium - localhost webdriver, slower, nondeterministic.
+
+- Large tests - no localhost, remote cluster, integrate wide assets.
+
+The amount of small tests should be the highest due to it's runtime and maintainability (that's why SDEs are always responsible for covering their code with good unit tests).
+
+> Smaller and smaller tests turned out to be faster, more stable and generally less painful.
+
+All tests should strive to be hermetic. The larger the tests the more difficult to stick to this advice.
+
+## Reusability 
+
+Code is a liability. Using the Static Code Analysis tools we could assess the amount of duplication that is in our codebase. Increasing duplication decreases the speed of delivery in a CI/CD pipe.
+
+> Duplicated code not only is a wasted effort, it can actually cost more in time than not having the code at all; changes that could be easily performed under one code pattern often require more effort when there is duplication in the codebase. Basically, "if you're writing it from scratch you're doing it wrong".
+
+## Sum up
+
+Google surprises me with the quality of their product. Their uptime, security measures, user interface and ease of access is amazing. If I love their products it means that they test it well. The quality that they maintain is a proof that their way works. If they say that it's possible to scale testing by automating it or that developers should be testers, it's difficult to disagree with this statement.
+
+---
+
+_Tell me about your insights and leave a comment - you are most welcome to see more posts of this type just go to [home page][100]_
+
+[100]: https://hvitis.dev

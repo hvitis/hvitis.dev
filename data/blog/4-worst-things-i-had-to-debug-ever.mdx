@@ -1,0 +1,159 @@
+---
+title: 4 Worst things I had to debug (EVER)
+date: '2020-03-06'
+summary: Tiny mistakes that took FOREVER to fix !
+tags: ['Python', 'ReactJS']
+images: ['/static/images/blog/4-worst-things-i-had-to-debug-ever/debugging-code-may-not-be-as-pretty-as-this-picture.jpg']
+draft: false
+---
+
+## What to do when you're stuck in a dead end?
+
+First of course logs from errors, then debugging with your IDE, then stackOverflow, then second page of Google but what if? What if nothing helps?
+
+What has worked for me in all of those cases was just starting all over again.
+Whether it means to start from last commit, from reinstalling the repo, or the project itself. After certain time for a break - your mind thinks differently after 1 hour of not having conscious filled with THE ERROR.
+
+## List of worst BUGs 🐞 I will remember until I die
+
+#### The famous dash hyphen npm ^ ~ package updates
+
+If you check your package.json then all the packages have a version with 2 dots like 1.2.3
+That's because they follow format where each number has a name: [major, minor, patch]
+So in 1.2.3
+1 is major
+2 is minor
+3 is update
+
+A tilde (`~`), a caret (`^`), an asterisk (`*`) are [some of the characters seen in package.json][0] file used to define a npm package version.
+
+```JSON
+{
+  "name": "my-app",
+  "dependencies": {
+    "axios": "~0.18.0",
+    "gatsby-plugin-typescript": "^2.0.12"
+  }
+}
+```
+
+npm uses difference characters to state updates for the packages (e.g. when you run `npm update`). So what's the difference between tilde (`~`) and caret (`^`) in package.json?
+
+##### [major, minor, patch]
+
+- [tilde ranges][1] (~) will update but will not increment [major, __minor__, patch] value if it is specified; otherwise will update but will not increment [__major__, minor, patch] value.
+
+  ~1.2.3 here minor value IS specified so it will keep updating until 1.2.9 (next one would be 1.3 which is forbidden).
+  ~1 here minor value IS NOT specified so it will keep updating until 1.9.9 (next one would be 2 which is forbidden)
+
+- [caret ranges][2] (^) will update but will not increment [__the left-most non-zero element__] value.
+  ^0.0.1 **WILL NOT** install 0.0.2 and above but **WILL** install e.g. 0.0.12
+  ^0.1.0 **WILL NOT** install 0.2.0 and above but **WILL** install e.g. 0.1.8
+  ^1.0.0 **WILL NOT** install 2.0.0 and above but **WILL** install e.g. 1.8.56
+
+It is used to install version that has no breaking changes because:
+
+> However, it presumes that there will not be breaking changes between 0.2.4 and 0.2.5.
+
+we basically we need to trust the developers of the package that the update will not break our app. Apparently the developers changing package that I was using in my app were not accustomed with this rules and the bug was caused by the fact that I did _npm update_ for some reason. After hopelessly trying to debug I cleaned the _node_modules_ and did _npm install_ again which solved it.
+
+[0]: https://github.com/npm/node-semver#advanced-range-syntax
+[1]: https://github.com/npm/node-semver#tilde-ranges-123-12-1
+[2]: https://github.com/npm/node-semver#caret-ranges-123-025-004
+
+---
+
+#### Change of filename's capital letter not picked up
+
+Procfile is a thing specific to Python. A Procfile is a mechanism for declaring what commands are run by your application.
+
+According to heroku:
+
+> The Procfile is always a simple text file that is named Procfile without a file extension. For example, Procfile.txt is not valid.
+> The Procfile must live in your app’s root directory. It does not function if placed anywhere else.
+
+In theory they wrote it right and I the fault is mine. The mistake was that I wrote the file by hand and I typed it as _procfile_ so not with capital letter.
+This was causing bauild to silently fail and I had completly no idea what was causing it.
+
+The problem was huge because changing the letters to uppercase was not picked up by git - mine or heroku's, I don't remember anymore, so [I was trying the solution][1] and was not working until I deleted the file and uploaded it again.
+
+[1]: https://stackoverflow.com/questions/17847631/heroku-procfile-no-such-process-type-web-defined-in-procfile-error
+
+---
+
+#### Reacts wrap `<div>` in a component
+
+That was back when I was learning React and I've decided to create some simple project. In order to create a component you needed to wrap it in a div like that:
+
+```JS
+import React from 'react';
+
+class ComputerGreeting extends React.Component {
+  render(){
+    return (
+      <div>
+        <h1>Hello Human.</h1>;
+        <p>Pleased to serve you.</p>;
+      <div/>
+  }
+}
+```
+
+Then they implemented React Fragments so that creating useless divs that get rendered and mess up with your mind is not longer necessarry. The code would look like that then:
+
+```JS
+import React from 'react';
+
+class ComputerGreeting extends React.Component {
+  render(){
+    return (
+       <React.Fragment>
+        <h1>Hello Human.</h1>;
+        <p>Pleased to serve you.</p>;
+       <React.Fragment/>
+  }
+}
+```
+
+Then they implemented another syntax to wrap up a component with:
+
+```JS
+import React from 'react';
+
+class ComputerGreeting extends React.Component {
+  render(){
+    return (
+       <>
+        <h1>Hello Human.</h1>;
+        <p>Pleased to serve you.</p>;
+       </>
+  }
+}
+```
+
+But on the very beginning, when I was trying to make some Bootstrap template into React but I forgot the fact that you **HAVE TO** wrap a component with an element that will actually make it a singular piece.
+And it took me ages. Again, what has helped was taking a break and trying to follow the error message.
+
+---
+
+#### Node version that is the cause of an error
+
+There is a tool that is called POSTMAN and it has it's command line equivalent called NEWMAN. There is also an npm package. Putting it simply - It's a tool for helping people with API. The first one is GUI equivalent with a sandbox for JavaScript code and the second one is just runner for collections of tests and requests that the first one generates.
+
+I was trying to export a tests collection from the POSTMAN and run it on NEWMAN. I had an error that was impossible to debug. The CLI was not very verbose and there was tons of variables that could have gone wrong on the way.
+
+I was surprised that after trying 20000 solutions I was still stuck. I even have changed the node versions twice to different once. The way out was reaching out for help and [creating an Issue on gitHub][0].
+
+The help solution was to change the node version - but **I DID IT**! So I changed it again to even lower versions and **IT WORKED**!
+
+From that moment when I try a solution I try all the possibilities of that solution...
+
+[0]: https://github.com/postmanlabs/newman/issues/2210
+
+---
+
+---
+
+_Did you make any mistakes when DEBUGGING or you've seen one here? Tell me about your insights. Leave a comment with You are most welcome to see more posts of this type just go to [home page][100]_
+
+[100]: https://hvitis.dev

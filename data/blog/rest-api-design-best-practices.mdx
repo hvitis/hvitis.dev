@@ -1,0 +1,462 @@
+---
+title: REST API Best practices - Why's and How's
+date: '2020-06-24'
+summary: Why you should put a lot of attention to your API design and how to do it well.
+tags: ['QA', 'POSTMAN']
+images: ['/static/images/blog/rest-api-design-best-practices/rest-api-is-about-connections-and-cooperation.jpg']
+draft: false
+---
+
+## Why your API should be REST ?
+
+[REST][0] helps. A lot. Let's focus on what REST gives your team. The picture I've chosen respresents the idea very well. In a crowd of backenders, front-enders, clients, users and testers - well design API increases productivity and efficiency, decreases frustration, let's people cooperate better. In case you're a bit confused on what's REST try [improving your knowledge][5] before continuing.
+
+If you are a **front end** developer you may want to save yourself writing custom messages for bad error requests. You may want to have a reusable functions for services and getting data, this shines when things are consistent. When requests you make are predictible, when their codes represent the actual state.
+
+If you are a **back end** developer you may want to check your services by calling them while developing. It's easier to debug if you can actually read in a message what did just happen instead of seeing empty body. Coding is not guessing, requests responses should be self explanatory.
+
+If you are a **tester** then you should make everybody follow the REST practices, otherwise you will go nuts. Backend API testing tools like [POSTMAN][1] could ease your work, especially if you know [some tricks][2]. If you want to perform server side automation testing and write set of tests for the API - it will be hard if all you get is unconsistency in HTTP responses. Even if your API testing resume says: _automation tester_ - it only makes sense if the API is well designed.
+
+If you are a **user** - you have a limited contact with developers, maybe the only thing that could help you is documentation. Well designed API could benefit from rest api documentation tools like [SWAGGER][3], [Sphinx][4] or [POSTMAN][6] but the best documentation won't have all the possible error you may encounter when using API. That is why for the sake of the future and potential integrations or exposing your API to customers, please, design well!
+
+## How to design well ?
+
+Here is the list of must haves:
+
+- [Error handling](#error-handling)
+- [Methods](#methods)
+- [Naming consistency](#naming-consistency)
+- [Resources](#resources)
+- [Returning objects](#returning-objects)
+- [Slash redirect](#slash-redirect)
+- [Status codes](#status-codes)
+- [Query parameters](#querystring)
+- [Versioning](#versioning)
+
+---
+
+### <a name="error-handling"></a><span>E</span>rror handling
+
+In order to provide more specific machine-readable messages with an error response, the API clients can react to errors more effectively and eventually it makes the API services much more reliable from the REST API testing perspective. Clients could benefit a lot from a good error handling since they can use the message strings comming directly from backend ( that eases translation issues ).
+
+> For non-success conditions, developers SHOULD be able to write one piece of code that handles errors consistently across different Microsoft REST API Guidelines services.
+
+This quote comes from [Microsoft's REST API design best practices][11] (it's a great place to learn although it often shows design examples of api architecture for a huge project).
+The quote says you need a wrapper. Some class or function that will be responsibe for showing a consistant error message for non-success requests. One important reminder: _Error responses MUST use standard HTTP [status codes](#status-codes) in the 400 or 500 range to detail the general category of error_.
+In case you are developing a huge system then go back and take a look at [Microsoft's example][8]. My take on this for smaller projects would be as follows:
+
+##### Error : Object
+
+| Property  | Type      | Required | Description                                                                |
+| --------- | --------- | -------- | -------------------------------------------------------------------------- |
+| `code`    | String    | ✔        | One of a server-defined set of error codes.                                |
+| `target`  | String    |          | The target of the error.                                                   |
+| `message` | String    | ✔        | A human-readable representation of the error.                              |
+| `details` | details[] |          | An array of details about specific errors that led to this reported error. |
+
+##### Details : Object
+
+| Property  | Type   | Required | Description                                                           |
+| --------- | ------ | -------- | --------------------------------------------------------------------- |
+| `code`    | String | ✔        | A more specific error code than was provided by the containing error. |
+| `target`  | String |          | The target of the error.                                              |
+| `message` | String | ✔        | A human-readable representation of the error details.                 |
+
+The simple design example example:
+
+```json
+{
+  "error": {
+    "code": "WrongMediaType",
+    "message": "Data types accepted: csv, json."
+  }
+}
+```
+
+(this message should be returned along with [status code 413][9])
+
+Other extended example:
+
+```json
+{
+  "error": {
+    "code": "BadArgument",
+    "target": "GetAllCatsService",
+    "message": "Data introduced has 1 error.",
+    "details": [
+      {
+        "code": "NullValue",
+        "target": "CatWeigth",
+        "message": "Cat's weight must not be null"
+      }
+    ]
+  }
+}
+```
+
+The way you name your key&value pairs in returned object is totally up to you. The way you construct your wrapper is also your choice although you may want to [use one of existing libraries][10].
+
+**SUM_UP:** Error handling is extremely important for backend automation testing and usability, it also could bring more profits for clients. It is possible to start small with a simple error / message object that could be extended with time and complexity.
+
+### <a name="methods"></a><span>M</span>ethods
+
+There is [many HTTP methods][12] but you should use at least those:
+
+- GET
+- POST
+- PUT
+- DELETE
+- PATCH
+  (You should know what is [the difference between POST/PUT/PATCH](#difference))
+
+Using methods is strictly connected with [naming consistency](#naming-consistency) because the method themselves are verbs which is a direct reason why you should avoid using verbs in your URLs. Instead of duplicating code and making it unmaintainable and unintuitive - use methods well.
+
+```
+GET: https://yourdomain.com/getCats       ⬅️🛑Wrong
+GET: https://yourdomain.com/cats          ⬅️✅ Good
+
+```
+
+```
+POST: https://yourdomain.com/getCats      ⬅️🛑Wrong
+GET: https://yourdomain.com/cats          ⬅️✅ Good
+```
+
+```
+GET: https://yourdomain.com/getCats       ⬅️🛑Wrong
+GET: https://yourdomain.com/getCat/{id}   ⬅️🛑Wrong
+POST: https://yourdomain.com/postCats     ⬅️🛑Wrong
+DELETE: https://yourdomain.com/deleteCats ⬅️🛑Wrong
+
+GET: https://yourdomain.com/cats          ⬅️✅ Good
+GET: https://yourdomain.com/cats/{id}     ⬅️✅ Good
+POST: https://yourdomain.com/cats         ⬅️✅ Good
+DELETE: https://yourdomain.com/cats       ⬅️✅ Good
+
+```
+
+There is [more methods][13] and more [ON methods][14]. Read-up before continuing!
+
+#### <a name="difference"></a>Difference between POST/PUT/PATCH
+
+It's pretty simple:
+
+**POST** creates a new resource that did not exist before:
+
+```json
+POST:
+URL: https://yourdomain.com/cats/
+REQUEST:
+
+{
+  "name": "George",
+  "color": "black",
+  "is_adopted": true
+}
+
+RESPONSE CODE: 201
+RESPONSE:
+
+{
+  "id": 1,
+  "name": "George",
+  "color": "black",
+  "is_adopted": true
+}
+```
+
+**PUT** updates resource previously created with a new object information:
+
+```json
+PUT:
+URL: https://yourdomain.com/cats/{catId}
+REQUEST:
+
+{
+  "name": "Bob",
+  "color": "white",
+  "is_adopted": false
+}
+
+RESPONSE CODE: 200
+RESPONSE:
+
+{
+  "id": 1,
+  "name": "Bob",
+  "color": "white",
+  "is_adopted": false
+}
+```
+
+**PATCH** updates resource previously created with partial information:
+
+```json
+PUT:
+URL: https://yourdomain.com/cats/{catId}
+REQUEST:
+
+{
+  "name": "Zoey"
+}
+
+RESPONSE CODE: 200
+RESPONSE:
+
+{
+  "id": 1,
+  "name": "Zoey",
+  "color": "white",
+  "is_adopted": false
+}
+```
+
+### <a name="naming-consistency"></a><span>N</span>aming consistency
+
+It's simple:
+
+- URIs resources as nouns - _do not_ use verbs in your URI
+
+```
+GET: domain.com/getCats       ⬅️🛑Wrong
+GET: domain.com/getCat/{id}   ⬅️🛑Wrong
+POST: domain.com/postCats     ⬅️🛑Wrong
+DELETE: domain.com/deleteCats ⬅️🛑Wrong
+
+GET: domain.com/cats          ⬅️✅ Good
+GET: domain.com/cats/{id}     ⬅️✅ Good
+POST: domain.com/cats         ⬅️✅ Good
+DELETE: domain.com/cats       ⬅️✅ Good
+```
+
+- Pluralized resources
+
+```
+GET: domain.com/cat           ⬅️🛑Wrong
+GET: domain.com/cat/{id}      ⬅️🛑Wrong
+
+GET: domain.com/cats          ⬅️✅ Good
+GET: domain.com/cats/{id}     ⬅️✅ Good
+```
+
+- Lowercase letters and dashes
+
+```
+GET: domain.com/Cats          ⬅️🛑Wrong
+
+GET: domain.com/cats          ⬅️✅ Good
+
+---
+
+GET: domain.com/cat_races     ⬅️🛑Wrong
+
+GET: domain.com/cat-races     ⬅️✅ Good
+```
+
+- (American) **English**
+
+```
+GET: domain.com/gatos         ⬅️🛑Wrong
+
+GET: domain.com/cats          ⬅️✅ Good
+
+```
+
+- No file extensions
+
+```
+GET: domain.com/cats.pdf      ⬅️🛑Wrong
+
+GET: domain.com/cats          ⬅️✅ Good
+
+```
+
+- Do not use trailing slashes
+
+```
+GET: domain.com/cats/         ⬅️🛑Wrong
+
+GET: domain.com/cats          ⬅️✅ Good
+
+```
+
+- Snake_casing for query parameters
+
+```
+GET: domain.com/cats?skinColor=black      ⬅️🛑Wrong
+
+GET: domain.com/cats?skin_color=black     ⬅️✅ Good
+
+```
+
+### <a name="resources"></a><span>R</span>esources
+
+- They should be flat, no nesting.
+
+```
+GET: domain.com/animals/{id}/family/{id}/colors/{id}/cats      ⬅️🛑Wrong
+
+GET: domain.com/cats     ⬅️✅ Good
+
+```
+
+- If nested is required it should be shallow.
+
+```
+GET: domain.com/animals/{id}/family/{id}/colors/{id}/cats      ⬅️🛑Wrong
+
+GET: domain.com/animals/{id}/cats     ⬅️✅ Good
+
+```
+
+### <a name="returning-objects"></a><span>R</span>eturning objects
+
+It depends on your client and architecture but in most cases it's good to return a body on creating resources.
+
+```json
+{
+  "result": {
+    "cat": {
+      "id": 1,
+      "name": "Georgina"
+    }
+  }
+}
+```
+
+You could think about wrapping the responses with additional info but you need to remember that certain requests **should return empty body** e.g. DELETE requests. Once the resource has been deleted and status code 204 returned then body should be empty. In most cases the decision on body of successful requests is up to you or your front-end collegue.
+
+### <a name="slash-redirect"></a><span>S</span>lash redirect
+
+As part of naming consistency: **do not use trailing forward slashes**.
+In case of using slashes e.g. by your users (mistakes / no docs etc) you should try to redirect to original resource. It's an interesting topic, try [reading more about it][16].
+
+> “The trailing slash must not have specific semantics. Resource paths must deliver the same results whether they have the trailing slash or not.”
+> \- [Zalando's RESTful API guidelines][15]
+
+### <a name="status-codes"></a><span>S</span>tatus codes
+
+Like with HTTP methods [there is many of them][17]. Try starting from the basics:
+
+- 200s
+
+```json
+HTTP_200_OK
+HTTP_201_CREATED
+HTTP_204_NO_CONTENT
+```
+
+- 300s
+
+```json
+HTTP_301_MOVED_PERMANENTLY
+HTTP_302_FOUND
+```
+
+- 400s
+
+```json
+HTTP_400_BAD_REQUEST
+HTTP_401_UNAUTHORIZED
+HTTP_403_FORBIDDEN
+HTTP_404_NOT_FOUND
+HTTP_405_METHOD_NOT_ALLOWED
+HTTP_408_REQUEST_TIMEOUT
+HTTP_415_UNSUPPORTED_MEDIA_TYPE
+```
+
+Important to know the **difference** between **401** and **403**:
+**401** - No credentials, no token, unauthenticated
+**402** - No authorization for the resource, role not correct, not enough eprmissions. Basically e.g. you may want to access admin resources as a simple user.
+
+### <a name="querystring"></a><span>Q</span>uery parameters
+
+Query resources via url parameters:
+
+```json
+domain.com/cats?name=georgina&color=black
+```
+
+Stick with [conventional query parameters][18].
+
+---
+
+### <a name="versioning"></a><span>V</span>ersioning
+
+If you are not working on a **mobile app** or in a **bigger team** you can skip it for now. This is very important if you are planning an API for a mobile app because app updates take long time to develop or deliver and it's difficult to synchronise the changes with the backend. In case you are starting a project in a bigger team or a company, versioning is also extremly important since it allows more agile development - backenders don´t have to wait for front-enders. You can deploy your new API without worrying that you'll break the client's app. There is many REST API verioning strategies, at the end the goal is to maintain backward compatibility and avoid code duplication.
+There is multiple possibilities of versioning schemes for your API:
+
+- Versioning via URL
+
+```python
+urlpatterns = [
+    url(
+        include('v1/registration',
+        register_via_email
+    ),
+    url(
+        include('v2/registration',
+        register_via_oauth
+    )
+]
+```
+
+- Versioning via hostname:
+
+```
+https://v1.yourdomain.com/registration/
+https://v2.yourdomain.com/registration/
+```
+
+- Versioning via parameter:
+
+```
+https://yourdomain.com/registration/?version=1
+https://yourdomain.com/registration/?version=2
+```
+
+Restful API best practices when it comes to way of versioning API - doesn't exist. Remember that your case might be different and your needs differ too - choose what is the best solution for you depending on the circumstances. Google has a [great source][7] on versioning API, you should check it out before laying first lines of code.
+
+Once you use versioning you can benefit from it like this:
+
+```python
+def registration_type(self):
+    if self.request.version == 'v1':
+        return register_via_email(self.body.email, self.body.password)
+    return register_via_oauth(self.body.token)
+```
+
+**SUM_UP:** API Versioning is a great way to implement changes to code but it should be used if other methods are unavailable, use it conciously to not introduce unnecessary complexity.
+
+---
+
+---
+
+_Did you make any mistakes when using REST API or you've seen one here? Tell me about your insights. Leave a comment with You are most welcome to see more posts of this type just go to [home page][100]_
+
+[100]: https://hvitis.dev
+
+
+
+[0]: https://en.wikipedia.org/wiki/Representational_state_transfer
+[1]: https://learning.postman.com/getting-started/
+[2]: https://hvitis.dev/5-lessons-for-intermediate-jedi-how-to-learn-postman
+[3]: https://swagger.io/
+[4]: https://www.sphinx-doc.org/en/master/
+[5]: https://www.codecademy.com/articles/what-is-rest
+[6]: https://learning.postman.com/docs/postman/api-documentation/documenting-your-api/
+[7]: https://cloud.google.com/blog/products/gcp/api-design-which-version-of-versioning-is-right-for-you
+[8]: https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#examples
+[9]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/415
+[10]: https://github.com/topics/error-handling
+[11]: https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md
+[12]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+[13]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+[14]: https://tools.ietf.org/rfc/rfc7231.txt
+[15]: https://opensource.zalando.com/restful-api-guidelines/index.html#api-naming
+[16]: https://www.danielmorell.com/guides/htaccess-seo/redirects/https-www-and-trailing-slash
+[17]: https://www.restapitutorial.com/httpstatuscodes.html
+[18]: https://opensource.zalando.com/restful-api-guidelines/#137
+
+
+

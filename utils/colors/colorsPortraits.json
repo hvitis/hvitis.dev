@@ -1,0 +1,46 @@
+[
+    {
+        "lego_id": "1",
+        "ldraw_name": "White",
+        "bo_name": "White",
+        "hex_code": "#f4f4f4",
+        "rgb": "244,244,244",
+        "ldraw_id": "15",
+        "bl_id": "1",
+        "lego_name": "White",
+        "bl_name": "White"
+    },
+    {
+        "lego_id": "3",
+        "ldraw_name": "Light_Yellow",
+        "bo_name": "Light Yellow",
+        "hex_code": "#ffd67f",
+        "rgb": "255,214,141",
+        "ldraw_id": "18",
+        "bl_id": "33",
+        "lego_name": "Light Yellow",
+        "bl_name": "Light Yellow"
+    },
+    {
+        "lego_id": "26",
+        "ldraw_name": "Black",
+        "bo_name": "Black",
+        "hex_code": "#1b2a34",
+        "rgb": "0,0,0",
+        "ldraw_id": "0",
+        "bl_id": "11",
+        "lego_name": "Black",
+        "bl_name": "Black"
+    },
+    {
+        "lego_id": "27",
+        "ldraw_name": "Dark_Gray",
+        "bo_name": "Dark Gray",
+        "hex_code": "#545955",
+        "rgb": "84,89,85",
+        "ldraw_id": "8",
+        "bl_id": "10",
+        "lego_name": "Dark Grey",
+        "bl_name": "Dark Gray"
+    }
+]

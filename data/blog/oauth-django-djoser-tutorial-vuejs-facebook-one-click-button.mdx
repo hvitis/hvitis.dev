@@ -1,0 +1,234 @@
+---
+title: TUTORIAL Django OAuth2 1-click Facebook login with VueJS - part 2
+date: '2020-07-23'
+summary: How to connect Djoser, VueJS (Nuxt) front-end with Django OAuth2 Facebook
+tags: ['DRF', 'Python']
+images: ['/static/images/blog/oauth-django-djoser-tutorial-vuejs-facebook-one-click-button/oauth-django-social-tutorial-how-to-implement-google-login-part-2.png']
+draft: false
+---
+
+## Django OAuth2 1-click - Tutorial pt 2 - Facebook login with Djoser
+
+In order to obtain token to access out Django backend using Facebook Social Login we need to do the following:
+
+0. Set up a new app in Developers Facebook (no need to change hosts etc. you can easily redirect to localhost for testing purposes)
+1. Define settings and secret information in _settings.py_
+1. Extend the Djoser Facebook views class for customization (not necessary but might be useful for explainint purposes)
+1. Add customized view to **AUTHENTICATION_BACKENDS**
+1. Whitelist view that we will be redirected to (FrontEnd) in Djoser´s **SOCIAL_AUTH_ALLOWED_REDIRECT_URIS**
+1. Make sure that **urls.py** are set up in a right way.
+1. Test!
+
+## 0. Setting up the app
+
+In order to set up the app follow steps from [this amazing tutorial on django_core][0]
+
+## 1. Defining scopes (!)
+
+In order to make it work you need email address from Facebook, otherwise Django will throw an error due to registering issues (email required).
+
+```python
+SOCIAL_AUTH_FACEBOOK_KEY = 'YOUR_FACEBOOK_APP_ID'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'YOUR_APPS_SECRET_KEY'
+
+# IMPORTANT! :
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'email'
+}
+```
+
+## 2. Extending views.py
+
+```python
+# djoser/facebook.py
+
+from social_core.backends.facebook import FacebookOAuth2
+
+
+class CustomFacebookOAuth2(FacebookOAuth2):
+    REDIRECT_STATE = False
+
+```
+
+## 3. Add view to AUTHENTICATION_BACKENDS
+
+```python
+AUTHENTICATION_BACKENDS = (
+    # Important for accessing admin with django_social
+    # 'social_core.backends.google.GoogleOAuth2',
+    'core.restconf.djoser.facebook.CustomFacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+```
+
+## 4. Whitelist your redirection URL
+
+```python
+# where your DJOSER settings are
+DJOSER = {
+    # "LOGIN_FIELD": "email",
+    #     'SEND_ACTIVATION_EMAIL': False,
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': [
+    'http://localhost:8000/temporary-redirect-for-testing/',
+    ]
+}
+```
+
+## 5. Make sure about urls.py
+
+```python
+# main/settings.py
+
+# I made my URLs custom:
+urlpatterns = [
+    # ...
+    path('api/auth/social/', include('djoser.social.urls')),
+
+    # This is URL we will use for future testing in pt. 5
+    # path('temporary-redirect-for-testing/', RedirectSocial.as_view()),
+]
+```
+
+This will give us 2 endpoints to test:
+
+```
+GET http://localhost:8000/api/auth/social/o/facebook/?redirect_uri=http://localhost:8000/temporary-redirect-for-testing/
+```
+
+that returns us URL we have to enter in a browser:
+(note api version that you can customize via [social_core settings][1] **SOCIALS_AUTH_FACEBOOK_API_VERSION** - that is optional)
+
+```json
+{
+  "authorization_url": "https://www.facebook.com/v3.2/dialog/oauth?client_id=YOUR_FACEBOOK_APP_ID&redirect_uri=http://localhost:8000/temporary-redirect-for-testing/&state=THIS_IS_GENERATED_BY_DJANGOf&return_scopes=true&scope=email"
+}
+```
+
+and
+
+```
+POST http://localhost:8000/api/auth/social/o/facebook/
+```
+
+This one requires 2 parameters:
+
+**code**
+
+**state**
+
+both we obtain after calling **redirect_uri** from first call and giving Facebook credentials for any Facebook user.
+
+Important to remember that this call has to be of:
+
+**Content-Type: application/x-www-form-urlencoded**
+
+Calling this endpoint with a code and state will work only for the first time. Every next time renders:
+
+```json
+{
+  "non_field_errors": ["Authentication process canceled"]
+}
+```
+
+But successful call gives us:
+
+```json
+{
+  "access": "eyJ0eXAiOiJK...",
+  "refresh": "eyJ0eXAiOiJ...",
+  "user": "FACEBOOK_USER_WE_LOGGED_WITH@gmail.com"
+}
+```
+
+---
+
+## 5. How do we test it?
+
+This is where a Testing endpoint would come in handy. We need the redirect view that will be called by facebook after executing **authorization_url**
+
+Let´s create the view that will show us the **code** and **state** returned by facebook:
+
+```python
+# core/restconf/djoser/views.py
+from django.http import JsonResponse
+from django.views import View
+
+
+class RedirectSocial(View):
+
+    def get(self, request, *args, **kwargs):
+        code, state = str(request.GET['code']), str(request.GET['state'])
+        json_obj = {'code': code, 'state': state}
+        print(json_obj)
+        return JsonResponse(json_obj)
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(context)
+        return context
+
+```
+
+Let's add it to **urls.py**
+
+```python
+# main/settings.py
+
+# Import it from wherever you create the view.
+from core.restconf.djoser.views import RedirectSocial
+
+# I made my URLs custom:
+urlpatterns = [
+    # ...
+    path('api/auth/social/', include('djoser.social.urls')),
+    path('temporary-redirect-for-testing/', RedirectSocial.as_view()),
+]
+```
+
+Now, the final test:
+
+1. We execute the 1st GET url
+2. We copy **authorization_url** from the response to the browser.
+3. We log in to the app
+4. We get redirected to our testing RedirectSocial url:
+
+![OAuth2Djoser](/static/images/blog/oauth-django-djoser-tutorial-vuejs-facebook-one-click-button/facebook-oauth2-django-redirect.png 'Facebook OAuth2 Django Djoser')
+
+🎉🎉🥳🥳 **You did it!**
+
+Now you can use your **code** and **state** to call the POST url. It can be done from your Django app (if you are not using JS frameworks) or it can be called from your Front End ap using e.g. **axios** or **fetch**
+
+```javascript
+var myHeaders = new Headers()
+myHeaders.append('Content-Type', 'application/x-www-form-urlencoded')
+myHeaders.append('Cookie', 'sessionid=m4c2oc0ahj7dibomn4a2d8uo8wmjrcy0')
+
+var urlencoded = new URLSearchParams()
+urlencoded.append('code', 'YOUR_CODE_OBTAINED_FROM_REDIRECT')
+urlencoded.append('state', 'YOUR_STATE_OBTAINED_FROM_REDIRECT')
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: urlencoded,
+  redirect: 'follow',
+}
+
+fetch('http://localhost:8000/api/auth/social/o/facebook/', requestOptions)
+  .then((response) => response.text())
+  .then((result) => console.log(result))
+  .catch((error) => console.log('error', error))
+```
+
+**Dont't forget to change redirect urls for front-end app**
+
+_Did you make any mistakes when using this tutorial or you've seen one here? Tell me about your insights. Leave a comment with YOUR opinion or QUESTION._
+
+
+
+[0]: https://simpleisbetterthancomplex.com/tutorial/2016/10/24/how-to-add-social-login-to-django.html
+[1]: https://python-social-auth.readthedocs.io/en/latest/backends/facebook.html
+
+

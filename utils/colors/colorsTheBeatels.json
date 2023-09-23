@@ -1,0 +1,101 @@
+[
+  {
+    "lego_id": "26",
+    "ldraw_name": "Black",
+    "bo_name": "Black",
+    "hex_code": "#1b2a34",
+    "rgb": "0,0,0",
+    "ldraw_id": "0",
+    "bl_id": "11",
+    "lego_name": "Black",
+    "bl_name": "Black"
+  },
+  {
+    "lego_id": "199",
+    "ldraw_name": "Dark_Bluish_Gray",
+    "bo_name": "Dark Stone Gray",
+    "hex_code": "#646464",
+    "rgb": "100,100,100",
+    "ldraw_id": "72",
+    "bl_id": "85",
+    "lego_name": "Dark Stone Grey",
+    "bl_name": "Dark Bluish Gray"
+  },
+  {
+    "lego_id": "140",
+    "ldraw_name": "Dark_Blue",
+    "bo_name": "Dark Blue",
+    "hex_code": "#19325a",
+    "rgb": "25,50,90",
+    "ldraw_id": "272",
+    "bl_id": "63",
+    "lego_name": "Earth Blue",
+    "bl_name": "Dark Blue"
+  },
+  {
+    "lego_id": "308",
+    "ldraw_name": "Dark_Brown",
+    "bo_name": "Dark Brown",
+    "hex_code": "#372100",
+    "rgb": "53,33,0",
+    "ldraw_id": "308",
+    "bl_id": "120",
+    "lego_name": "Dark Brown",
+    "bl_name": "Dark Brown"
+  },
+  {
+    "lego_id": "194",
+    "ldraw_name": "Light_Bluish_Gray",
+    "bo_name": "Medium Stone Gray",
+    "hex_code": "#969696",
+    "rgb": "150,150,150",
+    "ldraw_id": "71",
+    "bl_id": "86",
+    "lego_name": "Medium Stone Grey",
+    "bl_name": "Light Bluish Gray"
+  },
+  {
+    "lego_id": "5",
+    "ldraw_name": "Tan",
+    "bo_name": "Tan",
+    "hex_code": "#b0a06f",
+    "rgb": "204,185,141",
+    "ldraw_id": "19",
+    "bl_id": "2",
+    "lego_name": "Brick Yellow",
+    "bl_name": "Tan"
+  },
+  {
+    "lego_id": "1",
+    "ldraw_name": "White",
+    "bo_name": "White",
+    "hex_code": "#f4f4f4",
+    "rgb": "244,244,244",
+    "ldraw_id": "15",
+    "bl_id": "1",
+    "lego_name": "White",
+    "bl_name": "White"
+  },
+  {
+    "lego_id": "154",
+    "ldraw_name": "Dark_Red",
+    "bo_name": "Dark Red",
+    "hex_code": "#720012",
+    "rgb": "114,0,18",
+    "ldraw_id": "320",
+    "bl_id": "59",
+    "lego_name": "(New) Dark Red",
+    "bl_name": "Dark Red"
+  },
+  {
+    "lego_id": "21",
+    "ldraw_name": "Red",
+    "bo_name": "Red",
+    "hex_code": "#b40000",
+    "rgb": "180,0,0",
+    "ldraw_id": "4",
+    "bl_id": "5",
+    "lego_name": "Bright Red",
+    "bl_name": "Red"
+  }
+]

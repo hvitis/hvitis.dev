@@ -1,0 +1,79 @@
+[
+  {
+    "lego_id": "26",
+    "ldraw_name": "Black",
+    "bo_name": "Black",
+    "hex_code": "#1b2a34",
+    "rgb": "0,0,0",
+    "ldraw_id": "0",
+    "bl_id": "11",
+    "lego_name": "Black",
+    "bl_name": "Black"
+  },
+  {
+    "lego_id": "27",
+    "ldraw_name": "Dark_Gray",
+    "bo_name": "Dark Gray",
+    "hex_code": "#545955",
+    "rgb": "84,89,85",
+    "ldraw_id": "8",
+    "bl_id": "10",
+    "lego_name": "Dark Grey",
+    "bl_name": "Dark Gray"
+  },
+  {
+    "lego_id": "11",
+    "ldraw_name": "Maersk_Blue",
+    "bo_name": "Maersk Blue",
+    "hex_code": "#abd9ff",
+    "rgb": "171,217,255",
+    "ldraw_id": "313",
+    "bl_id": "72",
+    "lego_name": "Pastel Blue",
+    "bl_name": "Maersk Blue"
+  },
+  {
+    "lego_id": "24",
+    "ldraw_name": "Yellow",
+    "bo_name": "Yellow",
+    "hex_code": "#fac80a",
+    "rgb": "250,200,10",
+    "ldraw_id": "14",
+    "bl_id": "3",
+    "lego_name": "Bright Yellow",
+    "bl_name": "Yellow"
+  },
+  {
+    "lego_id": "222",
+    "ldraw_name": "Bright_Pink",
+    "bo_name": "Bright Pink",
+    "hex_code": "#ff9ecd",
+    "rgb": "255,158,205",
+    "ldraw_id": "29",
+    "bl_id": "104",
+    "lego_name": "Light Purple",
+    "bl_name": "Bright Pink"
+  },
+  {
+    "lego_id": "139",
+    "ldraw_name": "Copper",
+    "bo_name": "",
+    "hex_code": "#764d3b",
+    "rgb": "118,77,59",
+    "ldraw_id": "134",
+    "bl_id": "84",
+    "lego_name": "Copper",
+    "bl_name": "Copper"
+  },
+  {
+    "lego_id": "154",
+    "ldraw_name": "Dark_Red",
+    "bo_name": "Dark Red",
+    "hex_code": "#720012",
+    "rgb": "114,0,18",
+    "ldraw_id": "320",
+    "bl_id": "59",
+    "lego_name": "(New) Dark Red",
+    "bl_name": "Dark Red"
+  }
+]

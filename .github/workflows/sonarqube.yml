@@ -1,4 +1,5 @@
 name: Main Workflow
+uses: SonarSource/sonarqube-scan-action@v2.0.1
 
 on:
   # Trigger analysis when pushing to your main branches, and when creating a pull request.
@@ -7,6 +8,7 @@ on:
       - main
       - master
       - develop
+      - development
       - 'releases/**'
   pull_request:
       types: [opened, synchronize, reopened]

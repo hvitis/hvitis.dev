@@ -22,13 +22,13 @@ Therefore we need machines to help us.
 
 ## What is Static Code Analysis
 
-Just to get a general grasp of the cocnept: imagine a recipe for **[goulash](https://en.wikipedia.org/wiki/Goulash)**. Let's say it consist of 50 phrases. You glimpse at the page and check the syntax, make sure the ingredients have correct measurements units, the sentences are understandable and the text has some paragraphs, title etc. You don't actually perform the tasks, you don't prepare the goulash and you don't know how it tastes.
+Just to get a general grasp of the cocnept: imagine a recipe for **[goulash](https://en.wikipedia.org/wiki/Goulash)**. Let's say it consist of 50 phrases. You glimpse at the page and check the syntax, make sure the ingredients have correct measurement units, the sentences are understandable and the text has some paragraphs, title etc. You don't actually perform the tasks, you don't prepare the goulash and you don't know how it tastes.
 
-Same thing happens with static code analysis - it does not check whether the code will run or not. It just gives hints regarding syntax, good practices, potential errors and other things. It tells you how to structure, write and correct the code so it has fewer errors and it more readable.
+Same thing happens with static code analysis - it does not check whether the code will run or not. It just gives hints regarding syntax, good practices, potential errors and other things. It tells you how to structure, write and correct the code so it has fewer errors and it more readable. Static Analysis is unquestionably required in software engineering and is very helpful in software testing.
 
 Here, we focus on two particular software that I find almost free and super helpful when combined together. There are of course other tools e.g. [linters](https://en.wikipedia.org/wiki/Lint_(software)) of all kinds but that's for another time.
 
-## How Can Static Analysis Can Help You
+## How Can Static Analysis Help You
 
 Simple. The goal is to write a good code. It does just that. How?
 
@@ -37,13 +37,11 @@ let's start with SonarQube
 ### SonarQube
 
 
-It's a software that is available in Community Edition (free of charge with some limitations) that can be used by anybody. It is especially useful in less experiences teams, in bigger projects that are have been initiated in a recent past. SonarQube uses the idea of gates which are percentage or numeric levels of all that could go wrong. Those gates can be a hint for a menager, advice for a programmer or a blocker for jenkins (e.g. during deploy). That's why the stage of implementing the tool is important. The bigger the project is when implementing the more cumbersome it is to learn it and fit into the development lifecycle.
+It's a software that is available in Community Edition (free of charge with some limitations) that can be used by anybody. It is especially useful in less experiences teams, in [solopreneurs](https://www.merriam-webster.com/dictionary/solopreneur) projects and in fresh, bigger projects. It helps by identyfying the errors and can be used to maintain the levels of quality.
+
+SonarQube uses the idea of gates which are percentage or numeric levels of all that could go wrong. Those gates can be a hint for a manager or a blocker for jenkins (e.g. during deploy). That's why the stage of implementing the tool is important - the sooner the better. The bigger the project is when implementing, the more cumbersome it is to learn it and fit into the development lifecycle.
 
 ![SonarQube Dashboard](/static/images/blog/advantages-of-static-code-analysis-tools-how-tos/sq/sonar-qube-05.webp)
-
-All this is mostly for codebases created and maintained by groups of people. What I really love SonarQube for is it's **teaching potential**. Any one-person code project is tremendously difficult mostly to lack of peer reviews ([here I wrote more on that](/blog/peer-testing-and-everything-you-should-know-about-it)) and companionship. Static Analysis can help with the first one by providing guidelines, solutions and hints on fixinf the problems. It's an actual gold mine for just about anybody that wants to learn during a solo-coding adventure.
-
-![SonarQube Fix Suggestions](/static/images/blog/advantages-of-static-code-analysis-tools-how-tos/sq/sonar-qube-06.webp)
 
 It analyses the code and divides the findings into couple of categories:
 
@@ -61,28 +59,32 @@ It analyses the code and divides the findings into couple of categories:
 
 - Duplications - it is just a reminder that we should not copy/paste tests and other chunks of code. It's the least important measurement cause algorithms of assessing it can be often times wrong e.g. when checking translating, locale jsons or other data.
 
-I think undermined fact of this tool is it's complexity. It is in fact huge. In addition to those above we get support for various languages, setting up gates, issues, history graph, tons of knowledge on all those issues and more.
+What I really love SonarQube for is it's **teaching potential**. Any one-person code project is tremendously difficult to create and maintain. Mostly due to lack of peer reviews ([here I wrote more on that](/blog/peer-testing-and-everything-you-should-know-about-it)) and **companionship**. Static Analysis can help with the first one by providing guidelines, solutions and hints on fixing the problems. It's an actual gold mine for just about anybody that wants to learn during a solo-coding adventure.
 
-That can be of couse a disadvantage. Someone who is just starting his adventure might have difficulties setting it all up but again - I encourage you to implement it, because on the beginning it can be used as a learning tool.
+![SonarQube Fix Suggestions](/static/images/blog/advantages-of-static-code-analysis-tools-how-tos/sq/sonar-qube-06.webp)
 
-The community version offers free scans of code and various CI integrations. You can of course test your code on local machine with docker but you might as well use cheap hosting and fire up docker online to offer the analysis to the team and implement some reporting.
+Often times the complexity of this tool is undermined or overlooked. SQ is in fact huge. In addition to those above we get support for various languages, setting up gates, issues, history graph, tons of knowledge and access to [SDLC](https://en.wikipedia.org/wiki/Systems_development_life_cycle) (creating and assigning tasks to fix the problems found during scans).
 
-This very blog is being tested by SonarQube and I am hosting an instance on Vultr. They give 250 dollars to new users and have very cheap machines starting from 2.5 $/month. That's 100 months of code scan (!).
+That can be of couse a disadvantage. Someone who is just starting his adventure might have difficulties setting it all up but again - I encourage you to implement it, because the advantages are overwhelming.
+
+It might be setup just to measure the quality and help developers increase their skills. It can be both a learning tool and tool that helps with quality of your software.
+
+The community version ([free](https://www.sonarsource.com/products/sonarqube/downloads/)) offers free scans of code and various CI integrations (GitLab, GitHub, jenkins, azure, you name it). You can of course test your code on local machine with docker but you might as well use cheap hosting and fire up a docker online to offer the analysis for the team. Implementing some reporting might also be beneficial and although PDF reports are available on *Enterprise* tier, you can [use plugins](https://github.com/cnescatlab/sonar-cnes-report) to have it with *Community* one.
+
+This very blog is being tested by SonarQube. I am hosting a SQ instance on Vultr. They give 250 dollars to new users and have very cheap machines starting from 2.5 $/month. That's 100 months of code scan (!).
 
 ![SonarQube Fix Suggestions](/static/images/blog/advantages-of-static-code-analysis-tools-how-tos/sq/sonar-qube-07.webp)
-
-One of the advantages is that you can find it everywhere. GitLab, GitHub, jenkins, azure, you name it.
 
 
 #### Disadvantages of using SonarQube
 
 - It might be difficult at the beginning. The tool itself is quite old and the experience of using it might not be top knotch.
-- It is cumbersome and difficult to set up, especially in the cloud. I think that the easiest solutions are: running it locally first and then using premade scripts for actions and CI tools. I am using GitHub actions.
+- It is cumbersome and difficult to set up. Try running it locally first and then using premade scripts for actions and CI tools e.g. GitHub actions.
 - It might be not useful due to it's findings and size. Usually great senior programmer knows most of what it does and other findings can be found by a simple linter. The gates can slow down the development and are different and arbitrary to setup in each case.
 
-## CodeRabbit
+### CodeRabbit
 
-It's "just" an AI addon to GitHub. My recent finding that I like quite a lot. It works only on pull requests so I am using it as an addition to SonarQube (which can scan on any step and gather the findings in its database).
+It's "just" an AI addon to GitHub. My recent finding and I like it quite a lot. It works only on pull requests so I am using it as an addition to SonarQube (which can scan on any step and gather the findings in its database).
 
 ![CodeRabbit Hints](/static/images/blog/advantages-of-static-code-analysis-tools-how-tos/rc/code-rabbit-02.webp)
 
@@ -94,25 +96,25 @@ It can also reply to your comments:
 
 ![CodeRabbit Hints](/static/images/blog/advantages-of-static-code-analysis-tools-how-tos/rc/code-rabbit-10.webp)
 
-Therefore it's a very helpful tool (again - super helpful for solo developers or those who do not do [peer reviewing](/blog/peer-testing-and-everything-you-should-know-about-it) in general).
+Even taking into account that - as a mindless algorithm - it will cause false positives, it's a very helpful tool. Again - super helpful for solo developers, solopreneurs or those who do not do [peer reviewing](/blog/peer-testing-and-everything-you-should-know-about-it) in general. It's a free tool that you might try out without a hassle. Just a [simple .yml file](https://github.com/coderabbitai/ai-pr-reviewer#install-instructions) in your GitHub workflow.
 
 ### Performance of CodeRabbit
 
-It writes comments, we get it but are they any good?
+It writes comments, ok, we get it but are they any good?
 
-That's a good question. I was testing it extensively on my other project and I have a couple of findings. Most of them are regarding ChatGPT of course. You can use different Open AI models to get the replies (version 3.5 and 4) and the tool itself costs as much as the API itself.
+That's a good question. It is based on ChatGPT so in order to check the quality of advices, you might want to read more about [AI code interpreters](https://openai.com/blog/chatgpt-plugins#code-interpreter).
 
-I paid 5 bucks to get an access (otherwise you get an error while setting it up) and a pull request was costing me on average 10cents with version 3.5. A bigger PR with version 4 has costed me over 1.10$.
+I was testing it extensively on my other project and I have a couple of findings. You can use different Open AI models to get the replies (version 3.5 and 4) and the tool itself costs you only the [price of API](https://openai.com/pricing) itself (they have [other tiers](https://coderabbit.ai/pricing) too).
 
-Is ChatGPT 3.5 worse than ChatGPT 4?
+I paid 5 bucks to get an access (otherwise you get an error while setting it up) and a pull request was costing me on average 10cents with version 3.5. A bigger PR with version 4 has costed me over 1.10$ (!).
 
-No.
+I think that ChatGPT 3.5 might be better than ChatGPT 4 in many ways regarding the code analysis aspect.
 
-The latter was making redundant comments:
+The latter, v.4 was generating redundant comments:
 
 ![RabbitCode Suggestions](/static/images/blog/advantages-of-static-code-analysis-tools-how-tos/rc/code-rabbit-17.webp)
 
-was wrong many times in different places and unnecessarily expensive. I am using 3.5 and am very happy with it, mostly because it offers interesting hints that I have omitted.
+was wrong many times in different places and unnecessarily expensive. I am using ChatGPT 3.5 turbo and I am happy with it, mostly because it offers interesting hints. Super useful for people who are not code wizards.
 
 The disadvantage would be to tell you about simple errors but again - That should have been caught using other tools, so it's probably developer's fault:
 
@@ -122,18 +124,21 @@ For the most part, during reviewing the tool in a couple of pull reviews, I was 
 
 ![RabbitCode Suggestions](/static/images/blog/advantages-of-static-code-analysis-tools-how-tos/rc/code-rabbit-13.webp)
 
-#### Disadvantages of using SonarQube
+#### Disadvantages of using CodeRabbit
 
-- It costs money (although arguable very little). That is a disadvantage only if the output would not proof valueable.
-- It can be wrong - AI can make redundant comments and confuse instead of helping
-- It runs only on GitHub
+- It costs money (although arguable very little).
+- It can generate false positives.
+- It can be wrong - AI can make redundant comments and confuse instead of helping.
+- It runs only on GitHub.
 
 
 ## Sum up
 
-The setup I find very useful and that can cheaply and effectively increase the code quality is having SonarQube scans on every branch and every pull request. It should have mostly an informative value but very rigid gates to stop bugs and security hostspots. If the time is pressuring us, those can always be reviewed in the sonarqube itself and marked "to resolve" which does not block the developer.
+The setup I find very useful and that can cheaply and effectively increase the code quality is having SonarQube scans on every branch and every pull request. It has mostly an informative value. Optionally, very rigid gates can be set to stop bugs and security hostspots. If the time is pressing, those can always be reviewed in the SQ itself and marked as "to resolve". This allows a build to pass and unblocks the developer in case of time pressure.
 
-In addition, setting up CodeRabbit can be a great addon, as it suggests changes on a cognitively deeper level and can be a helpful tool when needing to fix something ASAP - we already have an AI tool that can give an explanation or answer via the comments, without a need to waste time of stack overflow (which was probably the source for the model anyway).
+In addition, setting up CodeRabbit can be a great addon, especially for younger developers, as it suggests changes on a deeper cognitive level. It is not a good tool for beginners as general knowledge of code it required in order to omit the false positives.
 
-If you have not used or heard about those tools before, you must absolutely consider using them!
+We have a tool that uses an AI API which can give an explanation or answer via the comments. Without a need to waste time on stack overflow (which was probably the source for the AI models anyway).
+
+If you have not used or heard about those tools before, you should give them a try if you value code quality!
 

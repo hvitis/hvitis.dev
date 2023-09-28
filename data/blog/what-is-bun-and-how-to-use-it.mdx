@@ -1,0 +1,95 @@
+---
+title: What is Bun and How to Use It?
+date: '2023-09-28'
+summary: Is it better than npm? Is it production ready? Let's dive in.
+tags: ['JavaScript']
+images: ['/static/images/blog/what-is-bun-and-how-to-use-it/thumbnail.webp']
+draft: true
+---
+
+[Bun smells delicious](/static/images/blog/what-is-bun-and-how-to-use-it/bun-js.webp)
+
+So I had to check what the fuss is about and I've tested the new package manager.
+
+## Bun
+
+Bun is a JavaScript runtime, package manager, bundler, and test runner built from scratch using the [Zig](https://ziglang.org/) programming language. It was designed by Jarred Sumner as a drop-in replacement for Node.js.
+
+### Bun and Managing Packages
+
+It has a number of advantages in terms of performance and features.
+
+- Speed: Bun is significantly faster than npm when it comes to installing packages. This is because Bun uses a number of optimizations, such as parallel downloads and caching.
+- Parallel downloads: Bun can download multiple packages at the same time, which can significantly speed up the installation process.
+- Caching: Bun caches downloaded packages so that they can be reused on subsequent installations. This can save a lot of time, especially if you install the same packages on multiple machines.
+- Native module support: Bun supports native modules, which can be used to improve the performance of your applications.
+- Built-in bundler: Bun has a built-in bundler that can be used to bundle your JavaScript code into a single file. This can make your applications faster and easier to deploy.
+
+There is also a locker file that they mention of official website but so far I don't see any differences between **npm** except the speed.
+
+### Bun and Test Runner
+
+Bun has a built-in test runner that is integrated with the package manager. This makes it easy to run tests for your packages without having to install a separate test runner.
+
+It works just like:
+
+```
+npm test
+```
+
+### Bun and Speed
+
+
+Bun uses the JavaScriptCore JavaScript engine, which is the same engine used by Safari. This gives Bun a number of advantages over Node.js, including:
+
+- Faster startup times
+- Lower memory usage
+- Better performance on certain types of workloads
+
+Does it actually work? I have tested it on my production app and [vercel.com](https://vercel.com/) and it is actually blazing fast. Tests were made with NextJS project with 90 dependencies.
+
+bun>
+```
+1739 packages installed [34.86s]
+```
+
+npm>
+```
+added 2087 packages, and audited 2088 packages in 38s
+```
+
+Wow 4 seconds faster. I think I will switch my entire infrastructure to a new software because of that. The thing gets interesting and less ironic when running:
+
+```
+bun run dev
+```
+
+Here I must say it works a lot smoother and faster when it comes to real time update than npm. It does not need to have extra packages for loading environmental variables from a .env file.
+
+It also works better when it comes to
+
+```
+bun run build
+```
+
+here there is over 25 seconds faster build. If you're running multiple front-ends or a bigger project than mine, then using bun might actually be worth considering. For now it's still in development but you should keep an eye on it. The use with React is smooth, all has worked out great.
+
+Those are very simple test but more intense performance tests using SQL or Sockets (running on Express JS server) can take much more bigger load than NodeJS.
+
+### Bun and Bundler
+
+Bun has a built-in bundler that can be used to bundle JavaScript code into a single file. This can make applications faster and easier to deploy.
+
+A bundler is a tool that combines multiple JavaScript code files into a single one that is production-ready loadable in the browser. This can improve performance by reducing the number of HTTP requests that need to be made to load the application, and it can also make deployment easier.
+
+Here is a more detailed comparison of Bun's bundler and Webpack:
+
+|   |  Feature	Bun's bundler | Webpack  |
+|---|---|---|
+|  Speed | Faster  | Slower  |
+|  Reliability |  More reliable |  Less reliable |
+|  Supports native modules |  No | Yes  |
+
+### Should I Use Bun in 2023?
+
+Remember Deno? No? Me neither. That's my lesson. If you want to use a new tool in a project that is changing and prone to long lasting development and support, use reliable tools. I would not call a project that is a [year and a couple of months old](https://github.com/oven-sh/bun) production ready. Let's remember that building and running the app is the very core of development tool and sits at it's heart. Don't rip it out, yet.

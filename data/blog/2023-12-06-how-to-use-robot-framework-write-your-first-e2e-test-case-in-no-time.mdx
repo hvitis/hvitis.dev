@@ -112,10 +112,11 @@ In order to achieve this we will create a keywords:
 *** Keywords ***
 Open Mosaic Page
     Open Browser   ${URL}     ${BROWSER}
+    Wait Until Element Is Visible    id:title
 
 ```
 
-This will allow us to write a following test case:
+This will allow us to write a following test cases:
 
 ```
 
@@ -123,8 +124,16 @@ This will allow us to write a following test case:
 
 Page opens correctly
     Open Mosaic Page
-    Element Text Should Be    id:title    Mosaic Art Maker
     Close Browser
+
+Input works correctly
+    Open Mosaic Page
+    Close Browser
+
+Change slider on input change
+    Open Mosaic Page
+    Input Text     id:board-size    13x13
+
 
 ```
 

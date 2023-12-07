@@ -410,7 +410,10 @@ function MosaicArtMaker() {
                   <div className="flex flex-col lg:w-full">
                     <label className="flex text-sm text-left font-medium text-gray-600 dark:text-gray-300 my-auto">
                       {dictionary[locale].boardSize.title}
-                      <span className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}>
+                      <span
+                        id="board-size-text"
+                        className={clsx('mx-2', !isCorrectBoardSize() && 'text-yellow-500')}
+                      >
                         {`${dictionary[locale].boardSize.width} ${boardSize.width} x ${dictionary[locale].boardSize.height} ${boardSize.height}`}
                       </span>
                       {!isCorrectBoardSize() && isEnglish() && (

@@ -102,10 +102,29 @@ First test
 
 ```
 
-Nowe we will check if the Selenium addon works fine. If so, proceed to add an actual test:
+Nowe we will check if the Selenium addon works fine. If so, proceed to add an actual test. On this blog there is a page with project. You can [create mosaic there][4] and we will be testing this functionality now.
+
+Because we will be creating multiple tests, we should begin each one with the same sequence of events. In our case open webpage at a specific address and make sure it loads correctly.
+
+In order to achieve this we will create a keywords:
+
+```
+*** Keywords ***
+Open Mosaic Page
+    Open Browser   ${URL}     ${BROWSER}
 
 ```
 
+This will allow us to write a following test case:
+
+```
+
+*** Test Cases ***
+
+Page opens correctly
+    Open Mosaic Page
+    Element Text Should Be    id:title    Mosaic Art Maker
+    Close Browser
 
 ```
 
@@ -113,4 +132,4 @@ Nowe we will check if the Selenium addon works fine. If so, proceed to add an ac
 [1]: https://hub.docker.com/r/ppodgorsek/robot-framework
 [2]: https://pypi.org/project/robotframework-seleniumlibrary/
 [3]: https://docs.robotframework.org/docs/using_rf_in_ci_systems/docker
-
+[4]: https://hvitis.dev/mosaic-art-maker

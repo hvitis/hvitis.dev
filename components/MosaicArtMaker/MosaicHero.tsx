@@ -23,7 +23,9 @@ export default function Hero() {
             >
               v. 2.0
             </Link>
-            <h1 className="lg:text-5xl text-2xl font-bold lg:px-1">Mosaic Art Maker</h1>
+            <h1 id="title" className="lg:text-5xl text-2xl font-bold lg:px-1">
+              Mosaic Art Maker
+            </h1>
           </div>
           <p className="py-6">{dictionary[locale].subtitle}</p>
         </div>

@@ -46,7 +46,7 @@ export default function SelectMultiply({ options, onSelect, label }) {
       }}
     >
       {(option) => (
-        <SelectItem key={option.id} textValue={option.name}>
+        <SelectItem id={`select-${option.nr}`} key={option.id} textValue={option.name}>
           <div className="flex gap-2 items-center">
             <Avatar alt={option.name} className="flex-shrink-0" size="sm" src={option.image} />
             <div className="flex flex-col">

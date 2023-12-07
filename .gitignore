@@ -51,3 +51,5 @@ bun.*
 # Tests
 **.pyc
 tests/reports/**
+**.html
+selenium-**

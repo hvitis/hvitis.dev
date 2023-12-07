@@ -33,4 +33,9 @@ Language can be switched to English
 
 Change color set
     Open Mosaic Page
-    Select From List By Label         id:select-set            Andy Warhol
+    Click Button                      id:select-set
+    Click Element                     select-31199
+    # Assess that number of colours decreased
+    ${count} =  Get Element Count   id:colors-selected
+    Should Be True  ${count} < 30
+

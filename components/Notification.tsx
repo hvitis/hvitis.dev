@@ -33,7 +33,7 @@ const Notification = ({ title, msg, btn, href, className }: NotificationInterfac
               </Link>
             )}
             <div className="tooltip" data-tip={"Don't show again"}>
-              <button onClick={() => setVisible(false)} className="btn btn-sm">
+              <button id="notification" className="btn btn-sm" onClick={() => setVisible(false)}>
                 <XCircleIcon className="text-gray-500" />
               </button>
             </div>

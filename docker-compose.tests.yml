@@ -1,0 +1,38 @@
+version: '3.9'
+
+x-app: &default-app
+  env_file:
+    - ".env"
+  restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+  stop_grace_period: "3s"
+  tty: true
+  healthcheck:
+    interval: "60s"
+    timeout: "3s"
+    start_period: "5s"
+    retries: 3
+
+services:
+
+  robot:
+    <<: *default-app
+    image: ppodgorsek/robot-framework:latest
+    container_name: robot
+    network_mode: "host"
+    restart: on-failure
+    user: root
+    # depends_on:
+    #   - "frontend"
+    volumes:
+      - ./tests:/tests
+    environment:
+      WORKSPACE: '/tests:/tests'
+      BROWSER: 'chrome'
+      ROBOT_TESTS_DIR: "$WORKSPACE/tests/robot/tests/e2e/"
+      ROBOT_REPORTS_DIR: "$WORKSPACE/tests/reports/robot/"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+
+
+# networks:
+#   sharednetwork:

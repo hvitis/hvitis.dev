@@ -6,6 +6,7 @@ import tinycolor from 'tinycolor2'
 interface BadgeProps {}
 
 const BadgeColor: React.FunctionComponent<BadgeProps> = ({
+  id,
   color,
   onClick,
   editColor,
@@ -46,6 +47,7 @@ const BadgeColor: React.FunctionComponent<BadgeProps> = ({
 
   return (
     <div
+      id={id}
       className="tooltip"
       data-tip={editColor && editColor.hex_code === color.hex_code ? hint : tooltip}
     >

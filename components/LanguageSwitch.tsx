@@ -28,6 +28,7 @@ const LanguageSwitch = () => {
   return (
     <>
       <Button
+        id="language-switch"
         onClick={handleLanguageSwitch}
         isIconOnly
         color="default"

@@ -10,7 +10,56 @@ draft: false
 
 ## Core of Robot Framework
 
-This is not Python addon! I know you might have heard a lot of times that Robot and Python go together but ...
+This is not Python addon! I know you might have heard a lot of times that Robot and Python go together but it is only partially true.
+
+It is correct that you can use Python with Robot Framework to create custom scripts but you can use Java as well.
+
+If you think you can be fluent in Robot Framework immediately just by knowing Python then you are wrong. You need to master a couple of Robot syntax before using it.
+
+In order to write test cases you will need to work hand in hand with documentation, especially Selenium (if you want to test frontend) in order to master the "spoke like" syntax.
+
+Examples are:
+
+1. Using 3 dots around section title in order to write section-specific code:
+
+```
+*** Variables ***
+
+or
+
+*** Tasks ***
+
+or
+
+*** Test Cases ***
+```
+
+2. Creating custom keywords and using [Gherkin][5] BDD syntax:
+
+```
+Test mosaic maker using bdd syntax
+    Given The Mosaic Maker Is Open
+    When The User Enters New Image
+    And The BoardSize is Selected to 3
+    Then The Result Should Be Minimum 500px wide
+```
+
+3. Mixing variables
+
+There is a possibility to use variables that look like JavaScript one:
+
+```
+Set Test Variable    ${term}
+```
+
+and it is possible to [pass variables][6] to test cases e.g. by importing:
+
+```
+*** Settings ***
+Resource    ../../../../testdata/variables/imports.resource
+```
+
+
 
 ## Setting up Docker
 
@@ -61,10 +110,8 @@ Now in the folder _/tests/robot/tests/e2e/_ we will place a file called __login.
 ```
 *** Test Cases ***
 
-
 Verify setup
     Log To Console    The docker executes my tests!
-
 
 ```
 
@@ -136,8 +183,12 @@ Notification can be closed
     Element Should Not Be Visible    id:notification-title
 ```
 
+
+
 [0]: https://github.com/ppodgorsek/docker-robot-framework/tree/master
 [1]: https://hub.docker.com/r/ppodgorsek/robot-framework
 [2]: https://pypi.org/project/robotframework-seleniumlibrary/
 [3]: https://docs.robotframework.org/docs/using_rf_in_ci_systems/docker
 [4]: https://hvitis.dev/mosaic-art-maker
+[5]: https://robotframework.org/?tab=0&example=BDD-Example#getting-started
+[6]: https://docs.robotframework.org/docs/variables

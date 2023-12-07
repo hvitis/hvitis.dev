@@ -37,9 +37,11 @@ export default function SelectMultiply({ options, onSelect, label }) {
       renderValue={(items: SelectedItems<LegoSet>) => {
         return (
           <div className="flex flex-wrap gap-2">
-            {items.map((item, index) => (
-              // @ts-ignore
-              <Chip id={`chip-${item.data.id}`} key={index}>{item.data.name}</Chip>
+            {/* // @ts-ignore */}
+            {items.map((item?: any) => (
+              <Chip key={item?.data?.name} id={`chip-${item?.data?.name}`}>
+                {item?.data?.name}
+              </Chip>
             ))}
           </div>
         )

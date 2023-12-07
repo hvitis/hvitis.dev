@@ -124,17 +124,16 @@ This will allow us to write a following test cases:
 
 Page opens correctly
     Open Mosaic Page
-    Close Browser
 
-Input works correctly
+Input changer induces slider change
     Open Mosaic Page
-    Close Browser
+    Input Text     id:board-size    15
+    Element Text Should Be    id:board-size-text    width 10 x height 105
 
-Change slider on input change
-    Open Mosaic Page
-    Input Text     id:board-size    13x13
-
-
+Notification can be closed
+    Element Text Should Be      id:notification-title    New version has arrived!
+    Click Button                id:notification-close
+    Element Should Not Be Visible    id:notification-title
 ```
 
 [0]: https://github.com/ppodgorsek/docker-robot-framework/tree/master

@@ -446,6 +446,7 @@ function MosaicArtMaker() {
                         {dictionary[locale].boardSize.custom}
                       </span>
                       <input
+                        id="board-size"
                         type="text"
                         value={`${boardSize.width}x${boardSize.height}`}
                         onChange={(e) => handleCustomBoard(e.target.value)}
@@ -477,6 +478,7 @@ function MosaicArtMaker() {
                   <span>{dictionary[locale].settings.title}</span>
                   <div id="settings" className="btn-group rounded-r-lg">
                     <button
+                      id="set-roundness"
                       if="set-roundness"
                       data-umami-event="Set Roundness"
                       className="btn btn-info btn-sm md:btn-md text-white"

@@ -20,7 +20,7 @@ const loadedColors = {
       name: 'Wszystkie',
       description: 'Kolory dostępne w zestawach LEGO',
       colors: COLORS_ALL,
-      nr: '',
+      nr: '0000',
       image: '/webp/sets/80x80-lego.webp',
       pcs: 0,
     },

@@ -39,7 +39,9 @@ export default function SelectMultiply({ options, onSelect, label }) {
           <div className="flex flex-wrap gap-2">
             {items.map((item, index) => (
               // @ts-ignore
-              <Chip key={index}>{item.data.name}</Chip>
+              <Chip id={`chip-${item.data.id}`} key={index}>
+                {item.data.name}
+              </Chip>
             ))}
           </div>
         )
@@ -50,7 +52,7 @@ export default function SelectMultiply({ options, onSelect, label }) {
           <div className="flex gap-2 items-center">
             <Avatar alt={option.name} className="flex-shrink-0" size="sm" src={option.image} />
             <div className="flex flex-col">
-              <span className="text-small">{option.name}</span>
+              <span className="text-small dark:text-slate-400">{option.name}</span>
               <span className="text-tiny text-default-400">{option.description}</span>
             </div>
           </div>

@@ -23,6 +23,10 @@ Examples are:
 1. Using 3 dots around section title in order to write section-specific code:
 
 ```
+*** Keywords ***
+
+or
+
 *** Variables ***
 
 or
@@ -59,6 +63,41 @@ and it is possible to [pass variables][6] to test cases e.g. by importing:
 Resource    ../../../../testdata/variables/imports.resource
 ```
 
+## Robot Syntax
+
+Most of the implemented, out of the box, ready to use syntax is plain English language. There are some things that should be learned such as:
+- What are invisible and superimportant parts of syntax?
+- How to use keywords?
+- How to define variables (special characters)?
+- How to use variables?
+
+Let's answer then now:
+
+1. Spaces. You might find it weird and a bit pythonic, but one space is not enough to delimiter your variable from it's value. You need more spaced or tab.
+
+2. Key idea is to write keywords (which are __like functions__ in programming languages) and after that write parameters divided by tabs or many spaces.
+
+3. Comments - __#__ like in python
+
+2. Keywor__S__! This is a reminder that we are talking about multiple words. In order to use keywords you should use plain english to define one. You can __think of then as of functions__ in other languages rather than as of variables. A single keybword can be composed out of many english words but in order to reuse it - treat it as a phrase.
+
+In this example the keyword is a whole sentence: _open the site_ and it does what it says. Down below we specify the steps that the keyword will be responsible for.
+```
+*** Keywords ***
+
+open the site
+    Open Browser    www.google.pl    chrome
+```
+
+We reuse keywords like that:
+```
+*** Test Case ***
+
+Website defaults to english language
+    open the site
+    Element Text Should Be  id:title  Welcome
+
+```
 
 
 ## Setting up Docker
@@ -181,7 +220,35 @@ Notification can be closed
     Element Text Should Be      id:notification-title    New version has arrived!
     Click Button                id:notification-close
     Element Should Not Be Visible    id:notification-title
+
+Language can be switched to English
+    Open Mosaic Page
+    Click Button                      id:language-switch
+    Element Text Should Be            id:title                 Mosaic Art Maker
+
+Change color set
+    Open Mosaic Page
+    Click Button                      id:select-set
+    Click                             select-31199
+    # Assess that number of colours decreased
+    ${count} =  Get Element Count   id:colors-selected
+    Should Be True  ${count} < 30
+
 ```
+
+Those tests should give the following outcome:
+
+![xml report robot framework java](/static/images/blog/2023-12-06/robot-framework-report-xml.jpg)
+
+
+And we also get a HTML report immediately:
+
+![xml report robot framework java](/static/images/blog/2023-12-06/robot-framework-report.jpg)
+
+
+You can see that there was... not much Python. Pretty much the most Pythonic way so far was the english-like syntax, comments and indents.
+
+More to come in the next part...!
 
 
 

@@ -19,6 +19,7 @@ export default function SelectMultiply({ options, onSelect, label }) {
 
   return (
     <Select
+      id="select-set"
       items={options}
       variant="bordered"
       isMultiline={true}

@@ -188,7 +188,11 @@ First test
 
 ```
 
-Nowe we will check if the Selenium addon works fine. If so, proceed to add an actual test. On this blog there is a page with project. You can [create mosaic there][4] and we will be testing this functionality now.
+Within the docker there is Robot Framework installed but it requires additional library to work with front end tests. We will check if the Selenium addon that is responsible for that works fine. If so, we will proceed to the actual test.
+
+You are reading this now on my website, which has also a LEGO mosaic projekt.
+
+You can [create mosaic there][4] but we will use it now to prepare some test cases that can verify some of the functionalities.
 
 Because we will be creating multiple tests, we should begin each one with the same sequence of events. In our case open webpage at a specific address and make sure it loads correctly.
 
@@ -202,7 +206,7 @@ Open Mosaic Page
 
 ```
 
-This will allow us to write a following test cases:
+This will allow us to write a following test cases (they all begin with the same keyword):
 
 ```
 

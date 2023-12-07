@@ -39,9 +39,7 @@ export default function SelectMultiply({ options, onSelect, label }) {
           <div className="flex flex-wrap gap-2">
             {items.map((item, index) => (
               // @ts-ignore
-              <Chip id={`chip-${item.data.id}`} key={index}>
-                {item.data.name}
-              </Chip>
+              <Chip id={`chip-${item.data.id}`} key={index}>{item.data.name}</Chip>
             ))}
           </div>
         )

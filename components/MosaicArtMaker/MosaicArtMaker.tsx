@@ -536,9 +536,10 @@ function MosaicArtMaker() {
                 <div className="text-left mx-4">
                   <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
                     {!customMode && 'Colors to use:'}
-                    <div className="flex flex-wrap my-2">
+                    <div className="flex flex-wrap my-2" id="colors-selected">
                       {selectedColors.map((color) => (
                         <BadgeColor
+                          id={`selected-${color.hex_code}`}
                           key={color.hex_code}
                           onClick={addCustomColor}
                           color={color}
@@ -554,9 +555,10 @@ function MosaicArtMaker() {
                     <label className="text-left font-medium text-gray-600 dark:text-gray-300 my-1">
                       {dictionary[locale].colors_to_use}:
                       {selectedCustomColors.length !== 0 && (
-                        <div className="flex flex-wrap my-2">
+                        <div className="flex flex-wrap my-2" id="colors-custom">
                           {selectedCustomColors.map((color) => (
                             <BadgeColor
+                              id={`custom-${color.hex_code}`}
                               key={color.hex_code}
                               color={color}
                               editColor={editColor}
@@ -661,7 +663,7 @@ function MosaicArtMaker() {
           </button>
         </div>
         <div className="w-full flex flex-row justify-center">
-          <div>
+          <div id="colors-statistics">
             {colors.length !== 0 && isGenerated && (
               <Statistics
                 size={boardSize}
@@ -670,6 +672,7 @@ function MosaicArtMaker() {
               >
                 {colors.map((color) => (
                   <BadgeColor
+                    id={`statistic-${color.hex_code}`}
                     key={color.hex_code}
                     onClick={pickEditColor}
                     color={color}

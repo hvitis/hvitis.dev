@@ -1,0 +1,76 @@
+---
+title: How to Run Command Without Sudo
+date: '2023-12-09'
+summary: Run files, scripts and commands without using SUDO.
+tags: ['Unix',]
+images: ['/static/images/blog/2023-12-09/cover.jpg']
+draft: false
+---
+
+## How to Run Sudo Commands from Script without using Sudo
+
+Let's say we have the following case:
+
+On a remote serwer I have a command that requires admin privliges e.g. _systemctl_ command. I also have a script _restartservicess.sh_ that uses that command to restart some services. Now I want to execute this script using some user without elevated privliges during continuos integration process.
+
+In order to do that, we need to exclude specific commands from the requirement of using elevated privliges. In order to do that we will add them to a file that is going to be added to __sudoers__ file. This file is located at:
+
+```
+/etc/sudoers
+```
+
+and at the end of this file we have default settings:
+
+```
+...
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) ALL
+
+# See sudoers(5) for more information on "@include" directives:
+
+@includedir /etc/sudoers.d
+
+```
+
+Which mean that all files from __sudoers.d__ will be added as extended permissions settings. Let´s create one file then. We __need to use visudo__ in order to do it:
+
+```
+sudo visudo -f /etc/sudoers.d/extended_permissions_for_restarting_services
+```
+
+In this file we will write:
+
+```
+yourusername ALL=NOPASSWD: /bin/systemctl restart gunicorn
+```
+
+Remember that the additional arguments to a command should be specified as a separate commands in order to include the exception e.g.:
+
+```
+yourusername ALL=NOPASSWD: /bin/systemctl stop gunicorn
+yourusername ALL=NOPASSWD: /bin/systemctl start gunicorn
+```
+
+Now save the file and let´s go to our script _restartservices.sh_
+
+What we had in the script:
+```
+sudo systemctl restart gunicorn
+```
+
+can now be changed to how our exception looks like:
+```
+#!/usr/bin/env bash
+# Script run during ci
+sudo /bin/systemctl restart gunicorn
+```
+
+Now when you log to your system using __yourusername__, you will be able to run:
+
+```
+bash restartservices.sh
+```
+
+Now the commands inside execute without entering password in the terminal. This is a complete solution to use nopasswd when you're stuck and it's not working.
+
+This works every time on Ubuntu and any other debian based system.

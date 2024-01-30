@@ -1147,12 +1147,12 @@
         "lego_id": "296",
         "ldraw_name": "Pearl_Light_Gray",
         "bo_name": "Flat Silver",
-        "hex_code": "#adadad",
+        "hex_code": "#8f9696",
         "rgb": "173,173,173",
         "ldraw_id": "135",
         "bl_id": "66",
         "lego_name": "Cool Silver",
-        "bl_name": "Pearl Light Gray"
+        "bl_name": "Flar Silver"
     },
     {
         "lego_id": "297",
@@ -1174,7 +1174,7 @@
         "ldraw_id": "87",
         "bl_id": "77",
         "lego_name": "Titanium Metallic",
-        "bl_name": "Pearl Dark Gray"
+        "bl_name": "Chrome Silver"
     },
     {
         "lego_id": "309",
@@ -1207,7 +1207,7 @@
         "ldraw_id": "80",
         "bl_id": "67",
         "lego_name": "Cool Silver, Drum Lacquered",
-        "bl_name": "Metallic Silver"
+        "bl_name": "Chrome Silver"
     },
     {
         "lego_id": "20",

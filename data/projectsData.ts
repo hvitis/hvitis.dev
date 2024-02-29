@@ -11,6 +11,12 @@ const projectsData = [
     imgSrc: '/static/images/assets/youtalky.png',
     href: 'https://www.youtalky.com',
   },
+  {
+    title: 'Educational content store',
+    description: `Learn polish for foreigners - webpage with courses and content materials available for purchase.`,
+    imgSrc: '/static/images/assets/lekcja_online.png',
+    href: 'https://www.lekcja.online',
+  },
 ]
 
 export default projectsData

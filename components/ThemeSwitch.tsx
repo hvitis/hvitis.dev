@@ -7,7 +7,7 @@ import { useLocalStorage } from 'usehooks-ts'
 const ThemeSwitch = () => {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
-  const [_daisyTheme, setDaisyTheme] = useLocalStorage('theme', 'dark')
+  const [_daisyTheme, setDaisyTheme] = useLocalStorage('theme', 'light')
 
   // When mounted on client, now we can show the UI
   useEffect(() => setMounted(true), [])
@@ -17,7 +17,7 @@ const ThemeSwitch = () => {
     body.setAttribute('data-theme', _daisyTheme)
     body.style.backgroundImage = `url('/svg/dots-${_daisyTheme}.svg')`
     body.style.backgroundSize = `${window.innerWidth / 2}px`
-  }, [_daisyTheme])
+  }, [_daisyTheme, theme])
 
   if (!mounted) {
     return null

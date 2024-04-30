@@ -3,6 +3,7 @@ import currencies from '@/data/currencies'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import Helper from './Helper'
+import { SwatchIcon } from './social-icons/icons'
 
 const BRICK_LINK_URL = 'https://www.bricklink.com/v2/catalog/catalogitem.page?P=98138#T=C'
 interface StatisticsInterface {
@@ -11,7 +12,14 @@ interface StatisticsInterface {
   children: React.ReactNode
 }
 
-const Statistics = ({ size, studsAvailable, children, text }: StatisticsInterface) => {
+const Statistics = ({
+  size,
+  studsAvailable,
+  children,
+  text,
+  isDetailViewOpen,
+  onChange,
+}: StatisticsInterface) => {
   const [currency, setCurrency] = useState(currencies['EUR'])
   const [rates, setRates] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -50,7 +58,17 @@ const Statistics = ({ size, studsAvailable, children, text }: StatisticsInterfac
     <div className="my-5 stats bg-primary text-primary flex lg:flex-row flex-col">
       <div className="stat lg:px-20">
         <div className="stat-title">{text.colors_used}</div>
-        <div className="stat-value">{children.length}</div>
+        <div className="stat-value">
+          {children.length}
+          <div className="tooltip" data-tip={'Click to show stats.'}>
+            <button
+              onClick={() => onChange(!isDetailViewOpen)}
+              className="btn btn-circle btn-outline btn-xs btn-success mx-1 align-middle"
+            >
+              <SwatchIcon className="h-5 w-5 fill-cyan-500 hover:fill-cyan-800 text-bold" />
+            </button>
+          </div>
+        </div>
         <div className="stat-actions flex flex-row flex-wrap">{children}</div>
       </div>
       <div className="stat">

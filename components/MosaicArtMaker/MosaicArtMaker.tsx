@@ -74,6 +74,7 @@ function MosaicArtMaker() {
   const [hasNumbers, setHasNumbers] = useState(false)
   const [shift, setShift] = useState(0)
   const [studsAvailable, setStudsAvailable] = useState(0)
+  const [isDetailViewOpen, setDetailViewOpen] = useState(false)
 
   useEffect(() => {
     setReInitialiseCanvas(false)
@@ -218,7 +219,7 @@ function MosaicArtMaker() {
 
         // TODO: Verify this functionality if it´s not redundant
         if (!colorCodesVerify.includes(pickedColor.value)) {
-          /* colors contains already the color we're iterating */
+          /* Colors contains already the Color we're iterating */
           colorCodesVerify.push(pickedColor.value)
           singleColor['hex_code'] = pickedColor.value
           singleColor['name'] = pickedColor.name
@@ -226,7 +227,7 @@ function MosaicArtMaker() {
           singleColor['amount'] = 1
           colorCodes.push(singleColor)
         } else {
-          // Getting the color code from the array of colors that will be used for BUTTONS
+          // Getting the Color code from the array of Colors that will be used for BUTTONS
           const newFilteredColour = colorCodes.filter(
             (color) => color.hex_code === pickedColor.value
           )
@@ -237,8 +238,8 @@ function MosaicArtMaker() {
     }
     Paper.project.activeLayer.position = Paper.view.center
 
-    // Returning colors array to create buttons with information and
-    setColors(colorCodes)
+    // Returning Colors array to create buttons with information and
+    setColors(updateColors(colorCodes))
     setLDrawMatrix(LDrawMatrix)
     setIsGenerated(true)
   }
@@ -273,18 +274,14 @@ function MosaicArtMaker() {
 
     if (isGenerated) clearCanvas()
 
-    updateColors()
     generateMosaic()
     trackMosaicClick('generate', `${boardSize.width}x${boardSize.height}`)
     setIsGenerating(false)
   }
 
-  function updateColors() {
+  function updateColors(colors) {
     // Order here colours by amount of them in the picture
-    const sortedColors = colors.sort((a, b) =>
-      a.amount > b.amount ? 1 : b.amount > a.amount ? -1 : 0
-    )
-    setColors(sortedColors)
+    return colors.sort((a, b) => (a.amount < b.amount ? 1 : b.amount < a.amount ? -1 : 0))
   }
 
   function handleCanvasSave() {
@@ -669,6 +666,8 @@ function MosaicArtMaker() {
                 size={boardSize}
                 studsAvailable={studsAvailable}
                 text={dictionary[locale].statistics}
+                isDetailViewOpen={isDetailViewOpen}
+                onChange={setDetailViewOpen}
               >
                 {colors.map((color) => (
                   <BadgeColor
@@ -678,6 +677,7 @@ function MosaicArtMaker() {
                     color={color}
                     editColor={editColor}
                     isRound={isRound}
+                    isDetailViewOpen={isDetailViewOpen}
                   />
                 ))}
               </Statistics>

@@ -19,9 +19,9 @@ export default function Hero() {
           <div className="indicator">
             <Link
               href={dictionary[locale].notification.banner.url}
-              className="indicator-item indicator-bottom badge badge-secondary lg:-right-5 lg:top-5 -top-5"
+              className="indicator-item indicator-bottom badge badge-success lg:-right-5 lg:top-5 -top-5"
             >
-              v. 2.0
+              v. 2.1
             </Link>
             <h1 id="title" className="lg:text-5xl text-2xl font-bold lg:px-1">
               Mosaic Art Maker

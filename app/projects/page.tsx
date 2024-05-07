@@ -2,7 +2,11 @@ import projectsData from '@/data/projectsData'
 import Card from '@/components/Card'
 import { genPageMetadata } from 'app/seo'
 
-export const metadata = genPageMetadata({ title: 'Projects' })
+export const metadata = genPageMetadata({
+  title: 'Software Projects',
+  description: 'Things I coded along the way.',
+  image: '/static/images/pages/projects.png',
+})
 
 export default function Projects() {
   return (

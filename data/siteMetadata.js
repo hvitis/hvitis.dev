@@ -1,16 +1,16 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Hvitis.dev || Testing Ideas with Code. Software Development and Testing.',
+  title: 'Ideas tested and turned into code | Hvitis.dev',
+  seoTitle: 'Software and more',
   author: 'Adam Piskorek',
   headerTitle: 'Hvitis.dev',
-  description:
-    'Different views on software - coding and testing. Tutorials that help you and ideas that confuse you - in a good way.',
+  description: 'Tutorials that help you turn your LEGO ideas into reality.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://hvitis.dev',
   siteRepo: 'https://github.com/hvitis/hvitis.dev',
   siteLogo: '/static/images/assets/logo.png',
-  socialBanner: '/static/images/assets/twitter-card.jpg',
+  socialBanner: '/static/images/assets/twitter-card.png',
   mastodon: '',
   email: '',
   github: 'https://github.com/hvitis',

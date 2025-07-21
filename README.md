@@ -1,3 +1,3 @@
 # Hvitis.dev
 
-Page dedicated to my coding adventures.
+Required node >=20 to run.

@@ -1,4 +1,3 @@
-
 import QRCodeMaker from '@/components/QRCodeMaker/QRCodeMaker'
 import { genPageMetadata } from 'app/seo'
 

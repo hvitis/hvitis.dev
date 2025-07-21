@@ -18,26 +18,30 @@ const QRCodeMaker = () => {
 
   const downloadPNG = () => {
     const canvas = document.getElementById('qr-code-canvas') as HTMLCanvasElement
-    const pngUrl = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
-    const downloadLink = document.createElement('a')
-    downloadLink.href = pngUrl
-    downloadLink.download = 'qr-code.png'
-    document.body.appendChild(downloadLink)
-    downloadLink.click()
-    document.body.removeChild(downloadLink)
+    if (canvas) {
+      const pngUrl = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
+      const downloadLink = document.createElement('a')
+      downloadLink.href = pngUrl
+      downloadLink.download = 'qr-code.png'
+      document.body.appendChild(downloadLink)
+      downloadLink.click()
+      document.body.removeChild(downloadLink)
+    }
   }
 
   const downloadSVG = () => {
     const svg = document.getElementById('qr-code-svg')
-    const svgData = new XMLSerializer().serializeToString(svg)
-    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
-    const svgUrl = URL.createObjectURL(svgBlob)
-    const downloadLink = document.createElement('a')
-    downloadLink.href = svgUrl
-    downloadLink.download = 'qr-code.svg'
-    document.body.appendChild(downloadLink)
-    downloadLink.click()
-    document.body.removeChild(downloadLink)
+    if (svg) {
+      const svgData = new XMLSerializer().serializeToString(svg)
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
+      const svgUrl = URL.createObjectURL(svgBlob)
+      const downloadLink = document.createElement('a')
+      downloadLink.href = svgUrl
+      downloadLink.download = 'qr-code.svg'
+      document.body.appendChild(downloadLink)
+      downloadLink.click()
+      document.body.removeChild(downloadLink)
+    }
   }
 
   return (

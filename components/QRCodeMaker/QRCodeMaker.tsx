@@ -1,4 +1,3 @@
-
 'use client'
 
 import React, { useState } from 'react'
@@ -69,13 +68,13 @@ const QRCodeMaker = () => {
         <div className="flex flex-col items-center justify-center">
           {qrCodeValue && (
             <>
-              <QRCodeCanvas id="qr-code-canvas" value={qrCodeValue} size={256} style={{ display: 'none' }} />
-              <QRCodeSVG
-                id="qr-code-svg"
+              <QRCodeCanvas
+                id="qr-code-canvas"
                 value={qrCodeValue}
                 size={256}
-                className="mb-4"
+                style={{ display: 'none' }}
               />
+              <QRCodeSVG id="qr-code-svg" value={qrCodeValue} size={256} className="mb-4" />
               <div className="flex space-x-4">
                 <button
                   onClick={downloadPNG}

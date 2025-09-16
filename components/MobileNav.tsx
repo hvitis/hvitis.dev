@@ -6,6 +6,7 @@ import headerNavLinks from '@/data/headerNavLinks'
 
 const MobileNav = () => {
   const [navShow, setNavShow] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
   const onToggleNav = () => {
     setNavShow((status) => {
@@ -57,17 +58,46 @@ const MobileNav = () => {
           </button>
         </div>
         <nav className="fixed mt-8 h-full">
-          {headerNavLinks.map((link) => (
-            <div key={link.title} className="px-12 py-4">
-              <Link
-                href={link.href}
-                className="text-2xl font-bold tracking-widest text-gray-900 dark:text-gray-100"
-                onClick={onToggleNav}
-              >
-                {link.title}
-              </Link>
-            </div>
-          ))}
+          {headerNavLinks.map((link) => {
+            if (link.links) {
+              return (
+                <div key={link.title} className="px-12 py-4">
+                  <button
+                    className="text-2xl font-bold tracking-widest text-gray-900 dark:text-gray-100"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                  >
+                    {link.title}
+                  </button>
+                  {dropdownOpen && (
+                    <div className="pl-4">
+                      {link.links.map((subLink) => (
+                        <div key={subLink.title} className="py-2">
+                          <Link
+                            href={subLink.href}
+                            className="text-xl font-bold tracking-widest text-gray-900 dark:text-gray-100"
+                            onClick={onToggleNav}
+                          >
+                            {subLink.title}
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            }
+            return (
+              <div key={link.title} className="px-12 py-4">
+                <Link
+                  href={link.href}
+                  className="text-2xl font-bold tracking-widest text-gray-900 dark:text-gray-100"
+                  onClick={onToggleNav}
+                >
+                  {link.title}
+                </Link>
+              </div>
+            )
+          })}
         </nav>
       </div>
     </>

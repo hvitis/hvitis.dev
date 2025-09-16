@@ -3,7 +3,13 @@ const headerNavLinks = [
   { href: '/blog', title: 'Blog' },
   { href: '/tags', title: 'Topics' },
   { href: '/projects', title: 'Projects' },
-  { href: '/qr-code-maker', title: 'QR Code Maker' },
+  {
+    title: 'Tools',
+    links: [
+      { href: '/text-comparison', title: 'Text Comparison' },
+      { href: '/qr-code-maker', title: 'QR Code Maker' },
+    ],
+  },
   { href: '/about', title: 'About' },
 ]
 

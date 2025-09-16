@@ -66,7 +66,7 @@ const TextComparison = () => {
   return (
     <div className="container mx-auto px-4">
       <div className="my-4 rounded-md bg-yellow-100 p-4 text-center text-yellow-800">
-        Your data is not sent anywhere. All processing is done in your browser.
+        Your data is not sent anywhere. Press Clear All if you want to delete it from local storage.
       </div>
       <h1 className="my-8 text-center text-3xl font-bold">Text Comparison</h1>
       <div className="my-4 text-center">
@@ -86,7 +86,7 @@ const TextComparison = () => {
             Clear
           </button>
           <textarea
-            className="h-64 w-full rounded-md border border-gray-300 p-2"
+            className="h-64 w-full rounded-md border border-gray-300 p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             value={text1}
             onChange={(e) => setText1(e.target.value)}
             placeholder="Text 1"
@@ -100,7 +100,7 @@ const TextComparison = () => {
             Clear
           </button>
           <textarea
-            className="h-64 w-full rounded-md border border-gray-300 p-2"
+            className="h-64 w-full rounded-md border border-gray-300 p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             value={text2}
             onChange={(e) => setText2(e.target.value)}
             placeholder="Text 2"

@@ -6,16 +6,11 @@ const projectsData = [
     href: '/mosaic-art-maker',
   },
   {
-    title: 'Book cataloguing system',
-    description: `Catalogue your paper book collection with printed QR codes. Search other bookshelves and become a librarian in your own neighbourhood.`,
-    imgSrc: '/static/images/assets/youtalky.png',
-    href: 'https://www.youtalky.com',
-  },
-  {
-    title: 'Educational content store',
-    description: `Learn polish for foreigners - webpage with courses and content materials available for purchase.`,
-    imgSrc: '/static/images/assets/lekcja_online.png',
-    href: 'https://www.lekcja.online',
+    
+    title: 'Book Cataloguing System',
+    description: `Change your paper book collection into real, private library. Search other bookshelves and become a librarian in your own neighbourhood.`,
+    imgSrc: '/static/images/assets/lektuarium.png',
+    href: 'https://www.lektuarium.pl',
   },
 ]
 

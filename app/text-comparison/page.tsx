@@ -120,7 +120,9 @@ const TextComparison = () => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <h2 className="mb-2 text-center text-xl font-bold">Original Text</h2>
-              <pre className="whitespace-pre-wrap rounded-md border border-gray-300 p-4">{text1}</pre>
+              <pre className="whitespace-pre-wrap rounded-md border border-gray-300 p-4">
+                {text1}
+              </pre>
             </div>
             <div>
               <h2 className="mb-2 text-center text-xl font-bold">Differences</h2>

@@ -7,14 +7,13 @@ import Link from './Link'
 import MobileNav from './MobileNav'
 import ThemeSwitch from './ThemeSwitch'
 import SearchButton from './SearchButton'
-import LanguageSwitch from './LanguageSwitch'
-import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
-const Header = () => {
-  const pathname = usePathname()
+const Header = ({ }) => {
+
   const [dropdownOpen, setDropdownOpen] = useState(false)
   let dropdownTimeout: NodeJS.Timeout
+  const [showNoTranslationAlert, setShowNoTranslationAlert] = useState(false)
 
   const handleMouseEnter = () => {
     clearTimeout(dropdownTimeout)
@@ -27,8 +26,24 @@ const Header = () => {
     }, 200)
   }
 
+  const handleNoTranslation = () => {
+    setShowNoTranslationAlert(true)
+    setTimeout(() => {
+      setShowNoTranslationAlert(false)
+    }, 3000) // Hide alert after 3 seconds
+  }
+
   return (
     <header className="flex items-center justify-between py-10">
+      {showNoTranslationAlert && (
+        <div
+          className="absolute top-0 left-0 w-full bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 z-50"
+          role="alert"
+        >
+          <p className="font-bold">No translation</p>
+          <p>No translation for that post</p>
+        </div>
+      )}
       <div>
         <Link href="/" aria-label={siteMetadata.headerTitle}>
           <div className="flex items-center justify-between">
@@ -102,7 +117,6 @@ const Header = () => {
               </Link>
             )
           })}
-        {pathname.includes('mosaic-art-maker') && <LanguageSwitch />}
         <SearchButton />
         <ThemeSwitch />
         <MobileNav />

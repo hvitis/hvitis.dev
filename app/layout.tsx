@@ -13,6 +13,7 @@ import { Metadata } from 'next'
 import { Providers } from './providers'
 import Head from './head'
 import GoogleAnalytics from './GoogleAnalytics'
+import LanguageSwitch from '@/components/LanguageSwitch'
 
 const space_grotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -61,6 +62,7 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  
   return (
     <html
       lang={siteMetadata.language}

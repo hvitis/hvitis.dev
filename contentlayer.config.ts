@@ -90,6 +90,8 @@ export const Blog = defineDocumentType(() => ({
     authors: { type: 'list', of: { type: 'string' } },
     layout: { type: 'string' },
     bibliography: { type: 'string' },
+    englishSlug: { type: 'string' },
+    polishSlug: { type: 'string' },
     canonicalUrl: { type: 'string' },
     cover: { type: 'string' },
   },

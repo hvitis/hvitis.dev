@@ -104,7 +104,6 @@ export default function PostLayout({
                 </ul>
               </dd>
             </dl>
-            
             <div className="divide-y divide-gray-200 dark:divide-gray-700 xl:col-span-3 xl:row-span-2 xl:pb-0">
               <div className="prose max-w-none pb-8 pt-10 dark:prose-invert">{children}</div>
               <div className="pb-6 pt-6 text-sm text-gray-700 dark:text-gray-300">
@@ -161,9 +160,7 @@ export default function PostLayout({
                     )}
                   </div>
                 )}
-                 <LanguageSwitch
-                  post={post}
-                />
+                <LanguageSwitch post={post} />
               </div>
               <div className="pt-4 xl:pt-8">
                 <Link

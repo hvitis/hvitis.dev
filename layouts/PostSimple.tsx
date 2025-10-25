@@ -23,9 +23,7 @@ export default function PostLayout({ content, next, prev, post, children }: Layo
 
   return (
     <SectionContainer>
-      <LanguageSwitch
-        post={post}
-      />
+      <LanguageSwitch post={post} />
       <ScrollTopAndComment />
       <article>
         <div>

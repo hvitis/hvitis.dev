@@ -9,8 +9,7 @@ import ThemeSwitch from './ThemeSwitch'
 import SearchButton from './SearchButton'
 import { useState } from 'react'
 
-const Header = ({ }) => {
-
+const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   let dropdownTimeout: NodeJS.Timeout
   const [showNoTranslationAlert, setShowNoTranslationAlert] = useState(false)

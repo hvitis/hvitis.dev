@@ -8,7 +8,6 @@ const POSTS_PER_PAGE = 5
 export const metadata = genPageMetadata({ title: 'Blog' })
 
 export default function BlogPage() {
-
   const posts = getUniqueSortedPolishPosts(allBlogs)
 
   const pageNumber = 1

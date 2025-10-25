@@ -12,8 +12,6 @@ import PostLayout from '@/layouts/PostLayout'
 import PostBanner from '@/layouts/PostBanner'
 import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
-import LanguageSwitch from '@/components/LanguageSwitch'
-
 
 const defaultLayout = 'PostLayout'
 const layouts = {
@@ -130,7 +128,6 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
         prev={prev}
         post={post}
       >
-         
         <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
       </Layout>
     </>

@@ -20,7 +20,7 @@ const LanguageSwitch = ({ post }: LanguageSwitchProps) => {
   const [currentLanguage, setCurrentLanguage] = useState(() => {
     if (typeof window !== 'undefined') {
       // Get the stored language, default to 'en' if not found
-      return localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'en';
+      return localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'pl';
     }
     return 'en'; // Default to 'en' during server-side rendering
   });
@@ -68,7 +68,7 @@ const LanguageSwitch = ({ post }: LanguageSwitchProps) => {
         variant="faded"
         aria-label="Change the language"
       >
-        <span className="uppercase">{currentLanguage !== 'pl' ? 'Po polsku' : 'In English'}</span>
+        <span className="uppercase">{currentLanguage !== 'en' ? 'English' : 'Polski'}</span>
       </Button>
     </>
   )

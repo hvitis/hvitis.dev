@@ -4,7 +4,7 @@ const siteMetadata = {
   seoTitle: 'Software and more',
   author: 'Adam Piskorek',
   headerTitle: 'Hvitis.dev',
-  description: 'Tutorials that help you turn your LEGO ideas into reality.',
+  description: 'Adventurs of a product owner who likes to think systematically.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://hvitis.dev',

@@ -1,14 +1,14 @@
 import ListLayout from '@/layouts/ListLayoutWithTags'
 import { allBlogs } from 'contentlayer/generated'
+import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer'
 import { genPageMetadata } from 'app/seo'
-import { getUniqueSortedPolishPosts } from '@/utils/filterPosts'
 
 const POSTS_PER_PAGE = 5
 
 export const metadata = genPageMetadata({ title: 'Blog' })
 
 export default function BlogPage() {
-  const posts = getUniqueSortedPolishPosts(allBlogs)
+  const posts = allCoreContent(sortPosts(allBlogs))
 
   const pageNumber = 1
   const initialDisplayPosts = posts.slice(

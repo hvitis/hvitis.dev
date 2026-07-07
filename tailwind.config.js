@@ -28,6 +28,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['var(--font-space-grotesk)', ...fontFamily.sans],
+        serif: ['var(--font-newsreader)', ...fontFamily.serif],
       },
       colors: {
         primary: colors.sky,
@@ -37,35 +38,50 @@ module.exports = {
         DEFAULT: {
           css: {
             a: {
-              color: theme('colors.primary.500'),
+              color: theme('colors.primary.600'),
+              textDecoration: 'underline',
+              textUnderlineOffset: '3px',
               '&:hover': {
-                color: `${theme('colors.primary.600')}`,
+                color: `${theme('colors.primary.700')}`,
               },
-              code: { color: theme('colors.primary.400') },
+              code: { color: theme('colors.primary.600') },
             },
             'h1,h2': {
-              fontWeight: '700',
+              fontWeight: '600',
+              fontStyle: 'italic',
               letterSpacing: theme('letterSpacing.tight'),
             },
             h3: {
               fontWeight: '600',
             },
+            blockquote: {
+              fontWeight: '400',
+              fontStyle: 'italic',
+              borderLeftColor: theme('colors.gray.300'),
+            },
             code: {
-              color: theme('colors.indigo.500'),
+              color: theme('colors.gray.700'),
+              fontWeight: '500',
             },
           },
         },
         invert: {
           css: {
             a: {
-              color: theme('colors.primary.500'),
+              color: theme('colors.primary.400'),
               '&:hover': {
-                color: `${theme('colors.primary.400')}`,
+                color: `${theme('colors.primary.300')}`,
               },
               code: { color: theme('colors.primary.400') },
             },
             'h1,h2,h3,h4,h5,h6': {
               color: theme('colors.gray.100'),
+            },
+            blockquote: {
+              borderLeftColor: theme('colors.gray.700'),
+            },
+            code: {
+              color: theme('colors.gray.300'),
             },
           },
         },

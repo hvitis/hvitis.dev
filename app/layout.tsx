@@ -1,7 +1,7 @@
 import 'css/tailwind.css'
 import 'pliny/search/algolia.css'
 
-import { Space_Grotesk } from 'next/font/google'
+import { Space_Grotesk, Newsreader } from 'next/font/google'
 import { Analytics, AnalyticsConfig } from 'pliny/analytics'
 import { SearchProvider, SearchConfig } from 'pliny/search'
 import Header from '@/components/Header'
@@ -13,12 +13,18 @@ import { Metadata } from 'next'
 import { Providers } from './providers'
 import Head from './head'
 import GoogleAnalytics from './GoogleAnalytics'
-import LanguageSwitch from '@/components/LanguageSwitch'
 
 const space_grotesk = Space_Grotesk({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-space-grotesk',
+})
+
+const newsreader = Newsreader({
+  subsets: ['latin'],
+  display: 'swap',
+  style: ['normal', 'italic'],
+  variable: '--font-newsreader',
 })
 
 export const metadata: Metadata = {
@@ -65,7 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang={siteMetadata.language}
-      className={`${space_grotesk.variable} scroll-smooth`}
+      className={`${space_grotesk.variable} ${newsreader.variable} scroll-smooth`}
       suppressHydrationWarning
     >
       <Head />

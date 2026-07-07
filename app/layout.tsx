@@ -1,7 +1,7 @@
 import 'css/tailwind.css'
 import 'pliny/search/algolia.css'
 
-import { Space_Grotesk, Newsreader } from 'next/font/google'
+import localFont from 'next/font/local'
 import { Analytics, AnalyticsConfig } from 'pliny/analytics'
 import { SearchProvider, SearchConfig } from 'pliny/search'
 import Header from '@/components/Header'
@@ -14,16 +14,20 @@ import { Providers } from './providers'
 import Head from './head'
 import GoogleAnalytics from './GoogleAnalytics'
 
-const space_grotesk = Space_Grotesk({
-  subsets: ['latin'],
+// Self-hosted (not next/font/google) so the build doesn't depend on
+// network access to fonts.googleapis.com.
+const space_grotesk = localFont({
+  src: './fonts/SpaceGrotesk-Variable.ttf',
   display: 'swap',
   variable: '--font-space-grotesk',
 })
 
-const newsreader = Newsreader({
-  subsets: ['latin'],
+const newsreader = localFont({
+  src: [
+    { path: './fonts/Newsreader-Variable.ttf', style: 'normal' },
+    { path: './fonts/Newsreader-Italic-Variable.ttf', style: 'italic' },
+  ],
   display: 'swap',
-  style: ['normal', 'italic'],
   variable: '--font-newsreader',
 })
 

@@ -29,9 +29,18 @@ import { useReadLocalStorage } from 'usehooks-ts'
 import dictionary from 'locales/mosaic'
 import Loader from '../Loader'
 
+const radius = 9
+const spacing = 19
+
+function calcCanvas(sideSize) {
+  return sideSize * (radius * 2 + (spacing - radius * 2)) + 2 * radius
+}
+
+function calculateShiftRange(size) {
+  return (window.screen.width - calcCanvas(size)) / 2
+}
+
 function MosaicArtMaker() {
-  const radius = 9
-  const spacing = 19
   const defBoardSize = 10
   const maxBoardSizes = [10, 64]
   const textColor = '#94a3b8'
@@ -43,14 +52,6 @@ function MosaicArtMaker() {
   const [boardSize, setBoardSize] = useState({ width: defBoardSize, height: defBoardSize })
 
   const locale = useReadLocalStorage('locale') || 'en'
-
-  const calcCanvas = (sideSize) => {
-    return sideSize * (radius * 2 + (spacing - radius * 2)) + 2 * radius
-  }
-
-  const calculateShiftRange = (size) => {
-    return (window.screen.width - calcCanvas(size)) / 2
-  }
 
   const [canvasSize, setCanvasSize] = useState({
     width: 100,
@@ -586,6 +587,7 @@ function MosaicArtMaker() {
             </div>
           </div>
         </div>
+        {/* eslint-disable-next-line @next/next/no-img-element -- hidden raster source read directly by Paper.js, never displayed */}
         <img
           id="image"
           src={file}

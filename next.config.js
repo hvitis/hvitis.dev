@@ -89,6 +89,14 @@ module.exports = () => {
         use: ['@svgr/webpack'],
       })
 
+      // paper.js's bundled paper-full.js uses a dynamic `require` that
+      // webpack can't statically analyze; this is benign (the package
+      // handles both browser and Node environments internally).
+      config.ignoreWarnings = [
+        ...(config.ignoreWarnings || []),
+        { module: /node_modules\/paper\/dist\/node\/extend\.js/ },
+      ]
+
       return config
     },
   })

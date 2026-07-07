@@ -2,10 +2,27 @@
 
 import React, { useState } from 'react'
 import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react'
+import { Button, ColorInput, Input, Label, Panel, Select, ToolHeader } from '@/components/ui/Tool'
+
+type ErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H'
+
+const SIZES = [128, 256, 384, 512]
+
+const ERROR_CORRECTION_LEVELS: { value: ErrorCorrectionLevel; label: string }[] = [
+  { value: 'L', label: 'Low (~7%)' },
+  { value: 'M', label: 'Medium (~15%)' },
+  { value: 'Q', label: 'Quartile (~25%)' },
+  { value: 'H', label: 'High (~30%)' },
+]
 
 const QRCodeMaker = () => {
   const [link, setLink] = useState('')
   const [qrCodeValue, setQrCodeValue] = useState('')
+  const [size, setSize] = useState(256)
+  const [level, setLevel] = useState<ErrorCorrectionLevel>('M')
+  const [fgColor, setFgColor] = useState('#000000')
+  const [bgColor, setBgColor] = useState('#ffffff')
+  const [includeMargin, setIncludeMargin] = useState(true)
 
   const handleInputChange = (event) => {
     setLink(event.target.value)
@@ -13,6 +30,12 @@ const QRCodeMaker = () => {
 
   const generateQRCode = () => {
     setQrCodeValue(link)
+  }
+
+  const handleLinkKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      generateQRCode()
+    }
   }
 
   const downloadPNG = () => {
@@ -44,50 +67,134 @@ const QRCodeMaker = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+      <ToolHeader
+        title="QR Code Maker"
+        description="Enter a link to generate a QR code you can download as PNG or SVG."
+      />
+      <div className="mt-8 grid grid-cols-1 gap-10 md:grid-cols-2 md:items-start">
         <div>
-          <h1 className="mb-4 text-3xl font-bold">QR Code Maker</h1>
-          <p className="mb-4">Enter a link to generate a QR code.</p>
-          <div className="flex">
-            <input
+          <Label>Link</Label>
+          <div className="mt-2 flex flex-col gap-3 sm:flex-row">
+            <Input
               type="text"
               value={link}
               onChange={handleInputChange}
-              className="w-full rounded-l-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+              onKeyDown={handleLinkKeyDown}
               placeholder="https://example.com"
+              className="flex-1"
             />
-            <button
-              onClick={generateQRCode}
-              className="rounded-r-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none"
-            >
+            <Button variant="primary" onClick={generateQRCode}>
               Generate
-            </button>
+            </Button>
+          </div>
+
+          <div className="mt-8">
+            <Label>Options</Label>
+            <div className="mt-3 grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="qr-size"
+                  className="mb-1 block text-xs text-gray-500 dark:text-gray-400"
+                >
+                  Size
+                </label>
+                <Select id="qr-size" value={size} onChange={(e) => setSize(Number(e.target.value))}>
+                  {SIZES.map((s) => (
+                    <option key={s} value={s}>
+                      {s} px
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <label
+                  htmlFor="qr-level"
+                  className="mb-1 block text-xs text-gray-500 dark:text-gray-400"
+                >
+                  Error correction
+                </label>
+                <Select
+                  id="qr-level"
+                  value={level}
+                  onChange={(e) => setLevel(e.target.value as ErrorCorrectionLevel)}
+                >
+                  {ERROR_CORRECTION_LEVELS.map((l) => (
+                    <option key={l.value} value={l.value}>
+                      {l.label}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <label
+                  htmlFor="qr-fg-color"
+                  className="mb-1 block text-xs text-gray-500 dark:text-gray-400"
+                >
+                  Foreground
+                </label>
+                <ColorInput
+                  id="qr-fg-color"
+                  value={fgColor}
+                  onChange={(e) => setFgColor(e.target.value)}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="qr-bg-color"
+                  className="mb-1 block text-xs text-gray-500 dark:text-gray-400"
+                >
+                  Background
+                </label>
+                <ColorInput
+                  id="qr-bg-color"
+                  value={bgColor}
+                  onChange={(e) => setBgColor(e.target.value)}
+                />
+              </div>
+            </div>
+            <label className="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <input
+                type="checkbox"
+                checked={includeMargin}
+                onChange={(e) => setIncludeMargin(e.target.checked)}
+                className="h-4 w-4 accent-gray-900 dark:accent-gray-100"
+              />
+              Include quiet-zone margin (recommended for printing)
+            </label>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center gap-6">
           {qrCodeValue && (
             <>
               <QRCodeCanvas
                 id="qr-code-canvas"
                 value={qrCodeValue}
-                size={256}
+                size={size}
+                level={level}
+                fgColor={fgColor}
+                bgColor={bgColor}
+                marginSize={includeMargin ? 4 : 0}
                 style={{ display: 'none' }}
               />
-              <QRCodeSVG id="qr-code-svg" value={qrCodeValue} size={256} className="mb-4" />
-              <div className="flex space-x-4">
-                <button
-                  onClick={downloadPNG}
-                  className="rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-600 focus:outline-none"
-                >
-                  Download as PNG
-                </button>
-                <button
-                  onClick={downloadSVG}
-                  className="rounded-md bg-gray-500 px-4 py-2 text-white hover:bg-gray-600 focus:outline-none"
-                >
-                  Download as SVG
-                </button>
+              <Panel className="p-6">
+                <QRCodeSVG
+                  id="qr-code-svg"
+                  value={qrCodeValue}
+                  size={size}
+                  level={level}
+                  fgColor={fgColor}
+                  bgColor={bgColor}
+                  marginSize={includeMargin ? 4 : 0}
+                />
+              </Panel>
+              <div className="flex gap-3">
+                <Button variant="secondary" onClick={downloadPNG}>
+                  Download PNG
+                </Button>
+                <Button variant="secondary" onClick={downloadSVG}>
+                  Download SVG
+                </Button>
               </div>
             </>
           )}

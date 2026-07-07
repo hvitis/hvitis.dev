@@ -1,5 +1,10 @@
 import ContactLayout from '@/layouts/ContactLayout'
-import NewsletterForm from 'pliny/ui/NewsletterForm'
+import { genPageMetadata } from 'app/seo'
+
+export const metadata = genPageMetadata({
+  title: 'Contact',
+  description: 'Get in touch by e-mail.',
+})
 
 export default function Page() {
   return (
@@ -7,8 +12,6 @@ export default function Page() {
       <ContactLayout>
         <h1 className="leading">Write me an e-mail</h1>
         <p>Write me at: hello (at) youtalky.com</p>
-        <p>If you want to stay up to date with mosaic changes, you can subscribe to newsletter.</p>
-        <NewsletterForm title="Subscribe" apiUrl="/api/newsletter" />
       </ContactLayout>
     </>
   )

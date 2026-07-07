@@ -29,35 +29,32 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
   const nextPage = currentPage + 1 <= totalPages
 
   return (
-    <div className="space-y-2 pb-8 pt-6 md:space-y-5">
-      <nav className="flex justify-between">
-        {!prevPage && (
-          <button className="cursor-auto disabled:opacity-50" disabled={!prevPage}>
-            Previous
-          </button>
-        )}
-        {prevPage && (
-          <Link
-            href={currentPage - 1 === 1 ? `/${basePath}/` : `/${basePath}/page/${currentPage - 1}`}
-            rel="prev"
-          >
-            Previous
-          </Link>
-        )}
-        <span>
-          {currentPage} of {totalPages}
-        </span>
-        {!nextPage && (
-          <button className="cursor-auto disabled:opacity-50" disabled={!nextPage}>
-            Next
-          </button>
-        )}
-        {nextPage && (
-          <Link href={`/${basePath}/page/${currentPage + 1}`} rel="next">
-            Next
-          </Link>
-        )}
-      </nav>
+    <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-6 text-sm dark:border-gray-800">
+      {prevPage ? (
+        <Link
+          href={currentPage - 1 === 1 ? `/${basePath}/` : `/${basePath}/page/${currentPage - 1}`}
+          rel="prev"
+          className="text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+        >
+          ← Previous
+        </Link>
+      ) : (
+        <span className="cursor-default text-gray-300 dark:text-gray-700">← Previous</span>
+      )}
+      <span className="font-serif italic text-gray-400 dark:text-gray-600">
+        {currentPage} of {totalPages}
+      </span>
+      {nextPage ? (
+        <Link
+          href={`/${basePath}/page/${currentPage + 1}`}
+          rel="next"
+          className="text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+        >
+          Next →
+        </Link>
+      ) : (
+        <span className="cursor-default text-gray-300 dark:text-gray-700">Next →</span>
+      )}
     </div>
   )
 }
@@ -76,88 +73,96 @@ export default function ListLayoutWithTags({
   const displayPosts = initialDisplayPosts.length > 0 ? initialDisplayPosts : posts
 
   return (
-    <>
-      <div>
-        <div className="pb-6 pt-6">
-          <h1 className="sm:hidden text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
-            {title}
-          </h1>
-        </div>
-        <div className="flex sm:space-x-24">
-          <div className="hidden max-h-screen h-full sm:flex flex-wrap bg-gray-50 dark:bg-gray-900/70 shadow-md pt-5 dark:shadow-gray-800/40 rounded min-w-[280px] max-w-[280px] overflow-auto">
-            <div className="py-4 px-6">
+    <div className="mx-auto max-w-5xl">
+      <header className="border-b border-gray-200 pb-8 pt-10 dark:border-gray-800">
+        <p className="text-xs uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
+          {posts.length} {posts.length === 1 ? 'article' : 'articles'}
+        </p>
+        <h1 className="mt-2 font-serif text-4xl italic tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl">
+          {title}
+        </h1>
+      </header>
+
+      <div className="flex flex-col gap-12 sm:flex-row sm:gap-16">
+        <nav className="order-2 shrink-0 pt-10 sm:order-1 sm:w-40 sm:border-r sm:border-gray-200 sm:pr-8 sm:dark:border-gray-800">
+          <h2 className="text-xs uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
+            Topics
+          </h2>
+          <ul className="mt-4 space-y-3">
+            <li>
               {pathname.startsWith('/blog') ? (
-                <h3 className="text-primary-500 font-bold uppercase">All Posts</h3>
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  All posts
+                </span>
               ) : (
                 <Link
-                  href={`/blog`}
-                  className="font-bold uppercase text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-500"
+                  href="/blog"
+                  className="text-sm text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                 >
-                  All Posts
+                  All posts
                 </Link>
               )}
-              <ul>
-                {sortedTags.map((t) => {
-                  return (
-                    <li key={t} className="my-3">
-                      {pathname.split('/tags/')[1] === slug(t) ? (
-                        <h3 className="inline py-2 px-3 uppercase text-sm font-bold text-primary-500">
-                          {`${t} (${tagCounts[t]})`}
-                        </h3>
-                      ) : (
-                        <Link
-                          href={`/tags/${slug(t)}`}
-                          className="py-2 px-3 uppercase text-sm font-medium text-gray-500 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-500"
-                          aria-label={`View posts tagged ${t}`}
-                        >
-                          {`${t} (${tagCounts[t]})`}
-                        </Link>
-                      )}
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          </div>
-          <div>
-            <ul>
-              {displayPosts.map((post) => {
-                const { path, date, title, summary, tags } = post
-                return (
-                  <li key={path} className="py-5">
-                    <article className="space-y-2 flex flex-col xl:space-y-0">
-                      <dl>
-                        <dt className="sr-only">Published on</dt>
-                        <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                          <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
-                        </dd>
-                      </dl>
-                      <div className="space-y-3">
-                        <div>
-                          <h2 className="text-2xl font-bold leading-8 tracking-tight">
-                            <Link href={`/${path}`} className="text-gray-900 dark:text-gray-100">
-                              {title}
-                            </Link>
-                          </h2>
-                          <div className="flex flex-wrap">
-                            {tags?.map((tag) => <Tag key={tag} text={tag} />)}
-                          </div>
-                        </div>
-                        <div className="prose max-w-none text-gray-500 dark:text-gray-400">
-                          {summary}
-                        </div>
-                      </div>
-                    </article>
-                  </li>
-                )
-              })}
-            </ul>
-            {pagination && pagination.totalPages > 1 && (
-              <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} />
-            )}
-          </div>
+            </li>
+            {sortedTags.map((t) => (
+              <li key={t}>
+                {pathname.split('/tags/')[1] === slug(t) ? (
+                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    {t} <span className="text-gray-400 dark:text-gray-600">{tagCounts[t]}</span>
+                  </span>
+                ) : (
+                  <Link
+                    href={`/tags/${slug(t)}`}
+                    className="text-sm text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                    aria-label={`View posts tagged ${t}`}
+                  >
+                    {t} <span className="text-gray-400 dark:text-gray-600">{tagCounts[t]}</span>
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="order-1 min-w-0 flex-1 sm:order-2">
+          <ul>
+            {displayPosts.map((post) => {
+              const { path, date, title, summary, tags } = post
+              return (
+                <li
+                  key={path}
+                  className="group border-b border-gray-200 py-10 first:pt-10 dark:border-gray-800"
+                >
+                  <article>
+                    <time
+                      dateTime={date}
+                      className="text-xs uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500"
+                    >
+                      {formatDate(date, siteMetadata.locale)}
+                    </time>
+                    <h2 className="mt-3">
+                      <Link
+                        href={`/${path}`}
+                        className="font-serif text-2xl leading-snug text-gray-900 transition-colors group-hover:text-primary-600 dark:text-gray-100 dark:group-hover:text-primary-400 sm:text-3xl"
+                      >
+                        {title}
+                      </Link>
+                    </h2>
+                    <p className="mt-3 max-w-2xl font-serif text-lg leading-relaxed text-gray-500 dark:text-gray-400">
+                      {summary}
+                    </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+                      {tags?.map((tag) => <Tag key={tag} text={tag} />)}
+                    </div>
+                  </article>
+                </li>
+              )
+            })}
+          </ul>
+          {pagination && pagination.totalPages > 1 && (
+            <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} />
+          )}
         </div>
       </div>
-    </>
+    </div>
   )
 }

@@ -53,3 +53,4 @@ bun.*
 tests/reports/**
 **.html
 selenium-**
+.refact

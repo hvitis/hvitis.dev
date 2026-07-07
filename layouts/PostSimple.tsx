@@ -8,7 +8,6 @@ import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
 import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
-import LanguageSwitch from '@/components/LanguageSwitch'
 
 interface LayoutProps {
   content: CoreContent<Blog>
@@ -18,12 +17,11 @@ interface LayoutProps {
   prev?: { path: string; title: string }
 }
 
-export default function PostLayout({ content, next, prev, post, children }: LayoutProps) {
+export default function PostLayout({ content, next, prev, children }: LayoutProps) {
   const { path, slug, date, title } = content
 
   return (
     <SectionContainer>
-      <LanguageSwitch post={post} />
       <ScrollTopAndComment />
       <article>
         <div>

@@ -1,7 +1,7 @@
 // @ts-check
 const { fontFamily } = require('tailwindcss/defaultTheme')
 const colors = require('tailwindcss/colors')
-import { nextui } from '@nextui-org/react'
+const { nextui } = require('@nextui-org/react')
 
 /** @type {import("tailwindcss/types").Config } */
 module.exports = {

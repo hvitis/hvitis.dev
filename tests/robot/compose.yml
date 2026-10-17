@@ -1,0 +1,12 @@
+services:
+  robot:
+    image: ppodgorsek/robot-framework:latest
+    network_mode: host
+    user: root
+    volumes:
+      - ./tests/e2e:/opt/robotframework/tests:ro
+      - ../reports/robot:/opt/robotframework/reports
+    environment:
+      BROWSER: chrome
+      ROBOT_TESTS_DIR: /opt/robotframework/tests
+      ROBOT_REPORTS_DIR: /opt/robotframework/reports

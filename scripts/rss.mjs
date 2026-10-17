@@ -5,7 +5,12 @@ import { escape } from 'pliny/utils/htmlEscaper.js'
 import siteMetadata from '../data/siteMetadata.js'
 
 const tagData = JSON.parse(readFileSync(path.join(process.cwd(), 'app', 'tag-data.json'), 'utf-8'))
-const allBlogs = JSON.parse(readFileSync(path.join(process.cwd(), '.contentlayer', 'generated', 'Blog', '_index.json'), 'utf-8'))
+const allBlogs = JSON.parse(
+  readFileSync(
+    path.join(process.cwd(), '.contentlayer', 'generated', 'Blog', '_index.json'),
+    'utf-8'
+  )
+)
 
 const generateRssItem = (config, post) => `
   <item>

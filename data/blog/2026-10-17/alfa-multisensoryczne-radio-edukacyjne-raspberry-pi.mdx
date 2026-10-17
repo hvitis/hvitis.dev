@@ -1,0 +1,115 @@
+---
+title: 'Alfa: radio z pięcioma przyciskami do odkrywania polskich liter'
+date: '2026-10-17'
+lastmod: '2026-10-17'
+summary: 'Dziecko wybiera literę, słucha nagrania i przyciskiem prowadzi animowany ołówek. Poznaj Alfę, projekt radia edukacyjnego w obudowie chmurki, które działa bez internetu.'
+tags:
+  ['Raspberry Pi', 'Edukacja', 'Hardware', 'Python', 'Montessori', 'Dzieci', 'DIY', 'Open Source']
+images: ['/static/images/blog/alfa/readme-banner.png']
+authors: ['default']
+draft: false
+---
+
+Alfa pozwala dziecku wybierać polskie litery, słuchać nagrań i sterować rysowaniem za pomocą pięciu fizycznych przycisków. Wszystko mieści się w projekcie małego radia w kształcie chmurki, które odtwarza przygotowane materiały bez internetu.
+
+Najciekawsza jest zabawa z ołówkiem. Gdy dziecko przytrzymuje środkowy przycisk, ołówek kreśli literę na wyświetlaczu. Po puszczeniu zatrzymuje się, a kolejne przytrzymanie pozwala dokończyć rysunek. Dziecko decyduje, kiedy animacja ma ruszyć i kiedy zrobić przerwę.
+
+![Projekt radia Alfa w obudowie chmurki, wizualizacja komputerowa](/static/images/blog/alfa/readme-banner.png 'Alfa, radio edukacyjne z fizycznymi przyciskami')
+
+To projekt do samodzielnego zbudowania. Można obejrzeć jego wnętrze, wybrać obudowę i dopasować zestaw liter do dziecka. Przyda się tu pomoc osoby, która zna podstawy elektroniki. Na początek wystarczy jednak przeglądarka, żeby zobaczyć, jak pomyślano całe urządzenie.
+
+## Jak działa radio edukacyjne Alfa?
+
+Na małym ekranie pojawia się karta z literą i ilustracją. Przyciski lewo i prawo zmieniają kartę oraz uruchamiają nagranie. Dziecko może wracać do wybranej litery tyle razy, ile chce.
+
+Każdy przycisk ma stałe zadanie. Dzięki temu po poznaniu kilku czynności można korzystać z radia bez przechodzenia przez kolejne menu.
+
+| Przycisk                   | Co się dzieje                                                  |
+| -------------------------- | -------------------------------------------------------------- |
+| Lewo i prawo               | Zmienia się litera i odtwarza jej nagranie                     |
+| Góra                       | Pojawia się animowana postać i pyta „Powiedz jaka to literka.” |
+| Dół                        | Jedna z dwóch animowanych postaci odtwarza swoją pochwałę      |
+| Krótkie naciśnięcie środka | Nagranie wybranej litery odtwarza się ponownie                 |
+| Przytrzymanie środka       | Ołówek zaczyna lub kontynuuje kreślenie litery                 |
+
+Po ostatniej kresce pojawiają się krótkie fajerwerki i wraca ilustracja. Wtedy przycisku nie trzeba już trzymać.
+
+Pochwałę uruchamia dziecko. Alfa nie słucha odpowiedzi ani nie sprawdza, czy została wypowiedziana poprawnie. Pytanie może więc być początkiem wspólnej zabawy z dorosłym, który usłyszy odpowiedź i na nią zareaguje.
+
+## Kilka znajomych liter na początek
+
+Alfa ma materiały dla 32 wielkich liter polskiego alfabetu. Nie trzeba udostępniać ich wszystkich naraz. Dorosły może wcześniej wybrać mniejszy zestaw i ustalić kolejność przeglądania.
+
+Można zacząć na przykład od M, A i J, a potem szukać tych samych znaków w imieniu dziecka, na okładce książki czy na pudełku z zabawkami. Radio daje wtedy punkt wyjścia do rozmowy o literach, które są także poza ekranem.
+
+Wybór zestawu wymaga przygotowania ustawień przez dorosłego. Alfa nie dobiera jeszcze kolejnych liter na podstawie postępów. To ograniczenie oznacza dodatkową pracę rodzica, ale pozostawia mu decyzję o tym, co dziecko zobaczy.
+
+## Co daje ołówek sterowany przyciskiem?
+
+Przytrzymanie klawisza ma widoczny skutek: przybywa fragment litery. Puszczenie zatrzymuje ruch. To prosta zależność, którą można odkryć podczas zabawy.
+
+Ołówek pokazuje kolejność kresek. W polskich literach najpierw powstaje główny kształt, a później dodatkowe znaki, takie jak ogonek czy kreska nad literą. Obecny zestaw obejmuje wielkie litery drukowane.
+
+![Wszystkie 32 wielkie litery polskiego alfabetu dostępne w Alfie](/static/images/blog/alfa/letter-drawing-contact-sheet.png 'Litery kreślone przez animowany ołówek')
+
+Palec dziecka pozostaje przy tym na przycisku. Kształt rysuje urządzenie. Dlatego do takiej zabawy warto dołączyć kartkę i kredkę albo literę, po której można przejechać palcem.
+
+[Badanie Karin James i Laury Engelhardt z 2012 roku](https://pmc.ncbi.nlm.nih.gov/articles/PMC4274624/) pokazało różnice w aktywności mózgu podczas oglądania liter zależnie od tego, czy dzieci wcześniej pisały je odręcznie, obrysowywały czy wpisywały na klawiaturze. Nie badano w nim Alfy ani podobnego przycisku. Traktuję je jako powód, by pamiętać o samodzielnym rysowaniu, gdy projektujemy zabawę z literami.
+
+Dokumentacja odwołuje się też do Montessori, między innymi do rozpoznawania wskazanego znaku wśród kilku możliwości. Taka gra pozostaje w planach Alfy. Samo pokazanie litery i odtworzenie pytania nie zastępuje pełnego ćwiczenia ani nie potwierdza skuteczności edukacyjnej urządzenia.
+
+## Fizyczne przyciski dają mniej wyborów i prostszą obsługę
+
+Na ekranie dotykowym można umieścić wiele gier i ustawień. Alfa ogranicza obsługę do pięciu przycisków. Ma to sens tam, gdzie zależy nam na łatwym powtarzaniu kilku znanych czynności.
+
+Ta prostota ma swoją cenę. Dodanie nowej zabawy wymaga przemyślenia, jak zmieścić ją w obecnym sposobie obsługi. Większe zmiany i przygotowanie zawartości pozostają po stronie dorosłego.
+
+Podobny wybór dotyczy internetu. Nagrania są zapisane w urządzeniu, więc podczas zabawy nie trzeba czekać na ich pobranie. Nowe materiały trzeba wcześniej przygotować i wgrać.
+
+Po pięciu minutach bezczynności ekran gaśnie, a wzmacniacz dźwięku przechodzi w uśpienie. Naciśnięcie przycisku przywraca działanie. W środku komputer nadal pracuje, więc wygaszony ekran nie oznacza całkowitego wyłączenia zasilania.
+
+## Co mieści się wewnątrz chmurki?
+
+Sercem Alfy jest Raspberry Pi 3, mały komputer mieszczący się na jednej płytce. Odbiera naciśnięcia przycisków, wyświetla obraz i uruchamia nagrania. Osobne elementy obsługują ekran, odczyt klawiatury i głośnik.
+
+![Schemat połączeń małego komputera Raspberry Pi, ekranu, przycisków i głośnika](/static/images/blog/alfa/hardware-connections.png 'Jak łączą się elementy Alfy')
+
+Nie trzeba znać nazw wszystkich części, żeby zrozumieć zasadę działania. Naciśnięcie trafia do komputera, a ten wybiera odpowiedni obraz i dźwięk. Przy budowie znaczenie mają już konkretne modele części i poprawne połączenia. Opisuje je [ilustrowana instrukcja sprzętu](https://github.com/hvitis/Alfa/blob/main/docs/hardware-guide.md).
+
+Obudowę chmurki można wydrukować na drukarce 3D. Składa się z dwóch głównych części i osobnej pokrywy komory zasilania. Ma uchwyt do przenoszenia, a jej korpus mierzy około 21 cm szerokości, 19 cm wysokości i 8,6 cm głębokości. Dostępne są także projekty obudów ze sklejki.
+
+![Rozmieszczenie elektroniki wewnątrz chmurki, wizualizacja komputerowa](/static/images/blog/alfa/roentgen-look.png 'Wnętrze projektowanej obudowy')
+
+Przed wydrukowaniem całej chmurki instrukcja zaleca wykonanie małych próbek zatrzasków. To pozwala sprawdzić, czy części pasują do siebie na danej drukarce, zanim zużyje się materiał na duży wydruk.
+
+Powstał również projekt dodatkowej płytki do Raspberry Pi. Łączy kilka elementów elektroniki w jednym miejscu i ma ograniczyć liczbę przewodów. Czeka jeszcze na fizyczne próby.
+
+![Projekt dodatkowej płytki elektronicznej do Raspberry Pi](/static/images/blog/alfa/pi3-shield.png 'Płytka mająca uprościć montaż elektroniki')
+
+## Alfa jest prototypem i wymaga sprawdzenia po złożeniu
+
+Obrazy obudowy i elektroniki w tym wpisie są wizualizacjami komputerowymi. Pomagają zobaczyć rozmieszczenie części, ale nie pokazują wyników prób gotowego urządzenia.
+
+Do sprawdzenia pozostają między innymi dopasowanie elementów, wytrzymałość uchwytu i zatrzasków oraz temperatura wewnątrz zamkniętej obudowy. Osobnych prób wymaga dodatkowa płytka elektroniczna.
+
+Alfa ma też ustawiony limit głośności. Sam procent na skali nie mówi jednak, jak głośno zagra konkretny głośnik w konkretnej obudowie. Potrzebny jest pomiar złożonego urządzenia.
+
+Przed budową warto przeczytać [instrukcję obudowy](https://github.com/hvitis/Alfa/blob/main/design/cloud-radio/README.md) i sprawdzić, które elementy trzeba jeszcze dopasować do posiadanych części. To projekt dla osoby gotowej poświęcić czas na montaż i próby.
+
+## Co może pojawić się w kolejnych wersjach?
+
+Jednym z pomysłów jest zabawa „Gdzie jest M?”. Na ekranie pojawiałyby się dwie litery, a dziecko wybierałoby odpowiedź przyciskiem po lewej lub prawej stronie. Byłoby to inne zadanie niż samo przewijanie kart: trzeba rozpoznać wskazany znak.
+
+Kolejna propozycja to fizyczne karty z literami. Po przyłożeniu karty do radia urządzenie rozpoznawałoby ją i uruchamiało odpowiedni materiał. W planach są także małe litery, większe przyciski i tabliczki do wodzenia palcem.
+
+Te możliwości są opisane na [liście pomysłów na rozwój](https://github.com/hvitis/Alfa/blob/main/docs/improvements-todo.md). Obecna Alfa skupia się na wybieraniu wielkich liter, nagraniach i sterowaniu animowanym ołówkiem.
+
+## Od czego zacząć, jeśli chcesz zbudować własną Alfę?
+
+Otwórz [prezentację Alfy z modelami 3D](https://hvitis.github.io/Alfa/). Można tam obejrzeć obudowy, zajrzeć do środka i zobaczyć połączenia elektroniki. To najlepszy pierwszy krok przed zakupem części.
+
+Potem przejrzyj [instrukcję sprzętu](https://github.com/hvitis/Alfa/blob/main/docs/hardware-guide.md) z osobą, która pomoże przy montażu. Porównajcie potrzebne elementy z tym, co już macie, i wybierzcie obudowę. [Instrukcja instalacji](https://github.com/hvitis/Alfa/blob/main/docs/installation.md) prowadzi przez przygotowanie urządzenia do działania.
+
+Zwróć też uwagę na ilustracje i nagrania. Mają osobne informacje o prawach do wykorzystania, a pakiet do pobrania nie zawiera wszystkich materiałów widocznych w projekcie. Przed przygotowaniem własnego zestawu przeczytaj [opis zawartości pakietu](https://github.com/hvitis/Alfa/blob/main/docs/release-contents.md).
+
+Pliki obudów, dokumentację i materiały potrzebne do dalszej pracy znajdziesz w [repozytorium Alfy](https://github.com/hvitis/Alfa). Zacznij od obejrzenia chmurki w przeglądarce, a decyzję o budowie podejmij po sprawdzeniu części i zakresu montażu.

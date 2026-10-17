@@ -19,8 +19,23 @@ import rehypeKatex from 'rehype-katex'
 import rehypeCitation from 'rehype-citation'
 import rehypePrismPlus from 'rehype-prism-plus'
 import rehypePresetMinify from 'rehype-preset-minify'
+import { visit } from 'unist-util-visit'
 import siteMetadata from './data/siteMetadata'
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer.js'
+
+function remarkMermaid() {
+  return (tree) => {
+    visit(tree, 'code', (node: any, index, parent: any) => {
+      if (node.lang !== 'mermaid' || !parent || typeof index !== 'number') return
+      parent.children[index] = {
+        type: 'mdxJsxFlowElement',
+        name: 'Mermaid',
+        attributes: [{ type: 'mdxJsxAttribute', name: 'chart', value: node.value }],
+        children: [],
+      }
+    })
+  }
+}
 
 const root = process.cwd()
 const isProduction = process.env.NODE_ENV === 'production'
@@ -141,6 +156,7 @@ export default makeSource({
       remarkCodeTitles,
       remarkMath,
       remarkImgToJsx,
+      remarkMermaid,
     ],
     rehypePlugins: [
       rehypeSlug,

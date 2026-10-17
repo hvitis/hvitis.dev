@@ -9,7 +9,9 @@
     "build": "cross-env INIT_CWD=$PWD next build && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
-    "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts"
+    "lint": "next lint --dir app --dir components --dir layouts --dir scripts",
+    "lint:fix": "yarn lint --fix",
+    "test:e2e": "docker compose -f tests/robot/compose.yml run --rm robot"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
@@ -34,6 +36,7 @@
     "jsdom": "^22.1.0",
     "jspdf": "^3.0.2",
     "lucide-react": "^0.274.0",
+    "mermaid": "10.9.1",
     "nearest-color": "^0.4.4",
     "next": "13.4.19",
     "next-contentlayer": "0.3.4",
@@ -99,5 +102,19 @@
   "packageManager": "yarn@3.6.1",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./config/eslint.cjs"
+    ]
+  },
+  "prettier": "./config/prettier.cjs",
+  "postcss": {
+    "plugins": {
+      "tailwindcss": {
+        "config": "./config/tailwind.cjs"
+      },
+      "autoprefixer": {}
+    }
   }
 }

@@ -1,5 +1,6 @@
 module.exports = {
   root: true,
+  ignorePatterns: ['node_modules/', 'config/'],
   parser: '@typescript-eslint/parser',
   env: {
     browser: true,
@@ -19,7 +20,7 @@ module.exports = {
   ],
   parserOptions: {
     project: true,
-    tsconfigRootDir: __dirname,
+    tsconfigRootDir: require('path').resolve(__dirname, '..'),
   },
   rules: {
     'prettier/prettier': 'error',

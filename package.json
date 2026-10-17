@@ -36,7 +36,7 @@
     "jsdom": "^22.1.0",
     "jspdf": "^3.0.2",
     "lucide-react": "^0.274.0",
-    "mermaid": "10.9.1",
+    "mermaid": "10.9.8",
     "nearest-color": "^0.4.4",
     "next": "13.4.19",
     "next-contentlayer": "0.3.4",

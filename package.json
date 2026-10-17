@@ -85,7 +85,8 @@
     "@opentelemetry/resources": "1.13.0",
     "@opentelemetry/sdk-trace-base": "1.13.0",
     "@opentelemetry/sdk-trace-node": "1.13.0",
-    "@opentelemetry/semantic-conventions": "1.13.0"
+    "@opentelemetry/semantic-conventions": "1.13.0",
+    "@contentlayer/core@0.3.4": "patch:@contentlayer/core@npm%3A0.3.4#./.yarn/patches/@contentlayer-core-npm-0.3.4-dd6645e9ec.patch"
   },
   "lint-staged": {
     "*.+(js|jsx|ts|tsx)": [
@@ -97,6 +98,6 @@
   },
   "packageManager": "yarn@3.6.1",
   "engines": {
-    "node": "20.x"
+    "node": ">=18.0.0"
   }
 }
